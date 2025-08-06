@@ -1,0 +1,21 @@
+{
+    "present": "Present",
+    "challenge": "Challenge",
+    "past": "Past",
+    "future": "Future",
+    "above": "Above",
+    "below": "Below",
+    "advice": "Advice",
+    "external": "External",
+    "hopes": "Hopes & Fears",
+    "outcome": "Outcome",
+    "save_share": "📸 Save & Share Spread",
+    "get_ai": "🔮 Get AI Reading",
+    "error": "Error",
+    "success": "Success",
+    "error_screenshot_not_ready": "Cannot capture screenshot: View is not ready.",
+    "screenshot_saved": "Screenshot saved to gallery!",
+    "permission_denied": "Cannot save screenshot without permission.",
+    "screenshot_failed": "Failed to capture or share screenshot.",
+    "ai_analysis_failed": "Failed to generate AI analysis."
+}
