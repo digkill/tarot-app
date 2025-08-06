@@ -1,0 +1,476 @@
+[
+  {
+    "name": "The Fool",
+    "upright": "New beginnings, spontaneity, free spirit",
+    "reversed": "Recklessness, fear of unknown, holding back",
+    "image": "the_fool.jpeg"
+  },
+  {
+    "name": "The Magician",
+    "upright": "Manifestation, resourcefulness, power",
+    "reversed": "Manipulation, poor planning, untapped talents",
+    "image": "the_magician.jpeg"
+  },
+  {
+    "name": "The High Priestess",
+    "upright": "Intuition, sacred knowledge, divine feminine",
+    "reversed": "Secrets, disconnected from intuition",
+    "image": "the_high_priestess.jpeg"
+  },
+  {
+    "name": "The Empress",
+    "upright": "Femininity, abundance, nurturing",
+    "reversed": "Dependence, smothering, emptiness",
+    "image": "the_empress.jpeg"
+  },
+  {
+    "name": "The Emperor",
+    "upright": "Authority, structure, control",
+    "reversed": "Domination, excessive control, rigidity",
+    "image": "the_emperor.jpeg"
+  },
+  {
+    "name": "The Hierophant",
+    "upright": "Spiritual wisdom, tradition, conformity",
+    "reversed": "Rebellion, personal beliefs",
+    "image": "the_hierophant.jpeg"
+  },
+  {
+    "name": "The Lovers",
+    "upright": "Love, harmony, choices",
+    "reversed": "Imbalance, misalignment, indecision",
+    "image": "the_lovers.jpeg"
+  },
+  {
+    "name": "The Chariot",
+    "upright": "Willpower, victory, determination",
+    "reversed": "Defeat, lack of direction",
+    "image": "the_chariot.jpeg"
+  },
+  {
+    "name": "Strength",
+    "upright": "Courage, persuasion, influence",
+    "reversed": "Self-doubt, insecurity, weakness",
+    "image": "strength.jpeg"
+  },
+  {
+    "name": "The Hermit",
+    "upright": "Soul-searching, introspection, solitude",
+    "reversed": "Loneliness, isolation, withdrawal",
+    "image": "the_hermit.jpeg"
+  },
+  {
+    "name": "Wheel of Fortune",
+    "upright": "Luck, karma, life cycles",
+    "reversed": "Bad luck, resistance to change",
+    "image": "wheel_of_fortune.jpeg"
+  },
+  {
+    "name": "Justice",
+    "upright": "Fairness, truth, law",
+    "reversed": "Unfairness, lack of accountability",
+    "image": "justice.jpeg"
+  },
+  {
+    "name": "The Hanged Man",
+    "upright": "Pause, surrender, letting go",
+    "reversed": "Delays, resistance, stalling",
+    "image": "the_hanged_man.jpeg"
+  },
+  {
+    "name": "Death",
+    "upright": "Endings, transformation, transition",
+    "reversed": "Resistance to change, personal transformation",
+    "image": "death.jpeg"
+  },
+  {
+    "name": "Temperance",
+    "upright": "Balance, moderation, patience",
+    "reversed": "Imbalance, excess, lack of long-term vision",
+    "image": "temperance.jpeg"
+  },
+  {
+    "name": "The Devil",
+    "upright": "Addiction, materialism, playfulness",
+    "reversed": "Freedom, release, restoring control",
+    "image": "the_devil.jpeg"
+  },
+  {
+    "name": "The Tower",
+    "upright": "Sudden change, upheaval, chaos",
+    "reversed": "Avoidance of disaster, fear of change",
+    "image": "the_tower.jpeg"
+  },
+  {
+    "name": "The Star",
+    "upright": "Hope, faith, rejuvenation",
+    "reversed": "Lack of faith, despair, discouragement",
+    "image": "the_star.jpeg"
+  },
+  {
+    "name": "The Moon",
+    "upright": "Illusion, fear, anxiety",
+    "reversed": "Release of fear, clarity",
+    "image": "the_moon.jpeg"
+  },
+  {
+    "name": "The Sun",
+    "upright": "Positivity, success, vitality",
+    "reversed": "Inner child, feeling down",
+    "image": "the_sun.jpeg"
+  },
+  {
+    "name": "The Hierophant",
+    "upright": "Tradition, conformity, morality and ethics",
+    "reversed": "Rebellion, subversiveness, new approaches",
+    "image": "the_hierophant.jpeg"
+  },
+  {
+    "name": "The Lovers",
+    "upright": "Love, harmony, partnerships, choices",
+    "reversed": "Disharmony, imbalance, conflict",
+    "image": "the_lovers.jpeg"
+  },
+  {
+    "name": "The Chariot",
+    "upright": "Direction, control, willpower, determination",
+    "reversed": "Lack of control, aggression, self-doubt",
+    "image": "the_chariot.jpeg"
+  },
+  {
+    "name": "Strength",
+    "upright": "Courage, persuasion, influence, compassion",
+    "reversed": "Self-doubt, weakness, insecurity",
+    "image": "the_strength.jpeg"
+  },
+  {
+    "name": "The Hermit",
+    "upright": "Soul-searching, introspection, inner guidance",
+    "reversed": "Isolation, loneliness, withdrawal",
+    "image": "the_hermit.jpeg"
+  },
+  {
+    "name": "Wheel of Fortune",
+    "upright": "Good luck, karma, life cycles, destiny",
+    "reversed": "Bad luck, resistance to change, breaking cycles",
+    "image": "wheel_of_fortune.jpeg"
+  },
+  {
+    "name": "Justice",
+    "upright": "Fairness, truth, law, cause and effect",
+    "reversed": "Dishonesty, imbalance, unfair treatment",
+    "image": "justice.jpeg"
+  },
+  {
+    "name": "The Hanged Man",
+    "upright": "Pause, surrender, letting go, new perspectives",
+    "reversed": "Delays, resistance, stalling",
+    "image": "the_hanged_man.jpeg"
+  },
+  {
+    "name": "Death",
+    "upright": "Endings, transformation, transition",
+    "reversed": "Resistance to change, personal transformation",
+    "image": "death.jpeg"
+  },
+  {
+    "name": "Temperance",
+    "upright": "Balance, moderation, patience, purpose",
+    "reversed": "Imbalance, excess, self-healing",
+    "image": "temperance.jpeg"
+  },
+  {
+    "name": "The Devil",
+    "upright": "Addiction, materialism, playfulness",
+    "reversed": "Freedom, release, restoring control",
+    "image": "the_devil.jpeg"
+  },
+  {
+    "name": "The Tower",
+    "upright": "Sudden change, upheaval, revelation",
+    "reversed": "Fear of change, averting disaster",
+    "image": "the_tower.jpeg"
+  },
+  {
+    "name": "The Star",
+    "upright": "Hope, faith, purpose, renewal",
+    "reversed": "Despair, disconnection, lack of faith",
+    "image": "the_star.jpeg"
+  },
+  {
+    "name": "The Moon",
+    "upright": "Illusion, fear, anxiety, subconscious",
+    "reversed": "Confusion, fear released, clarity",
+    "image": "the_moon.jpeg"
+  },
+  {
+    "name": "The Sun",
+    "upright": "Positivity, fun, warmth, success",
+    "reversed": "Negativity, depression, sadness",
+    "image": "the_sun.jpeg"
+  },
+  {
+    "name": "Judgement",
+    "upright": "Reflection, reckoning, awakening",
+    "reversed": "Self-doubt, rejection, lack of self-awareness",
+    "image": "judgement.jpeg"
+  },
+  {
+    "name": "The World",
+    "upright": "Completion, integration, accomplishment",
+    "reversed": "Lack of closure, incomplete goals",
+    "image": "the_world.jpeg"
+  },
+  {
+    "name": "Ace of Wands",
+    "upright": "Inspiration, new opportunities, growth",
+    "reversed": "Delays, lack of direction, distractions",
+    "image": "ace_of_wands.jpeg"
+  },
+  {
+    "name": "Two of Wands",
+    "upright": "Future planning, progress, decisions",
+    "reversed": "Fear of change, indecisiveness",
+    "image": "two_of_wands.jpeg"
+  },
+  {
+    "name": "Three of Wands",
+    "upright": "Expansion, foresight, overseas opportunities",
+    "reversed": "Delays, obstacles, frustration",
+    "image": "three_of_wands.jpeg"
+  },
+  {
+    "name": "The Devil",
+    "upright": "Addiction, materialism, playfulness",
+    "reversed": "Freedom, release, restoring control",
+    "image": "the_devil.jpeg"
+  },
+  {
+    "name": "The Tower",
+    "upright": "Sudden change, upheaval, revelation",
+    "reversed": "Avoidance of disaster, fear of change",
+    "image": "the_tower.jpeg"
+  },
+  {
+    "name": "The Star",
+    "upright": "Hope, faith, purpose, renewal",
+    "reversed": "Despair, disconnection, lack of faith",
+    "image": "the_star.jpeg"
+  },
+  {
+    "name": "The Moon",
+    "upright": "Illusion, intuition, fear, anxiety",
+    "reversed": "Clarity, truth, understanding",
+    "image": "the_moon.jpeg"
+  },
+  {
+    "name": "The Sun",
+    "upright": "Success, positivity, vitality",
+    "reversed": "Negativity, depression, sadness",
+    "image": "the_sun.jpeg"
+  },
+  {
+    "name": "Judgement",
+    "upright": "Reflection, reckoning, inner voice",
+    "reversed": "Self-doubt, rejection, lack of self-awareness",
+    "image": "judgement.jpeg"
+  },
+  {
+    "name": "The World",
+    "upright": "Completion, accomplishment, travel",
+    "reversed": "Lack of closure, short-cuts, delays",
+    "image": "the_world.jpeg"
+  },
+  {
+    "name": "Ace of Cups",
+    "upright": "Love, compassion, creativity",
+    "reversed": "Blocked or repressed emotions",
+    "image": "ace_of_cups.jpeg"
+  },
+  {
+    "name": "Two of Cups",
+    "upright": "Unified love, partnership, attraction",
+    "reversed": "Break-up, imbalance in a relationship",
+    "image": "two_of_cups.jpeg"
+  },
+  {
+    "name": "Three of Cups",
+    "upright": "Celebration, friendship, creativity",
+    "reversed": "Overindulgence, gossip, isolation",
+    "image": "three_of_cups.jpeg"
+  },
+  {
+    "name": "Four of Cups",
+    "upright": "Meditation, contemplation, apathy",
+    "reversed": "Sudden awareness, choosing happiness",
+    "image": "four_of_cups.jpeg"
+  },
+  {
+    "name": "Five of Cups",
+    "upright": "Loss, regret, disappointment",
+    "reversed": "Acceptance, moving on, finding peace",
+    "image": "five_of_cups.jpeg"
+  },
+  {
+    "name": "Six of Cups",
+    "upright": "Reunion, nostalgia, childhood memories",
+    "reversed": "Stuck in the past, naivety, unrealistic",
+    "image": "six_of_cups.jpeg"
+  },
+  {
+    "name": "Seven of Cups",
+    "upright": "Opportunities, choices, wishful thinking",
+    "reversed": "Lack of purpose, diversion, confusion",
+    "image": "seven_of_cups.jpeg"
+  },
+  {
+    "name": "Eight of Cups",
+    "upright": "Escapism, withdrawal, seeking truth",
+    "reversed": "Hopelessness, avoidance, fear of change",
+    "image": "eight_of_cups.jpeg"
+  },
+  {
+    "name": "Nine of Cups",
+    "upright": "Satisfaction, emotional stability, luxury",
+    "reversed": "Greed, dissatisfaction, indulgence",
+    "image": "nine_of_cups.jpeg"
+  },
+  {
+    "name": "Ten of Cups",
+    "upright": "Harmony, marriage, alignment",
+    "reversed": "Misalignment of values, broken home",
+    "image": "ten_of_cups.jpeg"
+  },
+  {
+    "name": "Page of Cups",
+    "upright": "Creative opportunities, curiosity, possibility",
+    "reversed": "Emotional immaturity, disappointment",
+    "image": "page_of_cups.jpeg"
+  },
+  {
+    "name": "Knight of Cups",
+    "upright": "Romance, charm, imagination",
+    "reversed": "Moodiness, disappointment",
+    "image": "knight_of_cups.jpeg"
+  },
+  {
+    "name": "Queen of Cups",
+    "upright": "Compassion, calm, comfort",
+    "reversed": "Insecurity, dependence",
+    "image": "queen_of_cups.jpeg"
+  },
+  {
+    "name": "King of Cups",
+    "upright": "Emotionally balanced, compassionate, diplomatic",
+    "reversed": "Moodiness, volatility, manipulation",
+    "image": "king_of_cups.jpeg"
+  },
+  {
+    "name": "Ace of Pentacles",
+    "upright": "Opportunity, prosperity, new venture",
+    "reversed": "Lost opportunity, lack of planning",
+    "image": "ace_of_pentacles.jpeg"
+  },
+  {
+    "name": "Two of Pentacles",
+    "upright": "Balance, adaptability, time management",
+    "reversed": "Disorganization, overwhelmed",
+    "image": "two_of_pentacles.jpeg"
+  },
+  {
+    "name": "Three of Pentacles",
+    "upright": "Teamwork, collaboration, skill development",
+    "reversed": "Lack of teamwork, disregard for skills",
+    "image": "three_of_pentacles.jpeg"
+  },
+  {
+    "name": "Four of Pentacles",
+    "upright": "Saving money, control, security",
+    "reversed": "Greed, over-spending, self-protection",
+    "image": "four_of_pentacles.jpeg"
+  },
+  {
+    "name": "Five of Pentacles",
+    "upright": "Isolation, insecurity, worry, financial loss",
+    "reversed": "Recovery, improvement, hope",
+    "image": "five_of_pentacles.jpeg"
+  },
+  {
+    "name": "Six of Pentacles",
+    "upright": "Giving, receiving, sharing wealth",
+    "reversed": "Debt, selfishness, inequality",
+    "image": "six_of_pentacles.jpeg"
+  },
+  {
+    "name": "Seven of Pentacles",
+    "upright": "Long-term view, perseverance, investment",
+    "reversed": "Lack of reward, impatience, waste",
+    "image": "seven_of_pentacles.jpeg"
+  },
+  {
+    "name": "Eight of Pentacles",
+    "upright": "Mastery, skill development, hard work",
+    "reversed": "Perfectionism, uninspired, no motivation",
+    "image": "eight_of_pentacles.jpeg"
+  },
+  {
+    "name": "Nine of Pentacles",
+    "upright": "Luxury, self-sufficiency, financial independence",
+    "reversed": "Over-investment, hustling, financial setbacks",
+    "image": "nine_of_pentacles.jpeg"
+  },
+  {
+    "name": "Ten of Pentacles",
+    "upright": "Wealth, family, inheritance",
+    "reversed": "Financial failure, loneliness, loss",
+    "image": "ten_of_pentacles.jpeg"
+  },
+  {
+    "name": "Page of Pentacles",
+    "upright": "Manifestation, new job, diligence",
+    "reversed": "Lack of progress, procrastination",
+    "image": "page_of_pentacles.jpeg"
+  },
+  {
+    "name": "Knight of Pentacles",
+    "upright": "Hard work, productivity, routine",
+    "reversed": "Laziness, obsession, perfectionism",
+    "image": "knight_of_pentacles.jpeg"
+  },
+  {
+    "name": "Queen of Pentacles",
+    "upright": "Practical, nurturing, provider",
+    "reversed": "Imbalance, self-centeredness",
+    "image": "queen_of_pentacles.jpeg"
+  },
+  {
+    "name": "King of Pentacles",
+    "upright": "Abundance, security, discipline",
+    "reversed": "Greed, indulgence, stubbornness",
+    "image": "king_of_pentacles.jpeg"
+  },
+  {
+    "name": "Page of Swords",
+    "upright": "Curiosity, new ideas, vigilance",
+    "reversed": "Deception, manipulation, all talk",
+    "image": "page_of_swords.jpeg"
+  },
+  {
+    "name": "Knight of Swords",
+    "upright": "Action, ambition, drive",
+    "reversed": "Recklessness, impatience",
+    "image": "knight_of_swords.jpeg"
+  },
+  {
+    "name": "Queen of Swords",
+    "upright": "Independent, perceptive, clear boundaries",
+    "reversed": "Cold-hearted, harsh, judgmental",
+    "image": "queen_of_swords.jpeg"
+  },
+  {
+    "name": "King of Swords",
+    "upright": "Mental clarity, authority, truth",
+    "reversed": "Manipulation, tyranny, misuse of power",
+    "image": "king_of_swords.jpeg"
+  }
+]
