@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, {useRef, useState} from 'react';
 import {
     View,
     Text,
@@ -12,13 +12,14 @@ import {
 import ViewShot from 'react-native-view-shot';
 import * as MediaLibrary from 'expo-media-library';
 import * as Sharing from 'expo-sharing';
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import TarotCardComponent from '../components/TarotCard';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import type { RootStackParamList } from '../App';
-import { generateTarotAnalysis } from '../utils/gpt';
-import { ColorSchemeName } from 'react-native/Libraries/Utilities/Appearance';
-import { I18n } from '../i18n';
+import type {NativeStackScreenProps} from '@react-navigation/native-stack';
+import type {RootStackParamList} from '../App';
+import {generateTarotAnalysis} from '../utils/gpt';
+import {ColorSchemeName} from 'react-native/Libraries/Utilities/Appearance';
+import {I18n} from '../i18n';
+import TiledBackground from "../components/TiledBackground";
 
 const languages = ['en', 'ru', 'th'];
 
@@ -42,12 +43,12 @@ const celticCrossLabels: { [key: number]: string } = {
 type Props = NativeStackScreenProps<RootStackParamList, 'Result'>;
 type PropsWithTheme = Props & { theme?: ColorSchemeName };
 
-export default function ResultScreen({ route, theme = 'light' }: PropsWithTheme) {
-    const { cards } = route.params;
+export default function ResultScreen({route, theme = 'light'}: PropsWithTheme) {
+    const {cards} = route.params;
     const viewRef = useRef<any>(null);
     const [analysis, setAnalysis] = useState('');
     const [langIndex, setLangIndex] = useState(0);
-    const { t, i18n } = useTranslation(); // Используем хук useTranslation
+    const {t, i18n} = useTranslation(); // Используем хук useTranslation
 
     const handleScreenshot = async () => {
         if (!viewRef.current) {
@@ -56,7 +57,7 @@ export default function ResultScreen({ route, theme = 'light' }: PropsWithTheme)
         }
         try {
             const uri = await viewRef.current.capture();
-            const { status } = await MediaLibrary.requestPermissionsAsync();
+            const {status} = await MediaLibrary.requestPermissionsAsync();
             if (status === 'granted') {
                 await MediaLibrary.saveToLibraryAsync(uri);
                 Alert.alert(t('success'), t('screenshot_saved'));
@@ -94,7 +95,7 @@ export default function ResultScreen({ route, theme = 'light' }: PropsWithTheme)
         const getCoords = (index: number): { left: number; top: number; rotate?: string } => {
             switch (index) {
                 case 1:
-                    return { left: centerX - CARD_WIDTH / 2, top: centerY };
+                    return {left: centerX - CARD_WIDTH / 2, top: centerY};
                 case 2:
                     return {
                         left: centerX - CARD_HEIGHT / 3,
@@ -142,68 +143,74 @@ export default function ResultScreen({ route, theme = 'light' }: PropsWithTheme)
                         top: centerY + CARD_HEIGHT * 1.5 + SPACING * 1.5,
                     };
                 default:
-                    return { left: 0, top: 0 };
+                    return {left: 0, top: 0};
             }
         };
 
         return (
+
             <View style={styles.crossContainer}>
                 {cards.slice(0, 10).map((card, idx) => {
                     const i = idx + 1;
-                    const { left, top, rotate } = getCoords(i);
+                    const {left, top, rotate} = getCoords(i);
 
                     return (
-                        <View key={i} style={{ position: 'absolute', left, top, alignItems: 'center' }}>
-                            <View style={{ transform: rotate ? [{ rotate }] : [] }}>
+                        <View key={i} style={{position: 'absolute', left, top, alignItems: 'center'}}>
+                            <View style={{transform: rotate ? [{rotate}] : []}}>
                                 <Text style={styles.label}>{t(celticCrossLabels[i])}</Text>
-                                <TarotCardComponent card={card} />
+                                <TarotCardComponent card={card}/>
                             </View>
                         </View>
                     );
                 })}
             </View>
+
         );
     };
 
     return (
-        <ScrollView
-            contentContainerStyle={[styles.container, { backgroundColor: theme === 'dark' ? '#333' : '#fff' }]}
-        >
-            <TouchableOpacity onPress={switchLanguage}>
-                <Text style={[styles.languageButton, { color: theme === 'dark' ? '#fff' : '#000' }]}>
-                    🌐 {i18n.language}
-                </Text>
-            </TouchableOpacity>
 
-            <ViewShot ref={viewRef} options={{ format: 'png', quality: 1 }}>
-                {cards.length === 10 ? (
-                    renderCelticCross()
-                ) : (
-                    cards.map((card, idx) => <TarotCardComponent key={idx} card={card} />)
-                )}
-            </ViewShot>
+            <ScrollView>
+                <View style={{flex: 1}}>
+                    <TiledBackground/>
+                    <TouchableOpacity onPress={switchLanguage}>
+                        <Text style={[styles.languageButton, {color: theme === 'dark' ? '#fff' : '#000'}]}>
+                            🌐 {i18n.language}
+                        </Text>
+                    </TouchableOpacity>
 
-            <View style={styles.buttonContainer}>
-                <Button
-                    title={t('save_share')}
-                    onPress={handleScreenshot}
-                    color={theme === 'dark' ? '#aaa' : '#000'}
-                />
-                <Button
-                    title={t('get_ai')}
-                    onPress={handleAI}
-                    color={theme === 'dark' ? '#aaa' : '#000'}
-                />
-            </View>
+                    <ViewShot ref={viewRef} options={{format: 'png', quality: 1}}>
+                        {cards.length === 10 ? (
+                            renderCelticCross()
+                        ) : (
+                            cards.map((card, idx) => <TarotCardComponent key={idx} card={card}/>)
+                        )}
+                    </ViewShot>
 
-            {analysis && (
-                <View style={[styles.analysisBox, { backgroundColor: theme === 'dark' ? '#444' : '#f0f0f0' }]}>
-                    <Text style={[styles.analysis, { color: theme === 'dark' ? '#fff' : '#000' }]}>
-                        {analysis}
-                    </Text>
+                    <View style={styles.buttonContainer}>
+                        <Button
+                            title={t('save_share')}
+                            onPress={handleScreenshot}
+                            color={theme === 'dark' ? '#aaa' : '#000'}
+                        />
+                        <Button
+                            title={t('get_ai')}
+                            onPress={handleAI}
+                            color={theme === 'dark' ? '#aaa' : '#000'}
+                        />
+                    </View>
+
+                    {analysis && (
+                        <View style={[styles.analysisBox, {backgroundColor: theme === 'dark' ? '#111' : '#f0f0f0'}]}>
+                            <Text style={[styles.analysis, {color: theme === 'dark' ? '#fff' : '#000'}]}>
+                                {analysis}
+                            </Text>
+                        </View>
+                    )}
+
                 </View>
-            )}
-        </ScrollView>
+            </ScrollView>
+
     );
 }
 
@@ -215,7 +222,7 @@ const styles = StyleSheet.create({
     crossContainer: {
         width: '100%',
         height: 1100,
-        position: 'relative',
+        position: 'relative'
     },
     buttonContainer: {
         marginTop: 20,
@@ -224,22 +231,24 @@ const styles = StyleSheet.create({
     analysisBox: {
         marginTop: 20,
         padding: 15,
-        borderRadius: 10,
+        //  backgroundColor: "rgba(240,240,240,0.8)",
+        // backgroundColor: "rgba(0,0,0,0.8)",
+        borderRadius: 10
     },
     analysis: {
         fontSize: 16,
-        fontStyle: 'italic',
+        fontStyle: 'italic'
     },
     label: {
         marginBottom: 4,
         fontSize: 10,
         fontWeight: '500',
-        textAlign: 'center',
+        textAlign: 'center'
     },
     languageButton: {
         textAlign: 'center',
         marginBottom: 10,
         fontSize: 16,
-        fontWeight: 'bold',
-    },
+        fontWeight: 'bold'
+    }
 });
