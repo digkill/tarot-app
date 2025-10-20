@@ -1,34 +1,35 @@
-import React, {useEffect, useState} from "react";
-import {Image, Text, StyleSheet, Pressable} from "react-native";
+import React, {useEffect, useState} from 'react';
+import {Pressable, StyleSheet, Text} from 'react-native';
 import Animated, {
-    useSharedValue,
-    useAnimatedStyle,
-    withTiming,
-    interpolate,
     Easing,
-} from "react-native-reanimated";
-import type {TarotCard} from "../App";
-import {cardImages} from "../utils/cardImages";
+    interpolate,
+    useAnimatedStyle,
+    useSharedValue,
+    withTiming,
+} from 'react-native-reanimated';
+import type {Card} from '../entities';
+import {cardImages} from '../utils/cardImages';
 
 type Props = {
-    card: TarotCard;
-    theme?: "light" | "dark"; // для поддержки тем
+    card: Card;
+    isReversed?: boolean;
+    theme?: 'light' | 'dark';
 };
 
-export default function TarotCardComponent({card, theme = "light"}: Props) {
+export const TarotCard = ({card, isReversed = false, theme = 'light'}: Props) => {
     const rotation = useSharedValue(0);
     const [flipped, setFlipped] = useState(false);
     const [visible, setVisible] = useState(false);
 
     const frontAnimatedStyle = useAnimatedStyle(() => ({
         transform: [{rotateY: `${interpolate(rotation.value, [0, 180], [0, 180])}deg`}],
-        backfaceVisibility: "hidden",
+        backfaceVisibility: 'hidden',
     }));
 
     const backAnimatedStyle = useAnimatedStyle(() => ({
         transform: [{rotateY: `${interpolate(rotation.value, [0, 180], [180, 360])}deg`}],
-        backfaceVisibility: "hidden",
-        position: "absolute",
+        backfaceVisibility: 'hidden',
+        position: 'absolute',
         top: 0,
     }));
 
@@ -49,39 +50,42 @@ export default function TarotCardComponent({card, theme = "light"}: Props) {
             duration: 600,
             easing: Easing.out(Easing.ease),
         });
-        setFlipped(!flipped);
+        setFlipped((prev) => !prev);
     };
 
     useEffect(() => {
         setVisible(true);
     }, []);
 
+    const imageSource = cardImages[card.image];
 
     return (
         <Pressable onPress={handleFlip}>
-
-            <Animated.View style={[
-                styles.cardBox,
-                containerFade,
-                theme === "dark" && {backgroundColor: "#111"}
-            ]}>
-
+            <Animated.View
+                style={[
+                    styles.cardBox,
+                    containerFade,
+                    theme === 'dark' && {backgroundColor: '#111'},
+                ]}
+            >
                 <Animated.View style={[styles.face, frontAnimatedStyle]}>
-                    <Animated.Image
-                        source={cardImages[card.image]}
-                        style={[
-                            styles.image,
-                            card.isReversed && {transform: [{rotate: "180deg"}]},
-                        ]}
-                    />
+                    {imageSource ? (
+                        <Animated.Image
+                            source={imageSource}
+                            style={[
+                                styles.image,
+                                isReversed && {transform: [{rotate: '180deg'}]},
+                            ]}
+                        />
+                    ) : null}
                     <Text
                         style={[
                             styles.name,
-                            theme === "dark" && {color: "#fff"},
-                            theme === "light" && {color: "#000"},
+                            theme === 'dark' && {color: '#fff'},
+                            theme === 'light' && {color: '#000'},
                         ]}
                     >
-                        {card.name} {card.isReversed ? "(Reversed)" : ""}
+                        {card.name} {isReversed ? '(Reversed)' : ''}
                     </Text>
                 </Animated.View>
 
@@ -89,54 +93,57 @@ export default function TarotCardComponent({card, theme = "light"}: Props) {
                     <Text
                         style={[
                             styles.desc,
-                            theme === "dark" && {color: "#fff"},
-                            theme === "light" && {color: "#000"},
+                            theme === 'dark' && {color: '#fff'},
+                            theme === 'light' && {color: '#000'},
                         ]}
                     >
-                        {card.isReversed ? card.reversed : card.upright}
+                        {isReversed ? card.reversed.general : card.upright.general}
                     </Text>
                 </Animated.View>
             </Animated.View>
         </Pressable>
     );
-}
+};
+
+export default TarotCard;
 
 const styles = StyleSheet.create({
     cardBox: {
-        width: 100,
-        height: 180,
+        width: 110,
+        height: 190,
         marginBottom: 35,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "#fff", // по умолчанию, затем переопределим в theme
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#fff',
         borderRadius: 12,
-        shadowColor: "#000",
+        shadowColor: '#000',
         shadowOpacity: 0.1,
         shadowOffset: {width: 0, height: 4},
         shadowRadius: 6,
-        elevation: 5, // работает на Android
+        elevation: 5,
+        padding: 8,
     },
     face: {
-        position: "absolute",
-        width: "100%",
-        height: "100%",
-        alignItems: "center",
-        justifyContent: "center",
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     image: {
-        width: 90,
+        width: 95,
         height: 150,
-        resizeMode: "contain",
+        resizeMode: 'contain',
     },
     name: {
-        fontSize: 10,
-        fontWeight: "bold",
-        textAlign: "center",
-        marginTop: 4,
+        fontSize: 11,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginTop: 6,
     },
     desc: {
         fontSize: 12,
         padding: 12,
-        textAlign: "center",
+        textAlign: 'center',
     },
 });

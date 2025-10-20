@@ -21,26 +21,13 @@ const resources = {
 };
 
 // Детектор языка
-const languageDetector = {
-    type: 'languageDetector',
-    async: true,
-    detect: (callback: (lng: string | null) => void) => {
-        const locales = Localization.getLocales();
-        const preferredLanguage = locales.length > 0 ? locales[0].languageCode : 'en';
-        console.log('Detected locale:', preferredLanguage);
-        callback(preferredLanguage);
-    },
-    init: () => {},
-    cacheUserLanguage: () => {},
-};
-
 // Инициализация i18next
 i18n
-    .use(languageDetector)
     .use(initReactI18next)
     .init({
         resources,
         fallbackLng: 'en',
+        lng: Localization.getLocales()[0]?.languageCode ?? 'en',
         debug: process.env.NODE_ENV === 'development', // Включаем debug только в разработке
         interpolation: {
             escapeValue: false, // React защищает от XSS

@@ -1,21 +1,264 @@
 {
-    "present": "Present",
-    "challenge": "Challenge",
+  "onboarding": {
+    "slide1": {
+      "title": "Welcome to Tarot",
+      "description": "Shuffle, draw and uncover insights with immersive tarot spreads."
+    },
+    "slide2": {
+      "title": "Choose Powerful Spreads",
+      "description": "From single-card reflections to complex crosses, pick layouts for any intention."
+    },
+    "slide3": {
+      "title": "Capture Interpretations",
+      "description": "Save readings, jot personal notes, and share mystical snapshots with friends."
+    },
+    "skip": "Skip",
+    "next": "Next",
+    "start": "Begin"
+  },
+  "disclaimer": {
+    "title": "Before You Begin",
+    "description1": "Tarot offers guidance and reflection. It does not replace professional advice in legal, medical, financial or psychological matters.",
+    "description2": "Use every reading with mindfulness and responsibility for your decisions.",
+    "remember": "Remember",
+    "rememberDescription": "Treat each spread as inspiration. Listen to your intuition and personal wisdom first.",
+    "accept": "I Understand"
+  },
+  "home": {
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "hero": {
+      "title": "Draw a card for your path today",
+      "subtitle": "Tap into symbolism, rituals and guided reflections whenever you need clarity.",
+      "cta": "Daily Draw"
+    },
+    "quickAccess": {
+      "title": "Quick spreads",
+      "more": "View all",
+      "cardCount": "{count} cards"
+    },
+    "recent": {
+      "title": "Recent reading",
+      "viewAll": "History",
+      "spread": "Spread",
+      "date": "Date"
+    },
+    "education": {
+      "title": "Explore the deck",
+      "body": "Study each card, connect with archetypes, and mark patterns that appear in your readings.",
+      "cta": "Open deck"
+    }
+  },
+  "spread": {
+    "oneCard": {
+      "name": "One Card",
+      "description": "Single-card focus for quick insight into the present moment."
+    },
+    "threeCard": {
+      "name": "Three Cards",
+      "description": "Classic three-card spread exploring past, present, and future influences."
+    },
+    "celticCross": {
+      "name": "Celtic Cross",
+      "description": "Iconic ten-card layout for deep, multi-layered guidance."
+    },
+    "love": {
+      "name": "Love & Connection",
+      "description": "Seven-card journey through relationship dynamics and emotional bonds."
+    },
+    "horseshoe": {
+      "name": "Horseshoe",
+      "description": "Seven cards revealing hidden influences, guidance, and outcomes."
+    },
+    "weekly": {
+      "name": "Week Ahead",
+      "description": "Seven positions to illuminate energy for each day of the week."
+    },
+    "yearWheel": {
+      "name": "Year Wheel",
+      "description": "Twelve-card ring highlighting themes for each month and the year overall."
+    },
+    "premium": "Premium",
+    "cards": "{count} cards",
+    "category": {
+      "basic": "Essentials",
+      "love": "Love",
+      "career": "Career",
+      "weekly": "Weekly",
+      "year": "Yearly",
+      "spiritual": "Spiritual",
+      "custom": "Custom"
+    }
+  },
+  "position": {
+    "focus": "Focus",
+    "focus.description": "Central theme calling for attention right now.",
     "past": "Past",
+    "past.description": "Roots and experiences that shaped the present.",
+    "present": "Present",
+    "present.description": "Current energy influencing your situation.",
     "future": "Future",
-    "above": "Above",
-    "below": "Below",
+    "future.description": "Emerging paths and near-term possibilities."
+  },
+  "celtic": {
+    "present": "Present",
+    "present.description": "Core of the matter right now.",
+    "challenge": "Challenge",
+    "challenge.description": "Obstacles or crossing influences.",
+    "past": "Past",
+    "past.description": "Foundation and recent history.",
+    "future": "Future",
+    "future.description": "Short-term direction unfolding soon.",
+    "conscious": "Conscious",
+    "conscious.description": "What you aspire to or are aware of.",
+    "subconscious": "Subconscious",
+    "subconscious.description": "Hidden drives and undercurrents.",
     "advice": "Advice",
+    "advice.description": "Guidance for navigating the path ahead.",
     "external": "External",
+    "external.description": "Outside forces surrounding you.",
     "hopes": "Hopes & Fears",
+    "hopes.description": "Inner hopes, anxieties, and expectations.",
     "outcome": "Outcome",
-    "save_share": "📸 Save & Share Spread",
-    "get_ai": "🔮 Get AI Reading",
-    "error": "Error",
-    "success": "Success",
-    "error_screenshot_not_ready": "Cannot capture screenshot: View is not ready.",
-    "screenshot_saved": "Screenshot saved to gallery!",
-    "permission_denied": "Cannot save screenshot without permission.",
-    "screenshot_failed": "Failed to capture or share screenshot.",
-    "ai_analysis_failed": "Failed to generate AI analysis."
+    "outcome.description": "Probable result if energy stays aligned."
+  },
+  "love": {
+    "you": "You",
+    "you.description": "Your energy entering this connection.",
+    "partner": "Partner",
+    "partner.description": "Other person’s perspective and feelings.",
+    "connection": "Connection",
+    "connection.description": "Bond that ties you together.",
+    "strengths": "Strengths",
+    "strengths.description": "Supportive qualities to lean on.",
+    "challenges": "Challenges",
+    "challenges.description": "Patterns that need attention.",
+    "advice": "Advice",
+    "advice.description": "How to nurture the relationship.",
+    "outcome": "Outcome",
+    "outcome.description": "Likely direction of the partnership."
+  },
+  "horseshoe": {
+    "past": "Past",
+    "past.description": "Influences that follow you into the present.",
+    "present": "Present",
+    "present.description": "Snapshot of the current situation.",
+    "hidden": "Hidden",
+    "hidden.description": "Unseen forces or secrets at play.",
+    "guidance": "Guidance",
+    "guidance.description": "Direction from guides or intuition.",
+    "block": "Block",
+    "block.description": "Primary obstacle to acknowledge.",
+    "newInfluence": "New Influence",
+    "newInfluence.description": "Upcoming shift entering your path.",
+    "outcome": "Outcome",
+    "outcome.description": "Overall resolution or next phase."
+  },
+  "weekly": {
+    "name": "Week Ahead",
+    "description": "Track the tone for each day and align intentions.",
+    "day1": "Monday",
+    "day1.description": "Opening energy of the week.",
+    "day2": "Tuesday",
+    "day2.description": "Momentum gaining influence.",
+    "day3": "Wednesday",
+    "day3.description": "Midweek pivot or insight.",
+    "day4": "Thursday",
+    "day4.description": "Opportunities to expand.",
+    "day5": "Friday",
+    "day5.description": "Social currents and celebrations.",
+    "day6": "Saturday",
+    "day6.description": "Rest, ritual, or play.",
+    "day7": "Sunday",
+    "day7.description": "Integration and reset."
+  },
+  "year": {
+    "name": "Year Wheel",
+    "description": "Reflect on twelve months of growth and turning points.",
+    "month1": "January",
+    "month1.description": "Seed of the new cycle.",
+    "month2": "February",
+    "month2.description": "Heart-led connections.",
+    "month3": "March",
+    "month3.description": "Momentum returns.",
+    "month4": "April",
+    "month4.description": "Action and initiative.",
+    "month5": "May",
+    "month5.description": "Stability and comfort.",
+    "month6": "June",
+    "month6.description": "Communication and learning.",
+    "month7": "July",
+    "month7.description": "Emotional renewal.",
+    "month8": "August",
+    "month8.description": "Confidence and expression.",
+    "month9": "September",
+    "month9.description": "Harvest and refinement.",
+    "month10": "October",
+    "month10.description": "Balance and recalibration.",
+    "month11": "November",
+    "month11.description": "Depth and transformation.",
+    "month12": "December",
+    "month12.description": "Closure and wisdom."
+  },
+  "reading": {
+    "cardCount": "{count} cards",
+    "redraw": "Redraw",
+    "shuffling": "Shuffling the deck...",
+    "skipAnimations": "Skip animations",
+    "continue": "Continue",
+    "saving": "Saving...",
+    "missingSpread": "Spread not found",
+    "reversed": "(Reversed)"
+  },
+  "interpretation": {
+    "summaryIntro": "Your {spread} reading reveals guidance across {count} positions.",
+    "summaryClosing": "Reflect on the messages, note synchronicities, and act with intention.",
+    "summaryTitle": "Summary",
+    "share": "Share",
+    "shareDialog": "Share tarot reading",
+    "shareError": "Unable to share right now.",
+    "notesTitle": "Personal notes",
+    "notesPlaceholder": "Write your reflections, emotions, or rituals...",
+    "saveNotes": "Save notes",
+    "saving": "Saving...",
+    "favorite": "Favorite",
+    "unfavorite": "Unfavorite",
+    "missingReading": "Reading not available",
+    "goBack": "Go back"
+  },
+  "history": {
+    "filter": {
+      "all": "All",
+      "favorites": "Favorites"
+    },
+    "clearAll": "Clear all",
+    "emptyTitle": "No readings yet",
+    "emptySubtitle": "Complete a spread to build your tarot journal.",
+    "delete": "Delete",
+    "deleteTitle": "Delete reading",
+    "deleteDescription": "Remove this reading from your history?",
+    "clearTitle": "Clear history",
+    "clearDescription": "Erase all saved readings? This action cannot be undone.",
+    "cancel": "Cancel",
+    "confirm": "Remove"
+  },
+  "deck": {
+    "arcana": "Arcana",
+    "arcanaFilter": {
+      "all": "All",
+      "major": "Major",
+      "minor": "Minor"
+    },
+    "suits": "Suits",
+    "suitFilter": {
+      "all": "All",
+      "wands": "Wands",
+      "cups": "Cups",
+      "swords": "Swords",
+      "pentacles": "Pentacles"
+    }
+  }
 }
