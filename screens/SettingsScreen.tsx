@@ -12,7 +12,7 @@ import {useTranslation} from 'react-i18next';
 import {useSettings} from '../providers/SettingsProvider';
 import type {LanguagePreference, ThemePreference} from '../entities';
 
-const LANGUAGES: LanguagePreference[] = ['en', 'ru', 'th'];
+const LANGUAGES: LanguagePreference[] = ['en', 'ru', 'th', 'zh'];
 const THEMES: ThemePreference[] = ['system', 'light', 'dark'];
 
 export const SettingsScreen = () => {

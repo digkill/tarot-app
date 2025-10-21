@@ -1,0 +1,264 @@
+{
+  "onboarding": {
+    "slide1": {
+      "title": "欢迎来到 Tarot",
+      "description": "洗牌、抽牌，在沉浸式的塔罗牌阵中发现启示。"
+    },
+    "slide2": {
+      "title": "选择强大的牌阵",
+      "description": "从单牌反思到复杂的凯尔特十字，为每个意图挑选合适的布局。"
+    },
+    "slide3": {
+      "title": "记录你的解读",
+      "description": "保存占卜结果，写下个人感悟，与友人分享神秘瞬间。"
+    },
+    "skip": "跳过",
+    "next": "下一步",
+    "start": "开始"
+  },
+  "disclaimer": {
+    "title": "开始之前",
+    "description1": "塔罗带来指引与自我反思，但不能替代法律、医疗、财务或心理方面的专业建议。",
+    "description2": "请以觉知的态度使用每一次占卜，并为自己的决定负责。",
+    "remember": "请记住",
+    "rememberDescription": "把每个牌阵视作灵感。首先倾听你的直觉与内在智慧。",
+    "accept": "我明白了"
+  },
+  "home": {
+    "greeting": {
+      "morning": "早安",
+      "afternoon": "午安",
+      "evening": "晚安"
+    },
+    "hero": {
+      "title": "抽一张牌开启今日旅程",
+      "subtitle": "当你需要清晰时，连结象征、仪式与引导。",
+      "cta": "每日一抽"
+    },
+    "quickAccess": {
+      "title": "快速牌阵",
+      "more": "查看全部",
+      "cardCount": "{count} 张牌"
+    },
+    "recent": {
+      "title": "最近占卜",
+      "viewAll": "历史",
+      "spread": "牌阵",
+      "date": "日期"
+    },
+    "education": {
+      "title": "探索整副牌",
+      "body": "学习每张牌，连结原型，并标记你在占卜中看到的模式。",
+      "cta": "打开牌库"
+    }
+  },
+  "spread": {
+    "oneCard": {
+      "name": "单张牌",
+      "description": "以一张牌聚焦当下的洞见。"
+    },
+    "threeCard": {
+      "name": "三张牌",
+      "description": "经典的三张牌阵，探索过去、现在与未来。"
+    },
+    "celticCross": {
+      "name": "凯尔特十字",
+      "description": "标志性的十牌布局，带来多层次的深度指引。"
+    },
+    "love": {
+      "name": "爱情与连结",
+      "description": "七张牌洞悉关系动态与情感纽带。"
+    },
+    "horseshoe": {
+      "name": "马蹄形",
+      "description": "七张牌揭示隐藏的影响、指引与结果。"
+    },
+    "weekly": {
+      "name": "未来一周",
+      "description": "为每一天照亮能量脉络以便调节意图。"
+    },
+    "yearWheel": {
+      "name": "年度之轮",
+      "description": "十二张牌串联每个月与整年的主题。"
+    },
+    "premium": "高级",
+    "cards": "{count} 张牌",
+    "category": {
+      "basic": "基础",
+      "love": "爱情",
+      "career": "事业",
+      "weekly": "每周",
+      "year": "年度",
+      "spiritual": "灵性",
+      "custom": "自定义"
+    }
+  },
+  "position": {
+    "focus": "焦点",
+    "focus.description": "此刻最需要关注的核心主题。",
+    "past": "过去",
+    "past.description": "塑造当下的根源与经验。",
+    "present": "现在",
+    "present.description": "影响你当下处境的能量。",
+    "future": "未来",
+    "future.description": "即将浮现的方向与可能。"
+  },
+  "celtic": {
+    "present": "现在",
+    "present.description": "事情此刻的核心。",
+    "challenge": "挑战",
+    "challenge.description": "横亘眼前的阻碍或交叉影响。",
+    "past": "过去",
+    "past.description": "奠定基础的经历与近期历史。",
+    "future": "未来",
+    "future.description": "即将展开的短期走向。",
+    "conscious": "意识层面",
+    "conscious.description": "你所追求或已经觉察到的内容。",
+    "subconscious": "潜意识",
+    "subconscious.description": "隐藏的动机与潜流。",
+    "advice": "指引",
+    "advice.description": "帮助你前行的建议。",
+    "external": "外部影响",
+    "external.description": "围绕你的外在力量。",
+    "hopes": "期望与恐惧",
+    "hopes.description": "内心的期待、担忧与预期。",
+    "outcome": "结果",
+    "outcome.description": "若能量保持一致，最可能的走向。"
+  },
+  "love": {
+    "you": "你",
+    "you.description": "你带入这段关系的能量。",
+    "partner": "对方",
+    "partner.description": "对方的视角与感受。",
+    "connection": "连结",
+    "connection.description": "将你们相系的纽带。",
+    "strengths": "优势",
+    "strengths.description": "可以依靠的支持力量。",
+    "challenges": "挑战",
+    "challenges.description": "需要留意的模式。",
+    "advice": "建议",
+    "advice.description": "如何滋养这段关系。",
+    "outcome": "结果",
+    "outcome.description": "关系可能的发展方向。"
+  },
+  "horseshoe": {
+    "past": "过去",
+    "past.description": "延续到现在的影响。",
+    "present": "现在",
+    "present.description": "当前局势的速写。",
+    "hidden": "隐藏因素",
+    "hidden.description": "未被看见的力量或秘密。",
+    "guidance": "指引",
+    "guidance.description": "来自向导或直觉的方向。",
+    "block": "阻碍",
+    "block.description": "最需要正视的主要障碍。",
+    "newInfluence": "新影响",
+    "newInfluence.description": "即将进入你路径的变化。",
+    "outcome": "结果",
+    "outcome.description": "整体的解决或下一阶段。"
+  },
+  "weekly": {
+    "name": "未来一周",
+    "description": "追踪每日的氛围，调整你的意图。",
+    "day1": "星期一",
+    "day1.description": "一周开启的基调。",
+    "day2": "星期二",
+    "day2.description": "逐渐增强的推动力。",
+    "day3": "星期三",
+    "day3.description": "周中的转折或洞见。",
+    "day4": "星期四",
+    "day4.description": "扩展与突破的机会。",
+    "day5": "星期五",
+    "day5.description": "社交与庆祝的流动。",
+    "day6": "星期六",
+    "day6.description": "休息、仪式或娱乐。",
+    "day7": "星期日",
+    "day7.description": "整合与重置。"
+  },
+  "year": {
+    "name": "年度之轮",
+    "description": "回顾十二个月的成长与转折点。",
+    "month1": "一月",
+    "month1.description": "新循环的种子。",
+    "month2": "二月",
+    "month2.description": "以心为引的连结。",
+    "month3": "三月",
+    "month3.description": "动力回归。",
+    "month4": "四月",
+    "month4.description": "行动与倡议。",
+    "month5": "五月",
+    "month5.description": "稳定与舒适。",
+    "month6": "六月",
+    "month6.description": "沟通与学习。",
+    "month7": "七月",
+    "month7.description": "情绪的焕新。",
+    "month8": "八月",
+    "month8.description": "自信与表达。",
+    "month9": "九月",
+    "month9.description": "收获与精进。",
+    "month10": "十月",
+    "month10.description": "平衡与再校准。",
+    "month11": "十一月",
+    "month11.description": "深度与转化。",
+    "month12": "十二月",
+    "month12.description": "收尾与智慧。"
+  },
+  "reading": {
+    "cardCount": "{count} 张牌",
+    "redraw": "重新抽牌",
+    "shuffling": "正在洗牌...",
+    "skipAnimations": "跳过动画",
+    "continue": "继续",
+    "saving": "保存中...",
+    "missingSpread": "未找到牌阵",
+    "reversed": "（逆位）"
+  },
+  "interpretation": {
+    "summaryIntro": "你的 {spread} 牌阵在 {count} 个位置揭示指引。",
+    "summaryClosing": "体会讯息、记录巧合，并带着意图采取行动。",
+    "summaryTitle": "摘要",
+    "share": "分享",
+    "shareDialog": "分享塔罗解读",
+    "shareError": "当前无法分享。",
+    "notesTitle": "个人笔记",
+    "notesPlaceholder": "写下你的感受、想法或仪式...",
+    "saveNotes": "保存笔记",
+    "saving": "保存中...",
+    "favorite": "收藏",
+    "unfavorite": "取消收藏",
+    "missingReading": "解读不可用",
+    "goBack": "返回"
+  },
+  "history": {
+    "filter": {
+      "all": "全部",
+      "favorites": "收藏"
+    },
+    "clearAll": "全部清除",
+    "emptyTitle": "尚无占卜记录",
+    "emptySubtitle": "完成一个牌阵，开始你的塔罗日志。",
+    "delete": "删除",
+    "deleteTitle": "删除占卜",
+    "deleteDescription": "要从历史中移除此条记录吗？",
+    "clearTitle": "清空历史",
+    "clearDescription": "删除所有保存的占卜？此操作无法恢复。",
+    "cancel": "取消",
+    "confirm": "移除"
+  },
+  "deck": {
+    "arcana": "奥秘",
+    "arcanaFilter": {
+      "all": "全部",
+      "major": "大阿卡那",
+      "minor": "小阿卡那"
+    },
+    "suits": "花色",
+    "suitFilter": {
+      "all": "全部",
+      "wands": "权杖",
+      "cups": "圣杯",
+      "swords": "宝剑",
+      "pentacles": "钱币"
+    }
+  }
+}

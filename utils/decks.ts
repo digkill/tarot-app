@@ -20,6 +20,7 @@ const rawDecks: Record<LanguagePreference, RawCard[]> = {
     en: tarotEn as RawCard[],
     ru: tarotRu as RawCard[],
     th: tarotTh as RawCard[],
+    zh: tarotEn as RawCard[], // reuse English deck as fallback for Chinese
 };
 
 const toSide = (value: string | TarotCardSide): TarotCardSide =>

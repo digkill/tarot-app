@@ -74,7 +74,7 @@ export type Reading = {
 
 export type ThemePreference = 'light' | 'dark' | 'system';
 
-export type LanguagePreference = 'en' | 'ru' | 'th';
+export type LanguagePreference = 'en' | 'ru' | 'th' | 'zh';
 
 export type Settings = {
     language: LanguagePreference;

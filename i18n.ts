@@ -6,6 +6,7 @@ import * as Localization from 'expo-localization';
 import en from './i18n/en.json';
 import ru from './i18n/ru.json';
 import th from './i18n/th.json';
+import zh from './i18n/zh.json';
 
 // Определяем ресурсы переводов
 const resources = {
@@ -18,16 +19,25 @@ const resources = {
     th: {
         translation: th,
     },
+    zh: {
+        translation: zh,
+    },
 };
 
 // Детектор языка
 // Инициализация i18next
+const locales = Localization.getLocales();
+const deviceLanguageCode = locales[0]?.languageCode?.toLowerCase();
+const availableLanguages = Object.keys(resources);
+const initialLanguage = deviceLanguageCode && availableLanguages.includes(deviceLanguageCode) ? deviceLanguageCode : 'en';
+
 i18n
     .use(initReactI18next)
     .init({
         resources,
         fallbackLng: 'en',
-        lng: Localization.getLocales()[0]?.languageCode ?? 'en',
+        supportedLngs: availableLanguages,
+        lng: initialLanguage,
         debug: process.env.NODE_ENV === 'development', // Включаем debug только в разработке
         interpolation: {
             escapeValue: false, // React защищает от XSS
