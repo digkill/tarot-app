@@ -60,6 +60,20 @@ export type ReadingCard = {
     isReversed: boolean;
 };
 
+export type ReadingAiInsight = {
+    summary: string;
+    positions: Array<{
+        positionIndex: number;
+        positionTitle: string;
+        cardName: string;
+        orientation: 'upright' | 'reversed';
+        meaning: string;
+    }>;
+    model: string;
+    language: LanguagePreference;
+    generatedAt: number;
+};
+
 export type Reading = {
     id: string;
     spreadId: string;
@@ -70,6 +84,7 @@ export type Reading = {
     notes?: string;
     tags?: string[];
     favorite?: boolean;
+    aiInsights?: ReadingAiInsight;
 };
 
 export type ThemePreference = 'light' | 'dark' | 'system';
@@ -83,6 +98,7 @@ export type Settings = {
     disableSounds: boolean;
     reversedChance: number;
     showMysticMode: boolean;
+    hasPremium: boolean;
     dailyReminder?: boolean;
     hasCompletedOnboarding?: boolean;
     acceptedDisclaimer?: boolean;

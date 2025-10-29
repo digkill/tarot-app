@@ -1,6 +1,7 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {
     Alert,
+    ActivityIndicator,
     ScrollView,
     StyleSheet,
     Text,
@@ -21,8 +22,9 @@ import {useSettings} from '../providers/SettingsProvider';
 import {SPREADS} from '../data';
 import {loadDeck, findCardById} from '../utils/decks';
 import {generateInterpretation} from '../features/interpretation';
+import {fetchPremiumInterpretation, MissingOpenAiKeyError} from '../features/aiInterpretation';
 import TarotCard from '../components/TarotCard';
-import type {Card, SpreadPosition} from '../entities';
+import type {Card, ReadingAiInsight, SpreadPosition} from '../entities';
 
 type Route = RouteProp<RootStackParamList, 'Interpretation'>;
 type Navigation = NativeStackNavigationProp<RootStackParamList, 'Interpretation'>;

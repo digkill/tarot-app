@@ -13,6 +13,7 @@ export const DEFAULT_SETTINGS: Settings = {
     disableSounds: false,
     reversedChance: DEFAULT_REVERSED_CHANCE,
     showMysticMode: true,
+    hasPremium: false,
     dailyReminder: false,
     hasCompletedOnboarding: false,
     acceptedDisclaimer: false,

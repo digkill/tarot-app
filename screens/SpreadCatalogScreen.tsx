@@ -1,5 +1,6 @@
 import React, {useMemo} from 'react';
 import {
+    Alert,
     SectionList,
     StyleSheet,
     Text,
@@ -14,6 +15,7 @@ import {useTranslation} from 'react-i18next';
 import {SPREADS} from '../data';
 import {AppTabsParamList, HomeStackParamList, RootStackParamList} from '../navigation/types';
 import type {Spread} from '../entities';
+import {useSettings} from '../providers/SettingsProvider';
 
 type Navigation = CompositeNavigationProp<
     NativeStackNavigationProp<HomeStackParamList, 'SpreadCatalog'>,
@@ -33,6 +35,7 @@ const categoryKey = (category: Spread['category']) => `spread.category.${categor
 export const SpreadCatalogScreen = () => {
     const navigation = useNavigation<Navigation>();
     const {t} = useTranslation();
+    const {settings} = useSettings();
 
     const sections = useMemo<Section[]>(() => {
         const grouped = SPREADS.reduce<Record<string, Spread[]>>((acc, spread) => {
@@ -48,6 +51,19 @@ export const SpreadCatalogScreen = () => {
     }, []);
 
     const startSpread = (spread: Spread) => {
+        if (spread.premium && !settings.hasPremium) {
+            Alert.alert(t('premium.lockedTitle'), t('premium.lockedDescription'), [
+                {
+                    text: t('premium.notNow'),
+                    style: 'cancel',
+                },
+                {
+                    text: t('premium.openSettings'),
+                    onPress: () => navigation.navigate('Settings'),
+                },
+            ]);
+            return;
+        }
         navigation.navigate('Reading', {spreadId: spread.id, deckId: 'rws'});
     };
 
