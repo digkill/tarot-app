@@ -260,5 +260,62 @@
       "swords": "宝剑",
       "pentacles": "钱币"
     }
+  },
+  "premium": {
+    "title": "高级订阅",
+    "status": {
+      "active": "已激活",
+      "inactive": "未激活"
+    },
+    "price": "¥49/月",
+    "features": {
+      "title": "订阅包含:",
+      "aiInterpretations": "AI 深度解读",
+      "deeperInsights": "个性化洞察",
+      "unlimitedReadings": "无限占卜",
+      "prioritySupport": "优先客服支持"
+    },
+    "subscribe": "立即订阅",
+    "manage": "管理订阅",
+    "cancel": "取消",
+    "purchaseSuccess": "订阅成功！",
+    "purchaseError": "订阅失败",
+    "benefits": "高级订阅让你获得由专为塔罗训练的 AI 提供的详细牌义解读。"
+  },
+  "aiInterpretation": {
+    "title": "AI 深度解读",
+    "loading": "正在生成个性化解读...",
+    "error": "生成解读失败",
+    "retry": "重试",
+    "premiumFeature": "高级功能",
+    "unlockMessage": "订阅高级会员获取 AI 深度解读",
+    "unlock": "解锁",
+    "generatedBy": "由 {model} 生成",
+    "refreshInterpretation": "刷新解读"
+  },
+  "settings": {
+    "premiumSection": "高级功能",
+    "languageTitle": "语言",
+    "themeTitle": "主题",
+    "behaviorTitle": "行为",
+    "animations": "动画",
+    "animationsDescription": "启用视觉效果",
+    "sounds": "音效",
+    "soundsDescription": "启用音效",
+    "mysticMode": "神秘模式",
+    "mysticModeDescription": "额外的视觉效果",
+    "reversedChanceTitle": "逆位卡牌概率",
+    "reversedHint": "卡牌出现逆位的频率",
+    "language": {
+      "en": "English",
+      "ru": "Русский",
+      "th": "ไทย",
+      "zh": "中文"
+    },
+    "theme": {
+      "system": "跟随系统",
+      "light": "浅色",
+      "dark": "深色"
+    }
   }
 }

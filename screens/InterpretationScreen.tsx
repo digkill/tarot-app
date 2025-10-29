@@ -24,6 +24,7 @@ import {loadDeck, findCardById} from '../utils/decks';
 import {generateInterpretation} from '../features/interpretation';
 import {fetchPremiumInterpretation, MissingOpenAiKeyError} from '../features/aiInterpretation';
 import TarotCard from '../components/TarotCard';
+import {PremiumModal} from '../components/PremiumModal';
 import type {Card, ReadingAiInsight, SpreadPosition} from '../entities';
 
 type Route = RouteProp<RootStackParamList, 'Interpretation'>;
@@ -38,6 +39,9 @@ export const InterpretationScreen = () => {
     const {t} = useTranslation();
     const viewRef = useRef<ViewShot>(null);
     const [savingNotes, setSavingNotes] = useState(false);
+    const [loadingAiInsights, setLoadingAiInsights] = useState(false);
+    const [aiError, setAiError] = useState<string | null>(null);
+    const [showPremiumPrompt, setShowPremiumPrompt] = useState(false);
 
     const reading = readings.find((item) => item.id === readingId);
     const spread = useMemo(
@@ -107,6 +111,48 @@ export const InterpretationScreen = () => {
         }
     };
 
+    const handleGenerateAiInsights = async () => {
+        if (!settings.hasPremium) {
+            setShowPremiumPrompt(true);
+            return;
+        }
+
+        if (!spread || !entries.length) return;
+
+        setLoadingAiInsights(true);
+        setAiError(null);
+
+        try {
+            const aiRequest = {
+                language: settings.language,
+                spreadName: t(spread.nameKey),
+                spreadDescription: t(spread.descriptionKey),
+                entries: entries.map((entry, index) => ({
+                    positionIndex: index,
+                    positionTitle: t(entry.position.titleKey),
+                    positionDescription: t(entry.position.descriptionKey),
+                    cardName: entry.card.name,
+                    uprightMeaning: entry.card.upright.general,
+                    reversedMeaning: entry.card.reversed.general,
+                    uprightKeywords: entry.card.upright.keywords,
+                    reversedKeywords: entry.card.reversed.keywords,
+                    isReversed: entry.isReversed,
+                })),
+            };
+
+            const aiInsights = await fetchPremiumInterpretation(aiRequest);
+            await updateReading(reading.id, {aiInsights});
+        } catch (error) {
+            if (error instanceof MissingOpenAiKeyError) {
+                setAiError(t('aiInterpretation.error') + ': API key not configured');
+            } else {
+                setAiError(t('aiInterpretation.error'));
+            }
+        } finally {
+            setLoadingAiInsights(false);
+        }
+    };
+
     return (
         <SafeAreaView style={styles.safe}>
             <ScrollView contentContainerStyle={styles.container}>
@@ -160,6 +206,71 @@ export const InterpretationScreen = () => {
                     </TouchableOpacity>
                 </View>
 
+                {!settings.hasPremium && (
+                    <View style={styles.premiumBox}>
+                        <Text style={styles.premiumTitle}>{t('aiInterpretation.premiumFeature')}</Text>
+                        <Text style={styles.premiumText}>{t('aiInterpretation.unlockMessage')}</Text>
+                        <TouchableOpacity
+                            style={styles.unlockButton}
+                            onPress={() => setShowPremiumPrompt(true)}
+                        >
+                            <Text style={styles.unlockButtonText}>{t('aiInterpretation.unlock')}</Text>
+                        </TouchableOpacity>
+                    </View>
+                )}
+
+                {settings.hasPremium && (
+                    <View style={styles.aiInsightsBox}>
+                        <Text style={styles.aiInsightsTitle}>{t('aiInterpretation.title')}</Text>
+                        {!reading.aiInsights && !loadingAiInsights && (
+                            <TouchableOpacity
+                                style={styles.generateButton}
+                                onPress={handleGenerateAiInsights}
+                            >
+                                <Text style={styles.generateButtonText}>{t('aiInterpretation.unlock')}</Text>
+                            </TouchableOpacity>
+                        )}
+                        {loadingAiInsights && (
+                            <View style={styles.loadingBox}>
+                                <ActivityIndicator color="#6c5ce7" />
+                                <Text style={styles.loadingText}>{t('aiInterpretation.loading')}</Text>
+                            </View>
+                        )}
+                        {aiError && (
+                            <View style={styles.errorBox}>
+                                <Text style={styles.errorText}>{aiError}</Text>
+                                <TouchableOpacity onPress={handleGenerateAiInsights}>
+                                    <Text style={styles.retryText}>{t('aiInterpretation.retry')}</Text>
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                        {reading.aiInsights && !loadingAiInsights && (
+                            <View style={styles.aiContent}>
+                                <Text style={styles.aiSummary}>{reading.aiInsights.summary}</Text>
+                                {reading.aiInsights.positions.map((pos) => (
+                                    <View key={pos.positionIndex} style={styles.aiPositionBlock}>
+                                        <Text style={styles.aiPositionTitle}>
+                                            {pos.positionTitle} - {pos.cardName}
+                                        </Text>
+                                        <Text style={styles.aiPositionText}>{pos.meaning}</Text>
+                                    </View>
+                                ))}
+                                <Text style={styles.aiModel}>
+                                    {t('aiInterpretation.generatedBy', {model: reading.aiInsights.model})}
+                                </Text>
+                                <TouchableOpacity
+                                    style={styles.refreshButton}
+                                    onPress={handleGenerateAiInsights}
+                                >
+                                    <Text style={styles.refreshButtonText}>
+                                        {t('aiInterpretation.refreshInterpretation')}
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                    </View>
+                )}
+
                 <View style={styles.notesBox}>
                     <Text style={styles.notesTitle}>{t('interpretation.notesTitle')}</Text>
                     <TextInput
@@ -177,6 +288,8 @@ export const InterpretationScreen = () => {
                     </TouchableOpacity>
                 </View>
             </ScrollView>
+
+            <PremiumModal visible={showPremiumPrompt} onClose={() => setShowPremiumPrompt(false)} />
         </SafeAreaView>
     );
 };
@@ -338,6 +451,124 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     link: {
+        color: '#6c5ce7',
+        fontWeight: '600',
+    },
+    premiumBox: {
+        backgroundColor: 'rgba(108,92,231,0.1)',
+        borderRadius: 20,
+        padding: 20,
+        borderWidth: 2,
+        borderColor: 'rgba(108,92,231,0.3)',
+        gap: 12,
+        alignItems: 'center',
+    },
+    premiumTitle: {
+        color: '#f4d386',
+        fontSize: 18,
+        fontWeight: '700',
+    },
+    premiumText: {
+        color: '#f7f4ea',
+        textAlign: 'center',
+        lineHeight: 20,
+    },
+    unlockButton: {
+        paddingVertical: 12,
+        paddingHorizontal: 24,
+        borderRadius: 16,
+        backgroundColor: '#6c5ce7',
+    },
+    unlockButtonText: {
+        color: '#fff',
+        fontWeight: '700',
+        fontSize: 16,
+    },
+    aiInsightsBox: {
+        backgroundColor: 'rgba(12,10,20,0.9)',
+        borderRadius: 20,
+        padding: 18,
+        borderWidth: 1,
+        borderColor: 'rgba(108,92,231,0.4)',
+        gap: 12,
+    },
+    aiInsightsTitle: {
+        color: '#f4d386',
+        fontSize: 18,
+        fontWeight: '700',
+    },
+    generateButton: {
+        paddingVertical: 14,
+        borderRadius: 16,
+        backgroundColor: '#6c5ce7',
+        alignItems: 'center',
+    },
+    generateButtonText: {
+        color: '#fff',
+        fontWeight: '700',
+        fontSize: 16,
+    },
+    loadingBox: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+        padding: 20,
+    },
+    loadingText: {
+        color: '#f7f4ea',
+        fontSize: 14,
+    },
+    errorBox: {
+        gap: 8,
+    },
+    errorText: {
+        color: '#ff6b6b',
+        fontSize: 14,
+    },
+    retryText: {
+        color: '#6c5ce7',
+        fontWeight: '600',
+    },
+    aiContent: {
+        gap: 16,
+    },
+    aiSummary: {
+        color: '#f7f4ea',
+        fontSize: 16,
+        lineHeight: 24,
+        fontWeight: '500',
+    },
+    aiPositionBlock: {
+        gap: 8,
+        paddingTop: 12,
+        borderTopWidth: StyleSheet.hairlineWidth,
+        borderColor: 'rgba(255,255,255,0.1)',
+    },
+    aiPositionTitle: {
+        color: '#f4d386',
+        fontWeight: '600',
+        fontSize: 15,
+    },
+    aiPositionText: {
+        color: '#f7f4ea',
+        lineHeight: 20,
+        opacity: 0.9,
+    },
+    aiModel: {
+        color: '#f7f4ea',
+        opacity: 0.5,
+        fontSize: 12,
+        fontStyle: 'italic',
+    },
+    refreshButton: {
+        paddingVertical: 10,
+        paddingHorizontal: 16,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: 'rgba(108,92,231,0.5)',
+        alignSelf: 'flex-start',
+    },
+    refreshButtonText: {
         color: '#6c5ce7',
         fontWeight: '600',
     },
