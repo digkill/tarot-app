@@ -260,5 +260,62 @@
       "swords": "ดาบ",
       "pentacles": "เหรียญ"
     }
+  },
+  "premium": {
+    "title": "สมาชิกพรีเมียม",
+    "status": {
+      "active": "ใช้งานอยู่",
+      "inactive": "ยังไม่ได้เปิด"
+    },
+    "price": "฿199/เดือน",
+    "features": {
+      "title": "สิ่งที่คุณจะได้รับ:",
+      "aiInterpretations": "คำทำนายเชิงลึกผ่าน AI",
+      "deeperInsights": "ข้อมูลเฉพาะบุคคล",
+      "unlimitedReadings": "อ่านไพ่ได้ไม่จำกัด",
+      "prioritySupport": "การสนับสนุนพิเศษ"
+    },
+    "subscribe": "สมัครสมาชิก",
+    "manage": "จัดการสมาชิก",
+    "cancel": "ยกเลิก",
+    "purchaseSuccess": "สมัครสมาชิกสำเร็จ!",
+    "purchaseError": "เกิดข้อผิดพลาดในการสมัคร",
+    "benefits": "สมาชิกพรีเมียมจะได้รับคำทำนายที่ละเอียดลึกซึ้งผ่านระบบ AI ที่ออกแบบมาเฉพาะสำหรับทาโรต์"
+  },
+  "aiInterpretation": {
+    "title": "คำทำนายเชิงลึก AI",
+    "loading": "กำลังสร้างคำทำนายเฉพาะคุณ...",
+    "error": "ไม่สามารถสร้างคำทำนายได้",
+    "retry": "ลองอีกครั้ง",
+    "premiumFeature": "ฟีเจอร์พรีเมียม",
+    "unlockMessage": "รับคำทำนายเชิงลึกผ่าน AI ด้วยสมาชิกพรีเมียม",
+    "unlock": "ปลดล็อก",
+    "generatedBy": "สร้างโดย {model}",
+    "refreshInterpretation": "สร้างใหม่"
+  },
+  "settings": {
+    "premiumSection": "พรีเมียม",
+    "languageTitle": "ภาษา",
+    "themeTitle": "ธีม",
+    "behaviorTitle": "พฤติกรรม",
+    "animations": "แอนิเมชัน",
+    "animationsDescription": "เปิดใช้เอฟเฟกต์ภาพ",
+    "sounds": "เสียง",
+    "soundsDescription": "เปิดใช้เอฟเฟกต์เสียง",
+    "mysticMode": "โหมดลึกลับ",
+    "mysticModeDescription": "เอฟเฟกต์ภาพเพิ่มเติม",
+    "reversedChanceTitle": "โอกาสไพ่กลับหัว",
+    "reversedHint": "ความถี่ที่ไพ่จะปรากฏในตำแหน่งกลับหัว",
+    "language": {
+      "en": "English",
+      "ru": "Русский",
+      "th": "ไทย",
+      "zh": "中文"
+    },
+    "theme": {
+      "system": "ระบบ",
+      "light": "สว่าง",
+      "dark": "มืด"
+    }
   }
 }
