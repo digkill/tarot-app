@@ -1,0 +1,15 @@
+{
+    "cli": { "version": ">= 3.0.0" },
+    "build": {
+      "production": {
+        "env": {
+          "NODE_VERSION": "20.19.4"
+        },
+        "android": {
+          "buildType": "apk"
+        }
+      }
+    },
+    "submit": {}
+  }
+  

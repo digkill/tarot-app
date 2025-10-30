@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "tarot-app",
-    "slug": "tarot-app",
-    "version": "1.0.0",
+    "name": "Tarot",
+    "slug": "tarot",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -16,6 +16,9 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "org.mediarise.tarot",
+      "versionCode": 1,
+      "permissions": [],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -24,6 +27,17 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "2b61bc02-2377-4775-a6a3-2e7461cd14c6"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/2b61bc02-2377-4775-a6a3-2e7461cd14c6"
     }
   }
 }
