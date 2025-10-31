@@ -36,6 +36,8 @@ export const HomeScreen = () => {
     const {settings} = useSettings();
 
     const recentReading = readings[0];
+    const recentSpread = recentReading ? SPREADS.find((spread) => spread.id === recentReading.spreadId) : null;
+    const recentSummary = recentReading?.aiInsights?.summary ?? recentReading?.summaryText;
     const featured = FEATURED_SPREADS;
 
     const greeting = useMemo(() => {
@@ -106,14 +108,16 @@ export const HomeScreen = () => {
                         </View>
                         <View style={styles.recentCard}>
                             <Text style={styles.recentLabel}>{t('home.recent.spread')}</Text>
-                            <Text style={styles.recentValue}>{recentReading.spreadId}</Text>
+                            <Text style={styles.recentValue}>
+                                {recentSpread ? t(recentSpread.nameKey) : recentReading.spreadId}
+                            </Text>
                             <Text style={styles.recentLabel}>{t('home.recent.date')}</Text>
                             <Text style={styles.recentValue}>
                                 {new Date(recentReading.drawnAt).toLocaleString(settings.language)}
                             </Text>
-                            {recentReading.summaryText ? (
+                            {recentSummary ? (
                                 <Text style={styles.recentSummary} numberOfLines={3}>
-                                    {recentReading.summaryText}
+                                    {recentSummary}
                                 </Text>
                             ) : null}
                         </View>

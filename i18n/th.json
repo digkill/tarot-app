@@ -52,6 +52,31 @@
       "cta": "เปิดสำรับ"
     }
   },
+  "premium": {
+    "lockedTitle": "สำหรับสมาชิกพรีเมียม",
+    "lockedDescription": "สมัครสมาชิกเพื่อปลดล็อกผังนี้และคำทำนายเชิงลึกจาก AI",
+    "notNow": "ไว้ทีหลัง",
+    "openSettings": "ไปที่แพ็กเกจ",
+    "title": "Tarot Premium",
+    "status": {
+      "active": "เปิดใช้งาน",
+      "inactive": "ยังไม่สมัคร"
+    },
+    "price": "499 ₽ ต่อเดือน",
+    "benefits": "เพียง 499 ₽ ต่อเดือนก็ปลดล็อกการตีความด้วย AI แบบละเอียด ผังพรีเมียม และอัปเดตสำคัญได้แล้ว",
+    "subscribe": "เริ่มสมัคร",
+    "manage": "ยกเลิกการสมัคร",
+    "cancel": "ยกเลิก",
+    "purchaseSuccess": "เปิดใช้งานสมาชิกแล้ว",
+    "purchaseError": "ไม่สามารถเปิดใช้งานได้",
+    "features": {
+      "title": "สิทธิประโยชน์ที่ได้รับ",
+      "aiInterpretations": "การตีความเชิงลึกด้วย OpenAI สำหรับทุกผัง",
+      "deeperInsights": "คำแนะนำและความหมายที่เจาะจงกับแต่ละไพ่",
+      "unlimitedReadings": "อ่านผังพรีเมียมได้ไม่จำกัด",
+      "prioritySupport": "การสนับสนุนแบบลำดับความสำคัญ"
+    }
+  },
   "spread": {
     "oneCard": {
       "name": "ไพ่หนึ่งใบ",
@@ -92,6 +117,36 @@
       "spiritual": "จิตวิญญาณ",
       "custom": "กำหนดเอง"
     }
+  },
+  "settings": {
+    "premiumSection": "การสมัครสมาชิก",
+    "languageTitle": "ภาษา",
+    "language": {
+      "en": "อังกฤษ",
+      "ru": "รัสเซีย",
+      "th": "ไทย",
+      "zh": "จีน"
+    },
+    "themeTitle": "ธีม",
+    "theme": {
+      "system": "ตามระบบ",
+      "light": "สว่าง",
+      "dark": "มืด"
+    },
+    "behaviorTitle": "ประสบการณ์",
+    "animations": "แอนิเมชันไพ่",
+    "animationsDescription": "เปิดการสับและเปิดไพ่แบบเคลื่อนไหว",
+    "sounds": "เสียงเอฟเฟ็กต์",
+    "soundsDescription": "เล่นเสียงประกอบเบา ๆ ระหว่างการอ่าน",
+    "mysticMode": "โหมดลึกลับ",
+    "mysticModeDescription": "เพิ่มแสงและประกายให้กับไพ่",
+    "reversedChanceTitle": "โอกาสไพ่กลับหัว",
+    "reversedHint": "กำหนดความถี่ของการกลับหัวเมื่อเปิดไพ่",
+    "premiumTitle": "Tarot Premium",
+    "premiumDescription": "ปลดล็อกทุกผังและคำทำนายเชิงลึกจาก OpenAI ราคา {price} ต่อเดือน",
+    "premiumSubscribe": "เริ่มสมาชิก",
+    "premiumManage": "ยกเลิกสมาชิก",
+    "premiumActive": "เปิดใช้สมาชิกแล้ว"
   },
   "position": {
     "focus": "ประเด็นหลัก",
@@ -227,7 +282,20 @@
     "favorite": "รายการโปรด",
     "unfavorite": "เอาออก",
     "missingReading": "ไม่พบข้อมูลการอ่าน",
-    "goBack": "ย้อนกลับ"
+    "goBack": "ย้อนกลับ",
+    "premiumHeading": "คำทำนาย AI แบบขยาย",
+    "premiumLocked": "สมาชิกสามารถขอคำแนะนำเชิงลึกจาก OpenAI",
+    "premiumCta": "สมัครในหน้าการตั้งค่า",
+    "premiumGenerate": "สร้างด้วย AI",
+    "premiumGenerating": "กำลังขอข้อมูลจาก OpenAI...",
+    "premiumError": "ไม่สามารถสร้างคำทำนายได้ ลองอีกครั้ง",
+    "premiumMissingKey": "เพิ่มคีย์ OpenAI เพื่อเปิดใช้การตีความ AI",
+    "premiumSummaryTitle": "สรุปโดย AI",
+    "premiumPositionsTitle": "คำแนะนำรายตำแหน่ง",
+    "orientation": {
+      "upright": "ตั้งตรง",
+      "reversed": "กลับหัว"
+    }
   },
   "history": {
     "filter": {
@@ -259,6 +327,63 @@
       "cups": "ถ้วย",
       "swords": "ดาบ",
       "pentacles": "เหรียญ"
+    }
+  },
+  "premium": {
+    "title": "สมาชิกพรีเมียม",
+    "status": {
+      "active": "ใช้งานอยู่",
+      "inactive": "ยังไม่ได้เปิด"
+    },
+    "price": "฿199/เดือน",
+    "features": {
+      "title": "สิ่งที่คุณจะได้รับ:",
+      "aiInterpretations": "คำทำนายเชิงลึกผ่าน AI",
+      "deeperInsights": "ข้อมูลเฉพาะบุคคล",
+      "unlimitedReadings": "อ่านไพ่ได้ไม่จำกัด",
+      "prioritySupport": "การสนับสนุนพิเศษ"
+    },
+    "subscribe": "สมัครสมาชิก",
+    "manage": "จัดการสมาชิก",
+    "cancel": "ยกเลิก",
+    "purchaseSuccess": "สมัครสมาชิกสำเร็จ!",
+    "purchaseError": "เกิดข้อผิดพลาดในการสมัคร",
+    "benefits": "สมาชิกพรีเมียมจะได้รับคำทำนายที่ละเอียดลึกซึ้งผ่านระบบ AI ที่ออกแบบมาเฉพาะสำหรับทาโรต์"
+  },
+  "aiInterpretation": {
+    "title": "คำทำนายเชิงลึก AI",
+    "loading": "กำลังสร้างคำทำนายเฉพาะคุณ...",
+    "error": "ไม่สามารถสร้างคำทำนายได้",
+    "retry": "ลองอีกครั้ง",
+    "premiumFeature": "ฟีเจอร์พรีเมียม",
+    "unlockMessage": "รับคำทำนายเชิงลึกผ่าน AI ด้วยสมาชิกพรีเมียม",
+    "unlock": "ปลดล็อก",
+    "generatedBy": "สร้างโดย {model}",
+    "refreshInterpretation": "สร้างใหม่"
+  },
+  "settings": {
+    "premiumSection": "พรีเมียม",
+    "languageTitle": "ภาษา",
+    "themeTitle": "ธีม",
+    "behaviorTitle": "พฤติกรรม",
+    "animations": "แอนิเมชัน",
+    "animationsDescription": "เปิดใช้เอฟเฟกต์ภาพ",
+    "sounds": "เสียง",
+    "soundsDescription": "เปิดใช้เอฟเฟกต์เสียง",
+    "mysticMode": "โหมดลึกลับ",
+    "mysticModeDescription": "เอฟเฟกต์ภาพเพิ่มเติม",
+    "reversedChanceTitle": "โอกาสไพ่กลับหัว",
+    "reversedHint": "ความถี่ที่ไพ่จะปรากฏในตำแหน่งกลับหัว",
+    "language": {
+      "en": "English",
+      "ru": "Русский",
+      "th": "ไทย",
+      "zh": "中文"
+    },
+    "theme": {
+      "system": "ระบบ",
+      "light": "สว่าง",
+      "dark": "มืด"
     }
   }
 }

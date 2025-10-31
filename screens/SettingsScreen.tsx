@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
     ScrollView,
     StyleSheet,
@@ -11,6 +11,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
 import {useSettings} from '../providers/SettingsProvider';
 import type {LanguagePreference, ThemePreference} from '../entities';
+import {PremiumModal} from '../components/PremiumModal';
 
 const LANGUAGES: LanguagePreference[] = ['en', 'ru', 'th', 'zh'];
 const THEMES: ThemePreference[] = ['system', 'light', 'dark'];
@@ -18,6 +19,7 @@ const THEMES: ThemePreference[] = ['system', 'light', 'dark'];
 export const SettingsScreen = () => {
     const {settings, setSetting} = useSettings();
     const {t} = useTranslation();
+    const [showPremiumModal, setShowPremiumModal] = useState(false);
 
     const toggle = (key: 'disableAnimations' | 'disableSounds' | 'showMysticMode') => {
         setSetting(key, !settings[key]).catch(() => {});
@@ -31,13 +33,55 @@ export const SettingsScreen = () => {
     return (
         <SafeAreaView style={styles.safe}>
             <ScrollView contentContainerStyle={styles.container}>
+                <Text style={styles.sectionTitle}>{t('settings.premiumSection')}</Text>
+                <View style={styles.premiumCard}>
+                    <View style={styles.premiumHeader}>
+                        <View>
+                            <Text style={styles.premiumTitle}>{t('premium.title')}</Text>
+                            <Text style={styles.premiumStatus}>
+                                {settings.hasPremium
+                                    ? t('premium.status.active')
+                                    : t('premium.status.inactive')}
+                            </Text>
+                        </View>
+                        <View
+                            style={[
+                                styles.statusBadge,
+                                settings.hasPremium ? styles.statusActive : styles.statusInactive,
+                            ]}
+                        >
+                            <Text style={styles.statusBadgeText}>
+                                {settings.hasPremium ? '✓' : '✕'}
+                            </Text>
+                        </View>
+                    </View>
+                    {!settings.hasPremium ? (
+                        <>
+                            <Text style={styles.premiumDescription}>{t('premium.benefits')}</Text>
+                            <TouchableOpacity
+                                style={styles.premiumButton}
+                                onPress={() => setShowPremiumModal(true)}
+                            >
+                                <Text style={styles.premiumButtonText}>{t('premium.subscribe')}</Text>
+                            </TouchableOpacity>
+                        </>
+                    ) : (
+                        <TouchableOpacity
+                            style={styles.manageButton}
+                            onPress={() => setSetting('hasPremium', false).catch(() => {})}
+                        >
+                            <Text style={styles.manageButtonText}>{t('premium.manage')}</Text>
+                        </TouchableOpacity>
+                    )}
+                </View>
+
                 <Text style={styles.sectionTitle}>{t('settings.languageTitle')}</Text>
                 <View style={styles.row}>
                     {LANGUAGES.map((language) => (
                         <TouchableOpacity
                             key={language}
                             style={[styles.option, settings.language === language && styles.optionActive]}
-                            onPress={() => setSetting('language', language)}
+                            onPress={() => setSetting('language', language).catch(() => {})}
                         >
                             <Text
                                 style={[styles.optionText, settings.language === language && styles.optionTextActive]}
@@ -54,7 +98,7 @@ export const SettingsScreen = () => {
                         <TouchableOpacity
                             key={theme}
                             style={[styles.option, settings.theme === theme && styles.optionActive]}
-                            onPress={() => setSetting('theme', theme)}
+                            onPress={() => setSetting('theme', theme).catch(() => {})}
                         >
                             <Text
                                 style={[styles.optionText, settings.theme === theme && styles.optionTextActive]}
@@ -109,6 +153,8 @@ export const SettingsScreen = () => {
                 </View>
                 <Text style={styles.reversedHint}>{t('settings.reversedHint')}</Text>
             </ScrollView>
+
+            <PremiumModal visible={showPremiumModal} onClose={() => setShowPremiumModal(false)} />
         </SafeAreaView>
     );
 };
@@ -199,5 +245,74 @@ const styles = StyleSheet.create({
         color: '#f7f4ea',
         fontSize: 22,
         fontWeight: '700',
+    },
+    premiumCard: {
+        backgroundColor: 'rgba(108,92,231,0.15)',
+        borderRadius: 20,
+        padding: 20,
+        borderWidth: 2,
+        borderColor: 'rgba(108,92,231,0.3)',
+        gap: 16,
+    },
+    premiumHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    premiumTitle: {
+        color: '#f4d386',
+        fontSize: 20,
+        fontWeight: '700',
+    },
+    premiumStatus: {
+        color: '#f7f4ea',
+        fontSize: 14,
+        marginTop: 4,
+        opacity: 0.8,
+    },
+    statusBadge: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    statusActive: {
+        backgroundColor: '#51cf66',
+    },
+    statusInactive: {
+        backgroundColor: 'rgba(255,255,255,0.2)',
+    },
+    statusBadgeText: {
+        color: '#fff',
+        fontSize: 20,
+        fontWeight: '700',
+    },
+    premiumDescription: {
+        color: '#f7f4ea',
+        lineHeight: 20,
+        opacity: 0.9,
+    },
+    premiumButton: {
+        backgroundColor: '#6c5ce7',
+        paddingVertical: 14,
+        borderRadius: 16,
+        alignItems: 'center',
+    },
+    premiumButtonText: {
+        color: '#fff',
+        fontWeight: '700',
+        fontSize: 16,
+    },
+    manageButton: {
+        paddingVertical: 12,
+        borderRadius: 14,
+        borderWidth: 1,
+        borderColor: 'rgba(244,211,134,0.4)',
+        alignItems: 'center',
+    },
+    manageButtonText: {
+        color: '#f4d386',
+        fontWeight: '600',
     },
 });

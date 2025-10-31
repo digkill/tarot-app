@@ -37,6 +37,7 @@ export const HistoryListScreen = () => {
 
     const renderItem = ({item}: {item: typeof readings[number]}) => {
         const spread = SPREADS.find((spreadItem) => spreadItem.id === item.spreadId);
+        const summary = item.aiInsights?.summary ?? item.summaryText;
         return (
             <TouchableOpacity
                 style={styles.card}
@@ -54,9 +55,11 @@ export const HistoryListScreen = () => {
                 <Text style={styles.cardDate}>
                     {new Date(item.drawnAt).toLocaleString(settings.language)}
                 </Text>
-                <Text style={styles.cardSummary} numberOfLines={3}>
-                    {item.summaryText}
-                </Text>
+                {summary ? (
+                    <Text style={styles.cardSummary} numberOfLines={3}>
+                        {summary}
+                    </Text>
+                ) : null}
                 <TouchableOpacity
                     onPress={() => confirmDelete(item.id)}
                     style={styles.deleteBtn}

@@ -52,6 +52,31 @@
       "cta": "Открыть колоду"
     }
   },
+  "premium": {
+    "lockedTitle": "Только для подписчиков",
+    "lockedDescription": "Оформите подписку, чтобы открыть этот расклад и расширенные толкования ИИ.",
+    "notNow": "Не сейчас",
+    "openSettings": "Перейти к подписке",
+    "title": "Tarot Premium",
+    "status": {
+      "active": "Активна",
+      "inactive": "Не оформлена"
+    },
+    "price": "499 ₽ в месяц",
+    "benefits": "Подписка за 499 ₽ в месяц открывает все расклады, расширенные толкования OpenAI и приоритетные обновления.",
+    "subscribe": "Оформить подписку",
+    "manage": "Отменить подписку",
+    "cancel": "Отмена",
+    "purchaseSuccess": "Подписка активирована",
+    "purchaseError": "Не удалось активировать подписку",
+    "features": {
+      "title": "Что входит",
+      "aiInterpretations": "Расширенные толкования с помощью OpenAI для каждого расклада.",
+      "deeperInsights": "Подробные значения карт и практические шаги под вашу ситуацию.",
+      "unlimitedReadings": "Неограниченный доступ к премиум-раскладам.",
+      "prioritySupport": "Приоритетная поддержка и ответы на вопросы."
+    }
+  },
   "spread": {
     "oneCard": {
       "name": "Одна карта",
@@ -92,6 +117,36 @@
       "spiritual": "Духовные",
       "custom": "Свои"
     }
+  },
+  "settings": {
+    "premiumSection": "Подписка",
+    "languageTitle": "Язык",
+    "language": {
+      "en": "Английский",
+      "ru": "Русский",
+      "th": "Тайский",
+      "zh": "Китайский"
+    },
+    "themeTitle": "Тема",
+    "theme": {
+      "system": "Системная",
+      "light": "Светлая",
+      "dark": "Тёмная"
+    },
+    "behaviorTitle": "Оформление",
+    "animations": "Анимации карт",
+    "animationsDescription": "Включить анимацию тасования и выкладывания.",
+    "sounds": "Звуковые эффекты",
+    "soundsDescription": "Проигрывать мягкие звуки во время раскладов.",
+    "mysticMode": "Мистический режим",
+    "mysticModeDescription": "Добавить свечения и частицы к картам.",
+    "reversedChanceTitle": "Шанс перевёрнутых карт",
+    "reversedHint": "Настройте, как часто карты будут выпадать перевёрнутыми.",
+    "premiumTitle": "Tarot Premium",
+    "premiumDescription": "Откройте все расклады и подробные толкования на базе OpenAI. {price} в месяц.",
+    "premiumSubscribe": "Оформить подписку",
+    "premiumManage": "Отменить подписку",
+    "premiumActive": "Подписка активна"
   },
   "position": {
     "focus": "Фокус",
@@ -227,7 +282,20 @@
     "favorite": "В избранное",
     "unfavorite": "Убрать из избранного",
     "missingReading": "Чтение недоступно",
-    "goBack": "Назад"
+    "goBack": "Назад",
+    "premiumHeading": "Расширенное толкование ИИ",
+    "premiumLocked": "Подписчики получают персонализированное толкование через OpenAI.",
+    "premiumCta": "Оформить в настройках",
+    "premiumGenerate": "Получить толкование ИИ",
+    "premiumGenerating": "Запрос к OpenAI...",
+    "premiumError": "Не удалось получить толкование. Попробуйте позже.",
+    "premiumMissingKey": "Добавьте ключ OpenAI, чтобы включить ИИ-подсказки.",
+    "premiumSummaryTitle": "ИИ-резюме",
+    "premiumPositionsTitle": "Советы по картам",
+    "orientation": {
+      "upright": "Прямое",
+      "reversed": "Перевёрнутое"
+    }
   },
   "history": {
     "filter": {
@@ -259,6 +327,63 @@
       "cups": "Кубки",
       "swords": "Мечи",
       "pentacles": "Пентакли"
+    }
+  },
+  "premium": {
+    "title": "Премиум подписка",
+    "status": {
+      "active": "Активна",
+      "inactive": "Не активна"
+    },
+    "price": "499 ₽/месяц",
+    "features": {
+      "title": "Что входит:",
+      "aiInterpretations": "Расширенные толкования через ИИ",
+      "deeperInsights": "Персонализированные инсайты",
+      "unlimitedReadings": "Безлимитные расклады",
+      "prioritySupport": "Приоритетная поддержка"
+    },
+    "subscribe": "Оформить подписку",
+    "manage": "Управление подпиской",
+    "cancel": "Отменить",
+    "purchaseSuccess": "Подписка успешно оформлена!",
+    "purchaseError": "Ошибка при оформлении подписки",
+    "benefits": "С премиум подпиской вы получаете детальное толкование каждой карты с помощью искусственного интеллекта, настроенного специально для таро."
+  },
+  "aiInterpretation": {
+    "title": "Расширенное толкование ИИ",
+    "loading": "Генерируем персональное толкование...",
+    "error": "Не удалось получить толкование",
+    "retry": "Попробовать снова",
+    "premiumFeature": "Премиум функция",
+    "unlockMessage": "Получите детальное толкование через ИИ с премиум подпиской",
+    "unlock": "Разблокировать",
+    "generatedBy": "Сгенерировано через {model}",
+    "refreshInterpretation": "Обновить толкование"
+  },
+  "settings": {
+    "premiumSection": "Премиум",
+    "languageTitle": "Язык",
+    "themeTitle": "Тема",
+    "behaviorTitle": "Поведение",
+    "animations": "Анимации",
+    "animationsDescription": "Включить визуальные эффекты",
+    "sounds": "Звуки",
+    "soundsDescription": "Включить звуковое сопровождение",
+    "mysticMode": "Мистический режим",
+    "mysticModeDescription": "Дополнительные визуальные эффекты",
+    "reversedChanceTitle": "Вероятность перевёрнутых карт",
+    "reversedHint": "Как часто карты будут появляться в перевёрнутом положении",
+    "language": {
+      "en": "English",
+      "ru": "Русский",
+      "th": "ไทย",
+      "zh": "中文"
+    },
+    "theme": {
+      "system": "Системная",
+      "light": "Светлая",
+      "dark": "Тёмная"
     }
   }
 }

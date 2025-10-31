@@ -52,6 +52,31 @@
       "cta": "打开牌库"
     }
   },
+  "premium": {
+    "lockedTitle": "高级功能",
+    "lockedDescription": "订阅即可解锁此牌阵并获得更深入的 AI 解读。",
+    "notNow": "暂不",
+    "openSettings": "查看方案",
+    "title": "Tarot Premium",
+    "status": {
+      "active": "已激活",
+      "inactive": "未订阅"
+    },
+    "price": "每月 499 ₽",
+    "benefits": "每月 499 ₽，即可解锁 OpenAI 深度解读、高级牌阵与优先更新。",
+    "subscribe": "开始订阅",
+    "manage": "取消订阅",
+    "cancel": "取消",
+    "purchaseSuccess": "订阅已激活",
+    "purchaseError": "订阅未能完成",
+    "features": {
+      "title": "订阅权益",
+      "aiInterpretations": "OpenAI 提供的扩展 AI 解读。",
+      "deeperInsights": "针对每次抽牌的详细含义与行动建议。",
+      "unlimitedReadings": "无限次访问高级牌阵。",
+      "prioritySupport": "优先支持与反馈通道。"
+    }
+  },
   "spread": {
     "oneCard": {
       "name": "单张牌",
@@ -92,6 +117,36 @@
       "spiritual": "灵性",
       "custom": "自定义"
     }
+  },
+  "settings": {
+    "premiumSection": "高级订阅",
+    "languageTitle": "语言",
+    "language": {
+      "en": "英语",
+      "ru": "俄语",
+      "th": "泰语",
+      "zh": "中文"
+    },
+    "themeTitle": "主题",
+    "theme": {
+      "system": "跟随系统",
+      "light": "浅色",
+      "dark": "深色"
+    },
+    "behaviorTitle": "体验",
+    "animations": "牌面动画",
+    "animationsDescription": "开启洗牌与翻牌动画。",
+    "sounds": "音效",
+    "soundsDescription": "在占卜时播放轻柔提示音。",
+    "mysticMode": "神秘模式",
+    "mysticModeDescription": "为卡牌加入光晕与粒子效果。",
+    "reversedChanceTitle": "逆位概率",
+    "reversedHint": "调整抽牌时出现逆位的频率。",
+    "premiumTitle": "Tarot Premium",
+    "premiumDescription": "解锁全部牌阵与 OpenAI 提供的深度解读，每月 {price}。",
+    "premiumSubscribe": "开始订阅",
+    "premiumManage": "取消订阅",
+    "premiumActive": "订阅已激活"
   },
   "position": {
     "focus": "焦点",
@@ -227,7 +282,20 @@
     "favorite": "收藏",
     "unfavorite": "取消收藏",
     "missingReading": "解读不可用",
-    "goBack": "返回"
+    "goBack": "返回",
+    "premiumHeading": "AI 深度解读",
+    "premiumLocked": "订阅用户可通过 OpenAI 获取更个性化的解读。",
+    "premiumCta": "前往设置订阅",
+    "premiumGenerate": "生成 AI 解读",
+    "premiumGenerating": "正在向 OpenAI 请求...",
+    "premiumError": "无法生成 AI 解读，请稍后再试。",
+    "premiumMissingKey": "请添加 OpenAI API Key 以启用 AI 功能。",
+    "premiumSummaryTitle": "AI 摘要",
+    "premiumPositionsTitle": "牌位指引",
+    "orientation": {
+      "upright": "正位",
+      "reversed": "逆位"
+    }
   },
   "history": {
     "filter": {
@@ -259,6 +327,63 @@
       "cups": "圣杯",
       "swords": "宝剑",
       "pentacles": "钱币"
+    }
+  },
+  "premium": {
+    "title": "高级订阅",
+    "status": {
+      "active": "已激活",
+      "inactive": "未激活"
+    },
+    "price": "¥49/月",
+    "features": {
+      "title": "订阅包含:",
+      "aiInterpretations": "AI 深度解读",
+      "deeperInsights": "个性化洞察",
+      "unlimitedReadings": "无限占卜",
+      "prioritySupport": "优先客服支持"
+    },
+    "subscribe": "立即订阅",
+    "manage": "管理订阅",
+    "cancel": "取消",
+    "purchaseSuccess": "订阅成功！",
+    "purchaseError": "订阅失败",
+    "benefits": "高级订阅让你获得由专为塔罗训练的 AI 提供的详细牌义解读。"
+  },
+  "aiInterpretation": {
+    "title": "AI 深度解读",
+    "loading": "正在生成个性化解读...",
+    "error": "生成解读失败",
+    "retry": "重试",
+    "premiumFeature": "高级功能",
+    "unlockMessage": "订阅高级会员获取 AI 深度解读",
+    "unlock": "解锁",
+    "generatedBy": "由 {model} 生成",
+    "refreshInterpretation": "刷新解读"
+  },
+  "settings": {
+    "premiumSection": "高级功能",
+    "languageTitle": "语言",
+    "themeTitle": "主题",
+    "behaviorTitle": "行为",
+    "animations": "动画",
+    "animationsDescription": "启用视觉效果",
+    "sounds": "音效",
+    "soundsDescription": "启用音效",
+    "mysticMode": "神秘模式",
+    "mysticModeDescription": "额外的视觉效果",
+    "reversedChanceTitle": "逆位卡牌概率",
+    "reversedHint": "卡牌出现逆位的频率",
+    "language": {
+      "en": "English",
+      "ru": "Русский",
+      "th": "ไทย",
+      "zh": "中文"
+    },
+    "theme": {
+      "system": "跟随系统",
+      "light": "浅色",
+      "dark": "深色"
     }
   }
 }
