@@ -68,7 +68,11 @@ export const SettingsScreen = () => {
                     ) : (
                         <TouchableOpacity
                             style={styles.manageButton}
+<<<<<<< Current (Your changes)
                             onPress={() => setSetting('hasPremium', false).catch(() => {})}
+=======
+                            onPress={() => setSetting('hasPremium', false)}
+>>>>>>> Incoming (Background Agent changes)
                         >
                             <Text style={styles.manageButtonText}>{t('premium.manage')}</Text>
                         </TouchableOpacity>
