@@ -1,4 +1,5 @@
 import OpenAI from 'openai';
+import Constants from 'expo-constants';
 import type {LanguagePreference, ReadingAiInsight} from '../entities';
 
 type PremiumEntry = {
@@ -32,6 +33,17 @@ type MaybeProcess = {
 };
 
 const getEnv = (key: string): string | undefined => {
+    // Сначала пробуем получить из expo-constants (для Expo приложений)
+    const expoExtra = Constants.expoConfig?.extra;
+    if (expoExtra) {
+        if (key === 'OPENAI_API_KEY' && expoExtra.openaiApiKey) {
+            return expoExtra.openaiApiKey;
+        }
+        if (key === 'OPENAI_TAROT_MODEL' && expoExtra.openaiTarotModel) {
+            return expoExtra.openaiTarotModel;
+        }
+    }
+    // Затем пробуем process.env (для Node.js окружения)
     const nodeProcess = (globalThis as {process?: MaybeProcess}).process;
     return nodeProcess?.env?.[key];
 };
@@ -102,38 +114,34 @@ const buildPrompt = ({entries, spreadName, spreadDescription, language}: Premium
 };
 
 const schema = {
-    name: 'tarot_interpretation',
-    schema: {
-        type: 'object',
-        properties: {
-            summary: {
-                type: 'string',
-                description: 'Overall insight summary for the entire spread, 3-5 sentences.',
-            },
-            positions: {
-                type: 'array',
-                description: 'Detailed guidance for each spread position.',
-                items: {
-                    type: 'object',
-                    properties: {
-                        positionIndex: {type: 'integer'},
-                        positionTitle: {type: 'string'},
-                        cardName: {type: 'string'},
-                        orientation: {type: 'string', enum: ['upright', 'reversed']},
-                        meaning: {
-                            type: 'string',
-                            description: '1-3 sentences with actionable advice.',
-                        },
+    type: 'object',
+    properties: {
+        summary: {
+            type: 'string',
+            description: 'Overall insight summary for the entire spread, 3-5 sentences.',
+        },
+        positions: {
+            type: 'array',
+            description: 'Detailed guidance for each spread position.',
+            items: {
+                type: 'object',
+                properties: {
+                    positionIndex: {type: 'integer'},
+                    positionTitle: {type: 'string'},
+                    cardName: {type: 'string'},
+                    orientation: {type: 'string', enum: ['upright', 'reversed']},
+                    meaning: {
+                        type: 'string',
+                        description: '1-3 sentences with actionable advice.',
                     },
-                    required: ['positionIndex', 'positionTitle', 'cardName', 'orientation', 'meaning'],
-                    additionalProperties: false,
                 },
+                required: ['positionIndex', 'positionTitle', 'cardName', 'orientation', 'meaning'],
+                additionalProperties: false,
             },
         },
-        required: ['summary', 'positions'],
-        additionalProperties: false,
     },
-    strict: true,
+    required: ['summary', 'positions'],
+    additionalProperties: false,
 } as const;
 
 export const fetchPremiumInterpretation = async (
@@ -155,7 +163,14 @@ export const fetchPremiumInterpretation = async (
                 content: prompt,
             },
         ],
-        response_format: {type: 'json_schema', json_schema: schema},
+        text: {
+            format: {
+                type: 'json_schema',
+                name: 'tarot_interpretation',
+                schema: schema,
+                strict: true,
+            },
+        },
     });
 
     const text = response.output_text?.trim();
