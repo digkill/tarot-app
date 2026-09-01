@@ -14,6 +14,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
 import {AppTabsParamList, HomeStackParamList, RootStackParamList} from '../navigation/types';
 import {SPREADS, BASIC_SPREAD_IDS} from '../data';
+import {getReadingSummary} from '../features/interpretation';
 import {useHistory} from '../providers/HistoryProvider';
 import {useSettings} from '../providers/SettingsProvider';
 
@@ -37,7 +38,9 @@ export const HomeScreen = () => {
 
     const recentReading = readings[0];
     const recentSpread = recentReading ? SPREADS.find((spread) => spread.id === recentReading.spreadId) : null;
-    const recentSummary = recentReading?.aiInsights?.summary ?? recentReading?.summaryText;
+    const recentSummary = recentReading
+        ? getReadingSummary(recentReading, settings.language)
+        : null;
     const featured = FEATURED_SPREADS;
 
     const greeting = useMemo(() => {

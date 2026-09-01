@@ -100,6 +100,5 @@ export type Settings = {
     showMysticMode: boolean;
     hasPremium: boolean;
     dailyReminder?: boolean;
-    hasCompletedOnboarding?: boolean;
     acceptedDisclaimer?: boolean;
 };

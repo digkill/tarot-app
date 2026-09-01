@@ -1,14 +1,32 @@
-require('dotenv').config();
+require('dotenv').config({quiet: true});
 
 module.exports = {
   expo: {
     name: 'Tarot',
     slug: 'tarot',
     version: '1.1.0',
+    scheme: 'mediarisetarot',
     orientation: 'portrait',
     icon: './assets/icon.png',
     userInterfaceStyle: 'light',
     newArchEnabled: true,
+    plugins: [
+      'expo-asset',
+      'expo-font',
+      'expo-image',
+      'expo-localization',
+      'expo-sharing',
+      'expo-splash-screen',
+      'expo-status-bar',
+      'expo-web-browser',
+      [
+        './plugins/withRuStorePay',
+        {
+          consoleApplicationId: process.env.RUSTORE_CONSOLE_APP_ID || '',
+          scheme: 'mediarisetarot',
+        },
+      ],
+    ],
     splash: {
       image: './assets/splash-icon.png',
       resizeMode: 'contain',
@@ -19,13 +37,12 @@ module.exports = {
     },
     android: {
       package: 'org.mediarise.tarot',
-      versionCode: 1,
+      versionCode: 2,
       permissions: [],
       adaptiveIcon: {
         foregroundImage: './assets/adaptive-icon.png',
         backgroundColor: '#ffffff',
       },
-      edgeToEdgeEnabled: true,
     },
     web: {
       favicon: './assets/favicon.png',
@@ -36,6 +53,7 @@ module.exports = {
       },
       openaiApiKey: process.env.OPENAI_API_KEY,
       openaiTarotModel: process.env.OPENAI_TAROT_MODEL || 'gpt-4o-mini',
+      rustorePremiumProductId: process.env.RUSTORE_PREMIUM_PRODUCT_ID || 'premium_monthly',
     },
     runtimeVersion: {
       policy: 'appVersion',

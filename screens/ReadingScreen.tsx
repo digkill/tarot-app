@@ -22,6 +22,7 @@ import {useHistory} from '../providers/HistoryProvider';
 import {loadDeck} from '../utils/decks';
 import {generateInterpretation} from '../features/interpretation';
 import TarotCard from '../components/TarotCard';
+import {ZoomableView} from '../components/ZoomableView';
 
 type Route = RouteProp<RootStackParamList, 'Reading'>;
 type Navigation = NativeStackNavigationProp<RootStackParamList, 'Reading'>;
@@ -32,8 +33,63 @@ type DrawnEntry = {
     isReversed: boolean;
 };
 
-const CARD_WIDTH = 110;
-const CARD_HEIGHT = 190;
+const BASE_CARD_W = 110;
+const BASE_CARD_H = 190;
+const ASPECT = BASE_CARD_H / BASE_CARD_W;
+const LABEL_H = 24;
+const CANVAS_PAD = 8;
+
+function computeCardWidth(positions: SpreadPosition[], canvasW: number, canvasH: number): number {
+    if (positions.length <= 1) {
+        return Math.min(BASE_CARD_W, canvasW - CANVAS_PAD * 2);
+    }
+
+    let minDeltaX = Infinity;
+    let minDeltaY = Infinity;
+
+    for (let i = 0; i < positions.length; i++) {
+        for (let j = i + 1; j < positions.length; j++) {
+            const pi = positions[i]!;
+            const pj = positions[j]!;
+            const dx = Math.abs(pi.x - pj.x) * canvasW;
+            const dy = Math.abs(pi.y - pj.y) * canvasH;
+            if (dy < 20 && dx > 1) {
+                minDeltaX = Math.min(minDeltaX, dx);
+            }
+            if (dx < 20 && dy > 1) {
+                minDeltaY = Math.min(minDeltaY, dy);
+            }
+        }
+    }
+
+    const candidates: number[] = [];
+
+    if (isFinite(minDeltaX)) {
+        candidates.push(minDeltaX * 0.85);
+    }
+
+    if (isFinite(minDeltaY)) {
+        const wFromY = (minDeltaY * 0.85 - LABEL_H) / ASPECT;
+        candidates.push(wFromY);
+    }
+
+    const minX = Math.min(...positions.map((p) => p.x));
+    const maxX = Math.max(...positions.map((p) => p.x));
+    const minY = Math.min(...positions.map((p) => p.y));
+    const maxY = Math.max(...positions.map((p) => p.y));
+
+    const usableW = canvasW - CANVAS_PAD * 2;
+    const usableH = canvasH - CANVAS_PAD * 2;
+    const xSpan = Math.max(maxX - minX, 0.01);
+    const ySpan = Math.max(maxY - minY, 0.01);
+    const cols = xSpan / (1 / (positions.length + 1)) + 1;
+    const rows = ySpan / (1 / (positions.length + 1)) + 1;
+    candidates.push(usableW / Math.max(cols, 1) * 0.85);
+    candidates.push((usableH / Math.max(rows, 1) - LABEL_H) / ASPECT * 0.85);
+
+    const computed = candidates.reduce((min, v) => (v > 0 && v < min ? v : min), BASE_CARD_W);
+    return Math.max(36, Math.round(computed));
+}
 
 export const ReadingScreen = () => {
     const route = useRoute<Route>();
@@ -51,6 +107,13 @@ export const ReadingScreen = () => {
 
     const spread = useMemo<Spread | undefined>(() => SPREADS.find((s) => s.id === spreadId), [spreadId]);
     const deck = useMemo(() => loadDeck(settings.language), [settings.language]);
+
+    const cardWidth = useMemo(() => {
+        if (!spread || layout.width === 0) return BASE_CARD_W;
+        return computeCardWidth(spread.positions, layout.width, layout.height);
+    }, [spread, layout]);
+
+    const cardHeight = Math.round(cardWidth * ASPECT);
 
     useEffect(() => {
         startReading(settings.disableAnimations);
@@ -111,10 +174,7 @@ export const ReadingScreen = () => {
 
         const initiate = () => {
             const drawn = drawCards();
-            const values = drawn.map((entry, index) => {
-                const value = new Animated.Value(skipAnimation ? 1 : 0);
-                return value;
-            });
+            const values = drawn.map(() => new Animated.Value(skipAnimation ? 1 : 0));
             setEntries(drawn);
             setAnimatedValues(values);
             animateEntries(values, skipAnimation);
@@ -138,8 +198,12 @@ export const ReadingScreen = () => {
 
     const renderCard = (entry: DrawnEntry, index: number) => {
         const value = animatedValues[index] ?? new Animated.Value(1);
-        const left = layout.width * entry.position.x - CARD_WIDTH / 2;
-        const top = layout.height * entry.position.y - CARD_HEIGHT / 2;
+
+        const rawLeft = layout.width * entry.position.x - cardWidth / 2;
+        const rawTop = layout.height * entry.position.y - cardHeight / 2;
+        const left = Math.max(CANVAS_PAD, Math.min(rawLeft, layout.width - cardWidth - CANVAS_PAD));
+        const top = Math.max(CANVAS_PAD, Math.min(rawTop, layout.height - cardHeight - LABEL_H - CANVAS_PAD));
+
         const animatedStyle = {
             opacity: value,
             transform: [
@@ -161,10 +225,12 @@ export const ReadingScreen = () => {
         return (
             <Animated.View
                 key={entry.position.index}
-                style={[styles.cardWrapper, {left, top}, animatedStyle]}
+                style={[styles.cardWrapper, {left, top, width: cardWidth}, animatedStyle]}
             >
-                <TarotCard card={entry.card} isReversed={entry.isReversed} theme="dark" />
-                <Text style={styles.cardLabel}>{t(entry.position.titleKey)}</Text>
+                <TarotCard card={entry.card} isReversed={entry.isReversed} startFaceDown width={cardWidth} />
+                <Text style={styles.cardLabel} numberOfLines={2}>
+                    {t(entry.position.titleKey)}
+                </Text>
             </Animated.View>
         );
     };
@@ -185,7 +251,7 @@ export const ReadingScreen = () => {
             const interpretation = generateInterpretation(
                 spread,
                 entries,
-                (key, vars) => t(key, {...vars, defaultValue: key}),
+                (key, vars) => String(t(key, vars ?? {})),
             );
             const reading = await addReading({
                 spreadId: spread.id,
@@ -214,6 +280,9 @@ export const ReadingScreen = () => {
         );
     }
 
+    const canvasHeight = spread.maxCards >= 10 ? 440 : spread.maxCards >= 7 ? 400 : 320;
+    const zoomResetKey = `${spread.id}-${phase === 'shuffle' ? 'shuffle' : entries.map((entry) => `${entry.position.index}:${entry.card.id}`).join(',')}`;
+
     return (
         <SafeAreaView style={styles.safe}>
             <View style={styles.header}>
@@ -227,13 +296,21 @@ export const ReadingScreen = () => {
             </View>
 
             <View style={styles.canvasContainer}>
-                <View style={styles.canvas} onLayout={handleLayout}>
+                <View style={[styles.canvas, {height: canvasHeight}]} onLayout={handleLayout}>
+                    <ZoomableView
+                        style={styles.zoomLayer}
+                        enabled={phase === 'review'}
+                        resetKey={zoomResetKey}
+                        hint={phase === 'review' ? t('reading.zoomHint') : undefined}
+                        resetLabel={t('reading.resetZoom')}
+                    >
+                        {layout.width > 0 && entries.map(renderCard)}
+                    </ZoomableView>
                     {phase === 'shuffle' && (
-                        <View style={styles.centered}>
+                        <View style={[styles.centered, styles.shuffleOverlay]}>
                             <Text style={styles.shuffleText}>{t('reading.shuffling')}</Text>
                         </View>
                     )}
-                    {entries.map(renderCard)}
                 </View>
             </View>
 
@@ -297,21 +374,35 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
     },
     canvas: {
-        height: 360,
         borderRadius: 24,
         borderWidth: 1,
         borderColor: 'rgba(244,211,134,0.25)',
         backgroundColor: 'rgba(12,10,20,0.85)',
+        overflow: 'hidden',
+    },
+    zoomLayer: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+    },
+    shuffleOverlay: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(4,3,7,0.55)',
     },
     cardWrapper: {
         position: 'absolute',
-        width: CARD_WIDTH,
         alignItems: 'center',
     },
     cardLabel: {
         color: '#f7f4ea',
-        fontSize: 12,
-        marginTop: 6,
+        fontSize: 10,
+        marginTop: 2,
         textAlign: 'center',
         opacity: 0.8,
     },

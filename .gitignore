@@ -38,3 +38,6 @@ yarn-error.*
 *.tsbuildinfo
 
 .idea
+# CNG: нативные папки генерируются prebuild-ом
+/android
+/ios

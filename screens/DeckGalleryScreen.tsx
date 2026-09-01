@@ -37,7 +37,11 @@ export const DeckGalleryScreen = () => {
         const source = cardImages[item.image];
         return (
             <View style={styles.card}>
-                {source ? <Image source={source} style={styles.cardImage} /> : null}
+                {source ? (
+                    <View style={styles.cardImageWrapper}>
+                        <Image source={source} style={styles.cardImage} />
+                    </View>
+                ) : null}
                 <Text style={styles.cardName}>{item.name}</Text>
                 <Text style={styles.cardDescription} numberOfLines={3}>
                     {item.upright.general}
@@ -148,17 +152,27 @@ const styles = StyleSheet.create({
     },
     card: {
         flex: 1,
-        backgroundColor: 'rgba(12,10,20,0.9)',
+        backgroundColor: '#1a1030',
         borderRadius: 16,
-        padding: 12,
+        padding: 10,
+        borderWidth: 1.5,
+        borderColor: '#d4af37',
+        shadowColor: '#d4af37',
+        shadowOpacity: 0.18,
+        shadowOffset: {width: 0, height: 4},
+        shadowRadius: 8,
+        elevation: 6,
+    },
+    cardImageWrapper: {
+        borderRadius: 10,
         borderWidth: 1,
-        borderColor: 'rgba(108,92,231,0.35)',
+        borderColor: 'rgba(212,175,55,0.5)',
+        overflow: 'hidden',
+        marginBottom: 10,
     },
     cardImage: {
         width: '100%',
         height: 160,
-        borderRadius: 12,
-        marginBottom: 12,
         resizeMode: 'cover',
     },
     cardName: {

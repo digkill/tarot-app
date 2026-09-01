@@ -38,7 +38,7 @@ i18n
         fallbackLng: 'en',
         supportedLngs: availableLanguages,
         lng: initialLanguage,
-        debug: process.env.NODE_ENV === 'development', // Включаем debug только в разработке
+        debug: false,
         interpolation: {
             escapeValue: false, // React защищает от XSS
         },

@@ -1,4 +1,7 @@
-import type {Card, Spread, SpreadPosition} from '../entities';
+import type {Card, LanguagePreference, Reading, Spread, SpreadPosition} from '../entities';
+import {SPREADS} from '../data';
+import {I18n} from '../i18n';
+import {findCardById, loadDeck} from '../utils/decks';
 
 type Entry = {
     card: Card;
@@ -34,6 +37,37 @@ const collectKeywords = (entries: Entry[]): string[] => {
         entry.isReversed ? entry.card.reversed.keywords : entry.card.upright.keywords,
     );
     return Array.from(new Set(keywords)).slice(0, 12);
+};
+
+export const hasBrokenSummary = (text: string | undefined): boolean =>
+    Boolean(text && /\{(?:count|spread|price|model)\}/.test(text));
+
+export const getReadingSummary = (reading: Reading, language: LanguagePreference): string => {
+    if (reading.aiInsights?.summary) {
+        return reading.aiInsights.summary;
+    }
+
+    const spread = SPREADS.find((item) => item.id === reading.spreadId);
+    if (!spread) {
+        return reading.summaryText ?? '';
+    }
+
+    const deck = loadDeck(language);
+    const entries = reading.items
+        .map((item) => {
+            const position = spread.positions.find((pos) => pos.index === item.positionIndex);
+            const card = findCardById(deck, item.cardId);
+            if (!position || !card) return null;
+            return {position, card, isReversed: item.isReversed};
+        })
+        .filter((entry): entry is Entry => entry !== null);
+
+    if (!entries.length) {
+        return reading.summaryText ?? '';
+    }
+
+    const translate: Translator = (key, vars) => I18n.t(key, {lng: language, ...(vars ?? {})});
+    return generateInterpretation(spread, entries, translate).summary;
 };
 
 export const generateInterpretation = (

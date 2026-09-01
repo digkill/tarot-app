@@ -1,20 +1,12 @@
 {
-  "onboarding": {
-    "slide1": {
-      "title": "欢迎来到 Tarot",
-      "description": "洗牌、抽牌，在沉浸式的塔罗牌阵中发现启示。"
-    },
-    "slide2": {
-      "title": "选择强大的牌阵",
-      "description": "从单牌反思到复杂的凯尔特十字，为每个意图挑选合适的布局。"
-    },
-    "slide3": {
-      "title": "记录你的解读",
-      "description": "保存占卜结果，写下个人感悟，与友人分享神秘瞬间。"
-    },
-    "skip": "跳过",
-    "next": "下一步",
-    "start": "开始"
+  "nav": {
+    "home": "首页",
+    "spreads": "牌阵",
+    "decks": "牌组",
+    "history": "历史",
+    "settings": "设置",
+    "reading": "占卜",
+    "interpretation": "解读"
   },
   "disclaimer": {
     "title": "开始之前",
@@ -38,7 +30,8 @@
     "quickAccess": {
       "title": "快速牌阵",
       "more": "查看全部",
-      "cardCount": "{count} 张牌"
+      "cardCount_one": "{{count}} 张牌",
+      "cardCount_other": "{{count}} 张牌"
     },
     "recent": {
       "title": "最近占卜",
@@ -69,6 +62,11 @@
     "cancel": "取消",
     "purchaseSuccess": "订阅已激活",
     "purchaseError": "订阅未能完成",
+    "paymentsUnavailable": "购买功能在 RuStore 版本的应用中可用。",
+    "restore": "恢复购买",
+    "restoreSuccess": "订阅已恢复",
+    "restoreNone": "未找到有效订阅",
+    "disclaimer": "订阅通过 RuStore 结算并自动续订。您可以随时在 RuStore 订阅设置中取消。",
     "features": {
       "title": "订阅权益",
       "aiInterpretations": "OpenAI 提供的扩展 AI 解读。",
@@ -107,7 +105,8 @@
       "description": "十二张牌串联每个月与整年的主题。"
     },
     "premium": "高级",
-    "cards": "{count} 张牌",
+    "cards_one": "{{count}} 张牌",
+    "cards_other": "{{count}} 张牌",
     "category": {
       "basic": "基础",
       "love": "爱情",
@@ -143,7 +142,7 @@
     "reversedChanceTitle": "逆位概率",
     "reversedHint": "调整抽牌时出现逆位的频率。",
     "premiumTitle": "Tarot Premium",
-    "premiumDescription": "解锁全部牌阵与 OpenAI 提供的深度解读，每月 {price}。",
+    "premiumDescription": "解锁全部牌阵与 OpenAI 提供的深度解读，每月 {{price}}。",
     "premiumSubscribe": "开始订阅",
     "premiumManage": "取消订阅",
     "premiumActive": "订阅已激活"
@@ -259,17 +258,20 @@
     "month12.description": "收尾与智慧。"
   },
   "reading": {
-    "cardCount": "{count} 张牌",
+    "cardCount_one": "{{count}} 张牌",
+    "cardCount_other": "{{count}} 张牌",
     "redraw": "重新抽牌",
     "shuffling": "正在洗牌...",
     "skipAnimations": "跳过动画",
     "continue": "继续",
     "saving": "保存中...",
     "missingSpread": "未找到牌阵",
-    "reversed": "（逆位）"
+    "reversed": "（逆位）",
+    "zoomHint": "双指捏合可放大牌桌",
+    "resetZoom": "重置缩放"
   },
   "interpretation": {
-    "summaryIntro": "你的 {spread} 牌阵在 {count} 个位置揭示指引。",
+    "summaryIntro": "你的 {{spread}} 牌阵在 {{count}} 个位置揭示指引。",
     "summaryClosing": "体会讯息、记录巧合，并带着意图采取行动。",
     "summaryTitle": "摘要",
     "share": "分享",
@@ -278,6 +280,8 @@
     "notesTitle": "个人笔记",
     "notesPlaceholder": "写下你的感受、想法或仪式...",
     "saveNotes": "保存笔记",
+    "notesSaved": "笔记已保存",
+    "notesSaveError": "无法保存笔记",
     "saving": "保存中...",
     "favorite": "收藏",
     "unfavorite": "取消收藏",
@@ -329,27 +333,6 @@
       "pentacles": "钱币"
     }
   },
-  "premium": {
-    "title": "高级订阅",
-    "status": {
-      "active": "已激活",
-      "inactive": "未激活"
-    },
-    "price": "¥49/月",
-    "features": {
-      "title": "订阅包含:",
-      "aiInterpretations": "AI 深度解读",
-      "deeperInsights": "个性化洞察",
-      "unlimitedReadings": "无限占卜",
-      "prioritySupport": "优先客服支持"
-    },
-    "subscribe": "立即订阅",
-    "manage": "管理订阅",
-    "cancel": "取消",
-    "purchaseSuccess": "订阅成功！",
-    "purchaseError": "订阅失败",
-    "benefits": "高级订阅让你获得由专为塔罗训练的 AI 提供的详细牌义解读。"
-  },
   "aiInterpretation": {
     "title": "AI 深度解读",
     "loading": "正在生成个性化解读...",
@@ -358,32 +341,9 @@
     "premiumFeature": "高级功能",
     "unlockMessage": "订阅高级会员获取 AI 深度解读",
     "unlock": "解锁",
-    "generatedBy": "由 {model} 生成",
+    "generate": "生成解读",
+    "missingKey": "未配置 API 密钥",
+    "generatedBy": "由 {{model}} 生成",
     "refreshInterpretation": "刷新解读"
-  },
-  "settings": {
-    "premiumSection": "高级功能",
-    "languageTitle": "语言",
-    "themeTitle": "主题",
-    "behaviorTitle": "行为",
-    "animations": "动画",
-    "animationsDescription": "启用视觉效果",
-    "sounds": "音效",
-    "soundsDescription": "启用音效",
-    "mysticMode": "神秘模式",
-    "mysticModeDescription": "额外的视觉效果",
-    "reversedChanceTitle": "逆位卡牌概率",
-    "reversedHint": "卡牌出现逆位的频率",
-    "language": {
-      "en": "English",
-      "ru": "Русский",
-      "th": "ไทย",
-      "zh": "中文"
-    },
-    "theme": {
-      "system": "跟随系统",
-      "light": "浅色",
-      "dark": "深色"
-    }
   }
 }

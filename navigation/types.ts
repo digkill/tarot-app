@@ -1,5 +1,4 @@
 export type RootStackParamList = {
-    Onboarding: undefined;
     Disclaimer: undefined;
     Main: undefined;
     Reading: {spreadId: string; deckId: string; readingId?: string};

@@ -15,6 +15,5 @@ export const DEFAULT_SETTINGS: Settings = {
     showMysticMode: true,
     hasPremium: false,
     dailyReminder: false,
-    hasCompletedOnboarding: false,
     acceptedDisclaimer: false,
 };

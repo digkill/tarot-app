@@ -1,20 +1,12 @@
 {
-  "onboarding": {
-    "slide1": {
-      "title": "Welcome to Tarot",
-      "description": "Shuffle, draw and uncover insights with immersive tarot spreads."
-    },
-    "slide2": {
-      "title": "Choose Powerful Spreads",
-      "description": "From single-card reflections to complex crosses, pick layouts for any intention."
-    },
-    "slide3": {
-      "title": "Capture Interpretations",
-      "description": "Save readings, jot personal notes, and share mystical snapshots with friends."
-    },
-    "skip": "Skip",
-    "next": "Next",
-    "start": "Begin"
+  "nav": {
+    "home": "Home",
+    "spreads": "Spreads",
+    "decks": "Decks",
+    "history": "History",
+    "settings": "Settings",
+    "reading": "Reading",
+    "interpretation": "Interpretation"
   },
   "disclaimer": {
     "title": "Before You Begin",
@@ -38,7 +30,8 @@
     "quickAccess": {
       "title": "Quick spreads",
       "more": "View all",
-      "cardCount": "{count} cards"
+      "cardCount_one": "{{count}} card",
+      "cardCount_other": "{{count}} cards"
     },
     "recent": {
       "title": "Recent reading",
@@ -69,6 +62,11 @@
     "cancel": "Maybe later",
     "purchaseSuccess": "Subscription activated",
     "purchaseError": "We couldn't complete the purchase.",
+    "paymentsUnavailable": "Purchases are available in the RuStore version of the app.",
+    "restore": "Restore purchases",
+    "restoreSuccess": "Subscription restored",
+    "restoreNone": "No active subscription found",
+    "disclaimer": "The subscription is billed through RuStore and renews automatically. You can cancel it anytime in your RuStore subscription settings.",
     "features": {
       "title": "Included in Premium",
       "aiInterpretations": "Expanded AI guidance powered by OpenAI for every spread.",
@@ -107,7 +105,8 @@
       "description": "Twelve-card ring highlighting themes for each month and the year overall."
     },
     "premium": "Premium",
-    "cards": "{count} cards",
+    "cards_one": "{{count}} card",
+    "cards_other": "{{count}} cards",
     "category": {
       "basic": "Essentials",
       "love": "Love",
@@ -253,23 +252,26 @@
     "reversedChanceTitle": "Chance of reversed cards",
     "reversedHint": "Adjust how often cards appear reversed when dealing.",
     "premiumTitle": "Tarot Premium",
-    "premiumDescription": "Unlock every spread and detailed AI interpretations powered by OpenAI. {price} per month.",
+    "premiumDescription": "Unlock every spread and detailed AI interpretations powered by OpenAI. {{price}} per month.",
     "premiumSubscribe": "Start subscription",
     "premiumManage": "Cancel subscription",
     "premiumActive": "Subscription active"
   },
   "reading": {
-    "cardCount": "{count} cards",
+    "cardCount_one": "{{count}} card",
+    "cardCount_other": "{{count}} cards",
     "redraw": "Redraw",
     "shuffling": "Shuffling the deck...",
     "skipAnimations": "Skip animations",
     "continue": "Continue",
     "saving": "Saving...",
     "missingSpread": "Spread not found",
-    "reversed": "(Reversed)"
+    "reversed": "(Reversed)",
+    "zoomHint": "Pinch to zoom the table",
+    "resetZoom": "Reset zoom"
   },
   "interpretation": {
-    "summaryIntro": "Your {spread} reading reveals guidance across {count} positions.",
+    "summaryIntro": "Your {{spread}} reading reveals guidance across {{count}} positions.",
     "summaryClosing": "Reflect on the messages, note synchronicities, and act with intention.",
     "summaryTitle": "Summary",
     "share": "Share",
@@ -278,6 +280,8 @@
     "notesTitle": "Personal notes",
     "notesPlaceholder": "Write your reflections, emotions, or rituals...",
     "saveNotes": "Save notes",
+    "notesSaved": "Notes saved",
+    "notesSaveError": "Could not save notes",
     "saving": "Saving...",
     "favorite": "Favorite",
     "unfavorite": "Unfavorite",
@@ -329,27 +333,6 @@
       "pentacles": "Pentacles"
     }
   },
-  "premium": {
-    "title": "Premium Subscription",
-    "status": {
-      "active": "Active",
-      "inactive": "Not Active"
-    },
-    "price": "$6.99/month",
-    "features": {
-      "title": "What's included:",
-      "aiInterpretations": "AI-powered deep interpretations",
-      "deeperInsights": "Personalized insights",
-      "unlimitedReadings": "Unlimited readings",
-      "prioritySupport": "Priority support"
-    },
-    "subscribe": "Subscribe Now",
-    "manage": "Manage Subscription",
-    "cancel": "Cancel",
-    "purchaseSuccess": "Successfully subscribed!",
-    "purchaseError": "Error purchasing subscription",
-    "benefits": "With premium subscription, you get detailed card interpretations powered by AI specifically trained for tarot readings."
-  },
   "aiInterpretation": {
     "title": "AI Deep Interpretation",
     "loading": "Generating personalized interpretation...",
@@ -358,32 +341,9 @@
     "premiumFeature": "Premium Feature",
     "unlockMessage": "Get detailed AI-powered interpretations with premium subscription",
     "unlock": "Unlock",
-    "generatedBy": "Generated by {model}",
+    "generate": "Generate Interpretation",
+    "missingKey": "API key is not configured",
+    "generatedBy": "Generated by {{model}}",
     "refreshInterpretation": "Refresh Interpretation"
-  },
-  "settings": {
-    "premiumSection": "Premium",
-    "languageTitle": "Language",
-    "themeTitle": "Theme",
-    "behaviorTitle": "Behavior",
-    "animations": "Animations",
-    "animationsDescription": "Enable visual effects",
-    "sounds": "Sounds",
-    "soundsDescription": "Enable sound effects",
-    "mysticMode": "Mystic Mode",
-    "mysticModeDescription": "Additional visual effects",
-    "reversedChanceTitle": "Reversed Card Chance",
-    "reversedHint": "How often cards appear in reversed position",
-    "language": {
-      "en": "English",
-      "ru": "Русский",
-      "th": "ไทย",
-      "zh": "中文"
-    },
-    "theme": {
-      "system": "System",
-      "light": "Light",
-      "dark": "Dark"
-    }
   }
 }

@@ -14,6 +14,7 @@ import {useTranslation} from 'react-i18next';
 import {useHistory} from '../providers/HistoryProvider';
 import {useSettings} from '../providers/SettingsProvider';
 import {SPREADS} from '../data';
+import {getReadingSummary} from '../features/interpretation';
 import {RootStackParamList} from '../navigation/types';
 
 type Navigation = NativeStackNavigationProp<RootStackParamList, 'Interpretation'>;
@@ -37,7 +38,7 @@ export const HistoryListScreen = () => {
 
     const renderItem = ({item}: {item: typeof readings[number]}) => {
         const spread = SPREADS.find((spreadItem) => spreadItem.id === item.spreadId);
-        const summary = item.aiInsights?.summary ?? item.summaryText;
+        const summary = getReadingSummary(item, settings.language);
         return (
             <TouchableOpacity
                 style={styles.card}

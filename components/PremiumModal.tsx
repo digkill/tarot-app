@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
     Modal,
     View,
@@ -6,10 +6,18 @@ import {
     TouchableOpacity,
     StyleSheet,
     ScrollView,
+    ActivityIndicator,
     Alert,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {useSettings} from '../providers/SettingsProvider';
+import {
+    describePayError,
+    hasActivePremiumSubscription,
+    isPaymentsSupported,
+    purchasePremium,
+    PurchaseCancelledError,
+} from '../features/payments';
 
 type PremiumModalProps = {
     visible: boolean;
@@ -19,25 +27,63 @@ type PremiumModalProps = {
 export const PremiumModal = ({visible, onClose}: PremiumModalProps) => {
     const {t} = useTranslation();
     const {setSetting} = useSettings();
+    const [processing, setProcessing] = useState(false);
+
+    const activatePremium = async () => {
+        await setSetting('hasPremium', true);
+        Alert.alert(t('premium.purchaseSuccess'), '', [{text: 'OK', onPress: onClose}]);
+    };
 
     const handleSubscribe = async () => {
+        if (processing) return;
+
+        if (!isPaymentsSupported()) {
+            if (__DEV__) {
+                // В dev-окружении (Expo Go, iOS-симулятор) активируем премиум без оплаты
+                await activatePremium();
+            } else {
+                Alert.alert(t('premium.paymentsUnavailable'));
+            }
+            return;
+        }
+
+        setProcessing(true);
         try {
-            // В реальном приложении здесь будет интеграция с платежной системой
-            // (например, React Native IAP для App Store / Google Play)
-            // Для демонстрации просто активируем премиум
-            await setSetting('hasPremium', true);
-            Alert.alert(
-                t('premium.purchaseSuccess'),
-                '',
-                [
-                    {
-                        text: 'OK',
-                        onPress: onClose,
-                    },
-                ],
-            );
+            await purchasePremium('DARK');
+            await activatePremium();
         } catch (error) {
-            Alert.alert(t('premium.purchaseError'));
+            if (!(error instanceof PurchaseCancelledError)) {
+                console.warn('[payments] purchase failed', error);
+                const details = describePayError(error);
+                Alert.alert(t('premium.purchaseError'), details ?? undefined);
+            }
+        } finally {
+            setProcessing(false);
+        }
+    };
+
+    const handleRestore = async () => {
+        if (processing) return;
+
+        if (!isPaymentsSupported()) {
+            Alert.alert(t('premium.paymentsUnavailable'));
+            return;
+        }
+
+        setProcessing(true);
+        try {
+            if (await hasActivePremiumSubscription()) {
+                await setSetting('hasPremium', true);
+                Alert.alert(t('premium.restoreSuccess'), '', [{text: 'OK', onPress: onClose}]);
+            } else {
+                Alert.alert(t('premium.restoreNone'));
+            }
+        } catch (error) {
+            console.warn('[payments] restore failed', error);
+            const details = describePayError(error);
+            Alert.alert(t('premium.purchaseError'), details ?? undefined);
+        } finally {
+            setProcessing(false);
         }
     };
 
@@ -73,17 +119,31 @@ export const PremiumModal = ({visible, onClose}: PremiumModalProps) => {
                             </View>
                         </View>
 
-                        <TouchableOpacity style={styles.subscribeButton} onPress={handleSubscribe}>
-                            <Text style={styles.subscribeButtonText}>{t('premium.subscribe')}</Text>
+                        <TouchableOpacity
+                            style={styles.subscribeButton}
+                            onPress={handleSubscribe}
+                            disabled={processing}
+                        >
+                            {processing ? (
+                                <ActivityIndicator color="#fff" />
+                            ) : (
+                                <Text style={styles.subscribeButtonText}>{t('premium.subscribe')}</Text>
+                            )}
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={styles.restoreButton}
+                            onPress={handleRestore}
+                            disabled={processing}
+                        >
+                            <Text style={styles.restoreButtonText}>{t('premium.restore')}</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
                             <Text style={styles.cancelButtonText}>{t('premium.cancel')}</Text>
                         </TouchableOpacity>
 
-                        <Text style={styles.disclaimer}>
-                            * Для демонстрации подписка активируется бесплатно. В производственной версии будет интеграция с платежной системой.
-                        </Text>
+                        <Text style={styles.disclaimer}>{t('premium.disclaimer')}</Text>
                     </ScrollView>
                 </View>
             </View>
@@ -166,6 +226,15 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 18,
         fontWeight: '700',
+    },
+    restoreButton: {
+        paddingVertical: 12,
+        alignItems: 'center',
+    },
+    restoreButtonText: {
+        color: '#6c5ce7',
+        fontSize: 15,
+        fontWeight: '600',
     },
     cancelButton: {
         paddingVertical: 14,

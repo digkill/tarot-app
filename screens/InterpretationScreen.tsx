@@ -13,7 +13,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import type {RouteProp} from '@react-navigation/native';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import ViewShot from 'react-native-view-shot';
+import ViewShot, {ViewShotRef} from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import {useTranslation} from 'react-i18next';
 import {RootStackParamList} from '../navigation/types';
@@ -25,7 +25,7 @@ import {generateInterpretation} from '../features/interpretation';
 import {fetchPremiumInterpretation, MissingOpenAiKeyError} from '../features/aiInterpretation';
 import TarotCard from '../components/TarotCard';
 import {PremiumModal} from '../components/PremiumModal';
-import type {Card, ReadingAiInsight, SpreadPosition} from '../entities';
+import type {Card, SpreadPosition} from '../entities';
 
 type Route = RouteProp<RootStackParamList, 'Interpretation'>;
 type Navigation = NativeStackNavigationProp<RootStackParamList, 'Interpretation'>;
@@ -37,7 +37,7 @@ export const InterpretationScreen = () => {
     const {readings, updateReading, toggleFavorite} = useHistory();
     const {settings} = useSettings();
     const {t} = useTranslation();
-    const viewRef = useRef<ViewShot>(null);
+    const viewRef = useRef<ViewShotRef>(null);
     const [savingNotes, setSavingNotes] = useState(false);
     const [loadingAiInsights, setLoadingAiInsights] = useState(false);
     const [aiError, setAiError] = useState<string | null>(null);
@@ -64,7 +64,7 @@ export const InterpretationScreen = () => {
 
     const interpretation = useMemo(() => {
         if (!spread || !entries.length) return null;
-        return generateInterpretation(spread, entries, (key, vars) => t(key, vars));
+        return generateInterpretation(spread, entries, (key, vars) => String(t(key, vars ?? {})));
     }, [entries, spread, t]);
 
     const [notes, setNotes] = useState(reading?.notes ?? '');
@@ -79,7 +79,7 @@ export const InterpretationScreen = () => {
         return (
             <SafeAreaView style={styles.safe}>
                 <View style={styles.centered}>
-                    <Text style={styles.errorText}>{t('interpretation.missingReading')}</Text>
+                    <Text style={styles.missingText}>{t('interpretation.missingReading')}</Text>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <Text style={styles.link}>{t('interpretation.goBack')}</Text>
                     </TouchableOpacity>
@@ -96,6 +96,10 @@ export const InterpretationScreen = () => {
         setSavingNotes(true);
         try {
             await updateReading(reading.id, {notes});
+            Alert.alert(t('interpretation.notesSaved'));
+        } catch (error) {
+            console.warn('[notes] failed to save', error);
+            Alert.alert(t('interpretation.notesSaveError'));
         } finally {
             setSavingNotes(false);
         }
@@ -103,11 +107,21 @@ export const InterpretationScreen = () => {
 
     const handleShare = async () => {
         try {
+            if (!(await Sharing.isAvailableAsync())) {
+                Alert.alert(t('interpretation.shareError'));
+                return;
+            }
             const uri = await viewRef.current?.capture?.();
-            if (!uri) return;
-            await Sharing.shareAsync(uri, {dialogTitle: t('interpretation.shareDialog')});
+            if (!uri) {
+                Alert.alert(t('interpretation.shareError'));
+                return;
+            }
+            const shareUri = uri.startsWith('file://') || uri.startsWith('data:') ? uri : `file://${uri}`;
+            await Sharing.shareAsync(shareUri, {dialogTitle: t('interpretation.shareDialog')});
         } catch (error) {
-            Alert.alert(t('interpretation.shareError')); 
+            console.warn('[share] failed', error);
+            const message = error instanceof Error ? error.message : String(error);
+            Alert.alert(t('interpretation.shareError'), message);
         }
     };
 
@@ -143,10 +157,12 @@ export const InterpretationScreen = () => {
             const aiInsights = await fetchPremiumInterpretation(aiRequest);
             await updateReading(reading.id, {aiInsights});
         } catch (error) {
+            console.warn('[ai] interpretation failed', error);
             if (error instanceof MissingOpenAiKeyError) {
-                setAiError(t('aiInterpretation.error') + ': API key not configured');
+                setAiError(t('aiInterpretation.missingKey'));
             } else {
-                setAiError(t('aiInterpretation.error'));
+                const message = error instanceof Error ? error.message : String(error);
+                setAiError(`${t('aiInterpretation.error')}: ${message}`);
             }
         } finally {
             setLoadingAiInsights(false);
@@ -155,7 +171,7 @@ export const InterpretationScreen = () => {
 
     return (
         <SafeAreaView style={styles.safe}>
-            <ScrollView contentContainerStyle={styles.container}>
+            <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
                 <ViewShot ref={viewRef} options={{format: 'png', quality: 1}} style={styles.capture}>
                     <Text style={styles.title}>{t(spread.nameKey)}</Text>
                     <Text style={styles.date}>{new Date(reading.drawnAt).toLocaleString(settings.language)}</Text>
@@ -181,7 +197,7 @@ export const InterpretationScreen = () => {
                                 <Text style={styles.cardSubtitle}>{t(entry.position.descriptionKey)}</Text>
                             </View>
                             <View style={styles.cardRow}>
-                                <TarotCard card={entry.card} isReversed={entry.isReversed} theme="dark" />
+                                <TarotCard card={entry.card} isReversed={entry.isReversed} />
                                 <View style={styles.cardNarrative}>
                                     <Text style={styles.cardName}>
                                         {entry.card.name} {entry.isReversed ? t('reading.reversed') : ''}
@@ -227,7 +243,7 @@ export const InterpretationScreen = () => {
                                 style={styles.generateButton}
                                 onPress={handleGenerateAiInsights}
                             >
-                                <Text style={styles.generateButtonText}>{t('aiInterpretation.unlock')}</Text>
+                                <Text style={styles.generateButtonText}>{t('aiInterpretation.generate')}</Text>
                             </TouchableOpacity>
                         )}
                         {loadingAiInsights && (
@@ -446,7 +462,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         gap: 12,
     },
-    errorText: {
+    missingText: {
         color: '#f7f4ea',
         fontSize: 16,
     },

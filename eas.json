@@ -8,8 +8,13 @@
         "android": {
           "buildType": "apk"
         }
+      },
+      "rustore": {
+        "extends": "production",
+        "android": {
+          "buildType": "apk"
+        }
       }
     },
     "submit": {}
   }
-  

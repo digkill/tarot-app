@@ -1,20 +1,12 @@
 {
-  "onboarding": {
-    "slide1": {
-      "title": "ยินดีต้อนรับสู่ Tarot",
-      "description": "สับไพ่ หยิบไพ่ และค้นพบข้อความจากจักรวาลผ่านรูปแบบการทำนายที่ลุ่มลึก"
-    },
-    "slide2": {
-      "title": "เลือกผังไพ่ที่ทรงพลัง",
-      "description": "ตั้งแต่ไพ่ใบเดียวไปจนถึงผังกรกม้วนเซลติก เลือกเลย์เอาต์ที่ตรงกับเจตนาของคุณ"
-    },
-    "slide3": {
-      "title": "บันทึกคำทำนาย",
-      "description": "เก็บผลการทำนาย เขียนบันทึกส่วนตัว และแชร์ภาพสุดลึกลับให้คนสำคัญ"
-    },
-    "skip": "ข้าม",
-    "next": "ถัดไป",
-    "start": "เริ่มต้น"
+  "nav": {
+    "home": "หน้าแรก",
+    "spreads": "ผังไพ่",
+    "decks": "สำรับไพ่",
+    "history": "ประวัติ",
+    "settings": "ตั้งค่า",
+    "reading": "การทำนาย",
+    "interpretation": "คำทำนาย"
   },
   "disclaimer": {
     "title": "ก่อนเริ่ม",
@@ -38,7 +30,8 @@
     "quickAccess": {
       "title": "ผังยอดนิยม",
       "more": "ดูทั้งหมด",
-      "cardCount": "{count} ใบ"
+      "cardCount_one": "{{count}} ใบ",
+      "cardCount_other": "{{count}} ใบ"
     },
     "recent": {
       "title": "การอ่านล่าสุด",
@@ -69,6 +62,11 @@
     "cancel": "ยกเลิก",
     "purchaseSuccess": "เปิดใช้งานสมาชิกแล้ว",
     "purchaseError": "ไม่สามารถเปิดใช้งานได้",
+    "paymentsUnavailable": "การซื้อใช้ได้ในแอปเวอร์ชัน RuStore",
+    "restore": "กู้คืนการซื้อ",
+    "restoreSuccess": "กู้คืนการสมัครสมาชิกแล้ว",
+    "restoreNone": "ไม่พบการสมัครสมาชิกที่ใช้งานอยู่",
+    "disclaimer": "การสมัครสมาชิกชำระผ่าน RuStore และต่ออายุอัตโนมัติ สามารถยกเลิกได้ทุกเมื่อในการตั้งค่า RuStore",
     "features": {
       "title": "สิทธิประโยชน์ที่ได้รับ",
       "aiInterpretations": "การตีความเชิงลึกด้วย OpenAI สำหรับทุกผัง",
@@ -107,7 +105,8 @@
       "description": "วางแผนธีมของแต่ละเดือนตลอดทั่งปี"
     },
     "premium": "พรีเมียม",
-    "cards": "{count} ใบ",
+    "cards_one": "{{count}} ใบ",
+    "cards_other": "{{count}} ใบ",
     "category": {
       "basic": "พื้นฐาน",
       "love": "ความรัก",
@@ -143,7 +142,7 @@
     "reversedChanceTitle": "โอกาสไพ่กลับหัว",
     "reversedHint": "กำหนดความถี่ของการกลับหัวเมื่อเปิดไพ่",
     "premiumTitle": "Tarot Premium",
-    "premiumDescription": "ปลดล็อกทุกผังและคำทำนายเชิงลึกจาก OpenAI ราคา {price} ต่อเดือน",
+    "premiumDescription": "ปลดล็อกทุกผังและคำทำนายเชิงลึกจาก OpenAI ราคา {{price}} ต่อเดือน",
     "premiumSubscribe": "เริ่มสมาชิก",
     "premiumManage": "ยกเลิกสมาชิก",
     "premiumActive": "เปิดใช้สมาชิกแล้ว"
@@ -259,17 +258,20 @@
     "month12.description": "การปิดบทและปัญญา"
   },
   "reading": {
-    "cardCount": "{count} ใบ",
+    "cardCount_one": "{{count}} ใบ",
+    "cardCount_other": "{{count}} ใบ",
     "redraw": "สับใหม่",
     "shuffling": "กำลังสับไพ่...",
     "skipAnimations": "ข้ามแอนิเมชัน",
     "continue": "ดำเนินการต่อ",
     "saving": "กำลังบันทึก...",
     "missingSpread": "ไม่พบผัง",
-    "reversed": "(กลับหัว)"
+    "reversed": "(กลับหัว)",
+    "zoomHint": "บีบนิ้วเพื่อซูมโต๊ะไพ่",
+    "resetZoom": "รีเซ็ตซูม"
   },
   "interpretation": {
-    "summaryIntro": "การอ่าน {spread} ของคุณเผยคำแนะนำผ่าน {count} ตำแหน่ง",
+    "summaryIntro": "การอ่าน {{spread}} ของคุณเผยคำแนะนำผ่าน {{count}} ตำแหน่ง",
     "summaryClosing": "เก็บเกี่ยวสัญญาณ บันทึกประสบการณ์ และลงมืออย่างมีสติ",
     "summaryTitle": "สรุป",
     "share": "แชร์",
@@ -278,6 +280,8 @@
     "notesTitle": "บันทึกส่วนตัว",
     "notesPlaceholder": "เขียนความรู้สึก ความคิด หรือพิธีกรรม...",
     "saveNotes": "บันทึก",
+    "notesSaved": "บันทึกโน้ตแล้ว",
+    "notesSaveError": "ไม่สามารถบันทึกโน้ตได้",
     "saving": "กำลังบันทึก...",
     "favorite": "รายการโปรด",
     "unfavorite": "เอาออก",
@@ -329,27 +333,6 @@
       "pentacles": "เหรียญ"
     }
   },
-  "premium": {
-    "title": "สมาชิกพรีเมียม",
-    "status": {
-      "active": "ใช้งานอยู่",
-      "inactive": "ยังไม่ได้เปิด"
-    },
-    "price": "฿199/เดือน",
-    "features": {
-      "title": "สิ่งที่คุณจะได้รับ:",
-      "aiInterpretations": "คำทำนายเชิงลึกผ่าน AI",
-      "deeperInsights": "ข้อมูลเฉพาะบุคคล",
-      "unlimitedReadings": "อ่านไพ่ได้ไม่จำกัด",
-      "prioritySupport": "การสนับสนุนพิเศษ"
-    },
-    "subscribe": "สมัครสมาชิก",
-    "manage": "จัดการสมาชิก",
-    "cancel": "ยกเลิก",
-    "purchaseSuccess": "สมัครสมาชิกสำเร็จ!",
-    "purchaseError": "เกิดข้อผิดพลาดในการสมัคร",
-    "benefits": "สมาชิกพรีเมียมจะได้รับคำทำนายที่ละเอียดลึกซึ้งผ่านระบบ AI ที่ออกแบบมาเฉพาะสำหรับทาโรต์"
-  },
   "aiInterpretation": {
     "title": "คำทำนายเชิงลึก AI",
     "loading": "กำลังสร้างคำทำนายเฉพาะคุณ...",
@@ -358,32 +341,9 @@
     "premiumFeature": "ฟีเจอร์พรีเมียม",
     "unlockMessage": "รับคำทำนายเชิงลึกผ่าน AI ด้วยสมาชิกพรีเมียม",
     "unlock": "ปลดล็อก",
-    "generatedBy": "สร้างโดย {model}",
+    "generate": "สร้างคำทำนาย",
+    "missingKey": "ยังไม่ได้ตั้งค่า API key",
+    "generatedBy": "สร้างโดย {{model}}",
     "refreshInterpretation": "สร้างใหม่"
-  },
-  "settings": {
-    "premiumSection": "พรีเมียม",
-    "languageTitle": "ภาษา",
-    "themeTitle": "ธีม",
-    "behaviorTitle": "พฤติกรรม",
-    "animations": "แอนิเมชัน",
-    "animationsDescription": "เปิดใช้เอฟเฟกต์ภาพ",
-    "sounds": "เสียง",
-    "soundsDescription": "เปิดใช้เอฟเฟกต์เสียง",
-    "mysticMode": "โหมดลึกลับ",
-    "mysticModeDescription": "เอฟเฟกต์ภาพเพิ่มเติม",
-    "reversedChanceTitle": "โอกาสไพ่กลับหัว",
-    "reversedHint": "ความถี่ที่ไพ่จะปรากฏในตำแหน่งกลับหัว",
-    "language": {
-      "en": "English",
-      "ru": "Русский",
-      "th": "ไทย",
-      "zh": "中文"
-    },
-    "theme": {
-      "system": "ระบบ",
-      "light": "สว่าง",
-      "dark": "มืด"
-    }
   }
 }

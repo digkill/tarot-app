@@ -1,6 +1,7 @@
 import React, {createContext, useCallback, useContext, useEffect, useMemo, useState} from 'react';
 import type {ReactNode} from 'react';
 import type {Reading} from '../entities';
+import {getReadingSummary, hasBrokenSummary} from '../features/interpretation';
 import {
     addReading as addReadingStorage,
     clearReadings,
@@ -9,6 +10,7 @@ import {
     toggleFavorite,
     updateReading as updateReadingStorage,
 } from '../storage/readings';
+import {loadSettings} from '../storage/settings';
 
 type HistoryContextValue = {
     readings: Reading[];
@@ -30,8 +32,18 @@ export const HistoryProvider = ({children}: {children: ReactNode}) => {
     const refresh = useCallback(async () => {
         setLoading(true);
         try {
-            const data = await loadReadings();
-            setReadings(data);
+            const [data, settings] = await Promise.all([loadReadings(), loadSettings()]);
+            const migrated = await Promise.all(
+                data.map(async (reading) => {
+                    if (!hasBrokenSummary(reading.summaryText)) {
+                        return reading;
+                    }
+                    const summaryText = getReadingSummary(reading, settings.language);
+                    await updateReadingStorage(reading.id, {summaryText});
+                    return {...reading, summaryText};
+                }),
+            );
+            setReadings(migrated);
         } finally {
             setLoading(false);
         }
