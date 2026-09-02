@@ -11,8 +11,10 @@ type Config struct {
 	Port               string
 	DatabaseURL        string
 	JWTSecret          string
-	OpenAIAPIKey       string
-	OpenAITarotModel   string
+	KieAPIKey          string
+	KieBaseURL         string
+	KieTarotModel      string
+	KieReasoningEffort string
 	AccessTokenTTL     time.Duration
 	RefreshTokenTTL    time.Duration
 	CORSAllowedOrigins []string
@@ -20,11 +22,13 @@ type Config struct {
 
 func Load() (*Config, error) {
 	cfg := &Config{
-		Port:             getEnv("PORT", "8080"),
-		DatabaseURL:      os.Getenv("DATABASE_URL"),
-		JWTSecret:        os.Getenv("JWT_SECRET"),
-		OpenAIAPIKey:     os.Getenv("OPENAI_API_KEY"),
-		OpenAITarotModel: getEnv("OPENAI_TAROT_MODEL", "gpt-4o-mini"),
+		Port:               getEnv("PORT", "8080"),
+		DatabaseURL:        os.Getenv("DATABASE_URL"),
+		JWTSecret:          os.Getenv("JWT_SECRET"),
+		KieAPIKey:          os.Getenv("KIE_API_KEY"),
+		KieBaseURL:         getEnv("KIE_BASE_URL", "https://api.kie.ai"),
+		KieTarotModel:      getEnv("KIE_TAROT_MODEL", "gpt-5-6-luna"),
+		KieReasoningEffort: getEnv("KIE_REASONING_EFFORT", "low"),
 	}
 
 	if cfg.DatabaseURL == "" {
@@ -32,6 +36,12 @@ func Load() (*Config, error) {
 	}
 	if len(cfg.JWTSecret) < 32 {
 		return nil, fmt.Errorf("JWT_SECRET must be at least 32 characters")
+	}
+
+	switch cfg.KieReasoningEffort {
+	case "low", "medium", "high", "xhigh":
+	default:
+		return nil, fmt.Errorf("KIE_REASONING_EFFORT must be one of low, medium, high, xhigh")
 	}
 
 	for _, o := range strings.Split(getEnv("CORS_ALLOWED_ORIGINS", "*"), ",") {

@@ -11,10 +11,17 @@ import (
 )
 
 type interpretRequest struct {
-	SpreadID   string          `json:"spreadId"`
-	SpreadName string          `json:"spreadName"`
-	Language   string          `json:"language"`
-	Cards      []llm.CardEntry `json:"cards"`
+	SpreadID          string          `json:"spreadId"`
+	SpreadName        string          `json:"spreadName"`
+	SpreadDescription string          `json:"spreadDescription"`
+	Language          string          `json:"language"`
+	Cards             []llm.CardEntry `json:"cards"`
+}
+
+type interpretResponse struct {
+	Summary   string                `json:"summary"`
+	Positions []llm.InsightPosition `json:"positions"`
+	Model     string                `json:"model"`
 }
 
 func (h *Handler) Interpret(w http.ResponseWriter, r *http.Request) {
@@ -58,17 +65,22 @@ func (h *Handler) Interpret(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	text, err := h.llmClient.Interpret(r.Context(), llm.InterpretRequest{
-		SpreadID:   req.SpreadID,
-		SpreadName: req.SpreadName,
-		Language:   req.Language,
-		Cards:      req.Cards,
+	insight, err := h.llmClient.Interpret(r.Context(), llm.InterpretRequest{
+		SpreadID:          req.SpreadID,
+		SpreadName:        req.SpreadName,
+		SpreadDescription: req.SpreadDescription,
+		Language:          req.Language,
+		Cards:             req.Cards,
 	})
 	if err != nil {
-		slog.Error("openai interpretation failed", "err", err)
+		slog.Error("kie interpretation failed", "err", err)
 		writeError(w, http.StatusBadGateway, "llm_error", "failed to get AI interpretation")
 		return
 	}
 
-	writeJSON(w, http.StatusOK, map[string]string{"text": text})
+	writeJSON(w, http.StatusOK, interpretResponse{
+		Summary:   insight.Summary,
+		Positions: insight.Positions,
+		Model:     insight.Model,
+	})
 }

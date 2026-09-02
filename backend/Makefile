@@ -1,6 +1,6 @@
 BIN := bin/server
 
-.PHONY: build run vet migrate-up migrate-down docker-up docker-down
+.PHONY: build run vet test migrate-up migrate-down docker-up docker-down
 
 build:
 	go build -o $(BIN) ./cmd/server
@@ -10,6 +10,9 @@ run: build
 
 vet:
 	go vet ./...
+
+test:
+	go test ./...
 
 migrate-up:
 	goose -dir migrations postgres "$$DATABASE_URL" up

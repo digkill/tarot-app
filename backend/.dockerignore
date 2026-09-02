@@ -1,0 +1,8 @@
+.env
+*.env
+bin/
+**/*_test.go
+.git
+.gitignore
+docker-compose.yml
+Makefile

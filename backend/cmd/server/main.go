@@ -60,8 +60,11 @@ func main() {
 	readings := storage.NewReadingRepo(pool)
 
 	var llmClient *llm.Client
-	if cfg.OpenAIAPIKey != "" {
-		llmClient = llm.NewClient(cfg.OpenAIAPIKey, cfg.OpenAITarotModel)
+	if cfg.KieAPIKey != "" {
+		llmClient = llm.NewClient(cfg.KieAPIKey, cfg.KieBaseURL, cfg.KieTarotModel, cfg.KieReasoningEffort)
+		slog.Info("kie llm enabled", "model", cfg.KieTarotModel, "effort", cfg.KieReasoningEffort)
+	} else {
+		slog.Warn("KIE_API_KEY is empty; AI interpretations are disabled")
 	}
 
 	handler := httpapi.NewHandler(cfg, users, refreshTokens, readings, llmClient)
@@ -70,7 +73,7 @@ func main() {
 		Addr:         ":" + cfg.Port,
 		Handler:      handler.Router(),
 		ReadTimeout:  15 * time.Second,
-		WriteTimeout: 60 * time.Second,
+		WriteTimeout: 90 * time.Second,
 		IdleTimeout:  120 * time.Second,
 	}
 
