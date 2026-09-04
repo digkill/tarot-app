@@ -10,6 +10,7 @@ import (
 	"github.com/digkill/tarot-app/backend/internal/llm"
 	"github.com/digkill/tarot-app/backend/internal/mailer"
 	"github.com/digkill/tarot-app/backend/internal/storage"
+	"github.com/digkill/tarot-app/backend/internal/yookassa"
 )
 
 type jwtHolder struct {
@@ -32,6 +33,8 @@ type Handler struct {
 	audit         *storage.AuditRepo
 	decks         *storage.DeckRepo
 	usage         *storage.UsageRepo
+	checkout      *storage.CheckoutRepo
+	yk            *yookassa.Client
 	mail          *mailer.Sender
 	box           *atrest.Box
 	llmClient     llm.Interpreter
@@ -52,6 +55,7 @@ func NewHandler(
 	audit *storage.AuditRepo,
 	deckRepo *storage.DeckRepo,
 	usageRepo *storage.UsageRepo,
+	checkoutRepo *storage.CheckoutRepo,
 	mail *mailer.Sender,
 	box *atrest.Box,
 	llmClient llm.Interpreter,
@@ -68,6 +72,8 @@ func NewHandler(
 		audit:         audit,
 		decks:         deckRepo,
 		usage:         usageRepo,
+		checkout:      checkoutRepo,
+		yk:            yookassa.New(cfg.YooKassaShopID, cfg.YooKassaSecretKey),
 		mail:          mail,
 		box:           box,
 		llmClient:     llmClient,

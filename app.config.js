@@ -4,7 +4,7 @@ module.exports = {
   expo: {
     name: 'Tarot',
     slug: 'tarot',
-    version: '1.1.5',
+    version: '1.1.6',
     scheme: 'mediarisetarot',
     orientation: 'portrait',
     icon: './assets/icon.png',
@@ -36,6 +36,7 @@ module.exports = {
       './plugins/withSplashBranding',
       'expo-status-bar',
       'expo-video',
+      'expo-web-browser',
       [
         './plugins/withRuStorePay',
         {
@@ -54,10 +55,15 @@ module.exports = {
     },
     ios: {
       supportsTablet: true,
+      bundleIdentifier: 'org.mediarise.tarot',
+      buildNumber: '8',
+      infoPlist: {
+        ITSAppUsesNonExemptEncryption: false,
+      },
     },
     android: {
       package: 'org.mediarise.tarot',
-      versionCode: 7,
+      versionCode: 8,
       permissions: [],
       adaptiveIcon: {
         foregroundImage: './assets/adaptive-icon.png',

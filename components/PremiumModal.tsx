@@ -1,20 +1,23 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import {
+    Alert,
     Modal,
+    Platform,
     View,
     Text,
     TouchableOpacity,
     StyleSheet,
     ScrollView,
     ActivityIndicator,
-    Alert,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {useSettings} from '../providers/SettingsProvider';
 import {useAuth} from '../providers/AuthProvider';
 import {useAppColors} from '../providers/DeckShopProvider';
 import {hexAlpha} from '../theme/appColors';
+import {isApiError} from '../features/apiClient';
 import {reportPurchaseRequest} from '../features/billingApi';
+import {startYooKassaCheckout} from '../features/yookassaCheckout';
 import {
     describePayError,
     FALLBACK_PREMIUM_PRICES,
@@ -102,6 +105,30 @@ export const PremiumModal = ({visible, onClose, onActivated}: PremiumModalProps)
             return;
         }
 
+        if (Platform.OS !== 'android') {
+            setProcessing(true);
+            try {
+                const status = await startYooKassaCheckout(selected);
+                await refreshUser();
+                if (status.hasPremium || status.status === 'paid') {
+                    await activatePremium();
+                    return;
+                }
+                Alert.alert(t('premium.checkoutPending'));
+            } catch (error) {
+                if (__DEV__ && isApiError(error) && error.code === 'payments_unavailable') {
+                    await syncPurchase({productId: selected, source: 'dev'});
+                    await activatePremium();
+                    return;
+                }
+                console.warn('[payments] yookassa checkout failed', error);
+                Alert.alert(t('premium.purchaseError'));
+            } finally {
+                setProcessing(false);
+            }
+            return;
+        }
+
         if (!isPaymentsSupported()) {
             if (__DEV__) {
                 await syncPurchase({productId: selected, source: 'dev'});
@@ -150,6 +177,32 @@ export const PremiumModal = ({visible, onClose, onActivated}: PremiumModalProps)
 
     const handleRestore = async () => {
         if (processing) {
+            return;
+        }
+
+        if (Platform.OS !== 'android') {
+            setProcessing(true);
+            try {
+                const me = await refreshUser();
+                if (me?.hasPremium) {
+                    await setSetting('hasPremium', true);
+                    Alert.alert(t('premium.restoreSuccess'), '', [
+                        {
+                            text: 'OK',
+                            onPress: () => {
+                                onActivated?.();
+                                onClose();
+                            },
+                        },
+                    ]);
+                } else {
+                    Alert.alert(t('premium.restoreNone'));
+                }
+            } catch {
+                Alert.alert(t('premium.purchaseError'));
+            } finally {
+                setProcessing(false);
+            }
             return;
         }
 
@@ -297,7 +350,9 @@ export const PremiumModal = ({visible, onClose, onActivated}: PremiumModalProps)
                             <Text style={[styles.cancelButtonText, {color: colors.text}]}>{t('premium.cancel')}</Text>
                         </TouchableOpacity>
 
-                        <Text style={[styles.disclaimer, {color: colors.muted}]}>{t('premium.disclaimer')}</Text>
+                        <Text style={[styles.disclaimer, {color: colors.muted}]}>
+                            {t(Platform.OS === 'android' ? 'premium.disclaimer' : 'premium.disclaimerIos')}
+                        </Text>
                     </ScrollView>
                 </View>
             </View>

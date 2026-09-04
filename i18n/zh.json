@@ -79,6 +79,15 @@
     "rustoreMissing": "请安装 RuStore 并用测试员 VK ID 登录后再付款。",
     "installRuStore": "安装 RuStore",
     "disclaimer": "通过 RuStore 结算。包月和包年会自动续订；终身为 99 年订阅。可在 RuStore 订阅设置中取消续订。沙盒付款会显示「Тестовая покупка」。",
+    "checkoutPending": "付款仍在处理中，请稍后再次打开会员页。",
+    "disclaimerIos": "iOS 通过我们的 YooKassa 网关付款。会员绑定 Tarot 账号，不是 Apple 内购。若先在 RuStore 订阅，则以 RuStore 为准，直到在此续费。",
+    "source": {
+      "rustore": "通过 RuStore 付款",
+      "yookassa": "通过 YooKassa 付款（iOS）",
+      "admin": "由客服开通",
+      "promo": "促销权限",
+      "dev": "开发解锁"
+    },
     "plans": {
       "monthly": {
         "name": "月相周期",

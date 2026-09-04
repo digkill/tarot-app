@@ -79,6 +79,15 @@
     "rustoreMissing": "Install RuStore and sign in with the tester VK ID to complete the purchase.",
     "installRuStore": "Install RuStore",
     "disclaimer": "Billed through RuStore. Monthly and yearly plans renew automatically; lifetime is a 99-year subscription. Cancel renewal in RuStore subscription settings. Sandbox payments show a “Test purchase” badge.",
+    "checkoutPending": "Payment is still processing. Open Premium again in a moment.",
+    "disclaimerIos": "On iOS you pay through our YooKassa gateway. Premium is tied to your Tarot account, not Apple In-App Purchase. If you first subscribed on RuStore, that store remains in charge until you renew here.",
+    "source": {
+      "rustore": "Billed via RuStore",
+      "yookassa": "Billed via YooKassa (iOS)",
+      "admin": "Granted by support",
+      "promo": "Promo access",
+      "dev": "Developer unlock"
+    },
     "plans": {
       "monthly": {
         "name": "Lunar Cycle",

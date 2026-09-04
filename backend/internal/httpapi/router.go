@@ -50,8 +50,12 @@ func (h *Handler) Router() http.Handler {
 			r.Post("/usage/ad-session", h.StartAdSession)
 			r.Post("/billing/purchases", h.ReportPurchase)
 			r.Post("/billing/subscription-status", h.SyncSubscriptionStatus)
+			r.Post("/billing/checkout", h.CreateCheckout)
+			r.Get("/billing/checkout/{id}", h.GetCheckout)
 			r.Get("/me/decks", h.MyDecks)
 		})
+
+		r.Post("/billing/yookassa/webhook", h.YooKassaWebhook)
 
 		r.Group(func(r chi.Router) {
 			r.Use(h.optionalAuth)
@@ -59,6 +63,9 @@ func (h *Handler) Router() http.Handler {
 			r.Get("/shop/decks/{slug}", h.ShopGetDeck)
 		})
 	})
+
+	r.Get("/pay/go", h.PayGo)
+	r.Get("/pay/return", h.PayReturn)
 
 	r.Get("/media/decks/{slug}/{file}", h.ServeDeckMedia)
 

@@ -42,6 +42,7 @@ type userView struct {
 	HasPremium       bool       `json:"hasPremium"`
 	PremiumExpiresAt *time.Time `json:"premiumExpiresAt"`
 	PremiumProductID string     `json:"premiumProductId,omitempty"`
+	PremiumSource    string     `json:"premiumSource,omitempty"`
 	EmailVerified    bool       `json:"emailVerified"`
 	CreatedAt        time.Time  `json:"createdAt"`
 }
@@ -53,6 +54,7 @@ func toUserView(u *storage.User) userView {
 		HasPremium:       u.HasPremium,
 		PremiumExpiresAt: u.PremiumExpiresAt,
 		PremiumProductID: u.PremiumProductID,
+		PremiumSource:    u.PremiumSource,
 		EmailVerified:    u.EmailVerified(),
 		CreatedAt:        u.CreatedAt,
 	}

@@ -29,12 +29,7 @@ func ExpiresAt(p Product, from time.Time) *time.Time {
 }
 
 func IsStoreManaged(source string) bool {
-	switch strings.ToLower(strings.TrimSpace(source)) {
-	case ProviderRuStore, ProviderDev:
-		return true
-	default:
-		return false
-	}
+	return IsRuStoreManaged(source)
 }
 
 func ParseTime(raw string) *time.Time {

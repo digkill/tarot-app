@@ -128,6 +128,32 @@ func (r *TransactionRepo) Create(ctx context.Context, p CreateTransactionParams)
 	return r.GetByID(ctx, id)
 }
 
+func (r *TransactionRepo) SetProviderRefs(ctx context.Context, id, invoiceID, purchaseID string) error {
+	tag, err := r.pool.Exec(ctx, `
+		UPDATE transactions
+		SET provider_invoice_id = NULLIF($2, ''),
+		    provider_purchase_id = NULLIF($3, '')
+		WHERE id = $1`, id, invoiceID, purchaseID)
+	if err != nil {
+		return fmt.Errorf("set transaction provider refs: %w", err)
+	}
+	if tag.RowsAffected() == 0 {
+		return ErrNotFound
+	}
+	return nil
+}
+
+func (r *TransactionRepo) SetStatus(ctx context.Context, id, status string) error {
+	tag, err := r.pool.Exec(ctx, `UPDATE transactions SET status = $2, paid_at = CASE WHEN $2 = 'paid' THEN NOW() ELSE paid_at END WHERE id = $1`, id, status)
+	if err != nil {
+		return fmt.Errorf("set transaction status: %w", err)
+	}
+	if tag.RowsAffected() == 0 {
+		return ErrNotFound
+	}
+	return nil
+}
+
 func (r *TransactionRepo) GetByID(ctx context.Context, id string) (*Transaction, error) {
 	q := `SELECT ` + txSelect + ` FROM transactions t JOIN users u ON u.id = t.user_id WHERE t.id = $1`
 	tx, err := scanTx(r.pool.QueryRow(ctx, q, id))

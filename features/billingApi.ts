@@ -10,6 +10,31 @@ export type ReportPurchaseInput = {
     expiresAt?: string;
 };
 
+export type CheckoutSession = {
+    transactionId: string;
+    paymentId?: string;
+    checkoutUrl: string;
+    confirmationUrl?: string;
+    productId?: string;
+};
+
+export type CheckoutStatus = {
+    transactionId: string;
+    status: string;
+    productId?: string;
+    hasPremium: boolean;
+    premiumSource?: string;
+};
+
+export const createCheckoutRequest = (productId: string) =>
+    apiRequest<CheckoutSession>('/api/v1/billing/checkout', {
+        method: 'POST',
+        body: {productId},
+    });
+
+export const fetchCheckoutRequest = (transactionId: string) =>
+    apiRequest<CheckoutStatus>(`/api/v1/billing/checkout/${transactionId}`);
+
 export type ReportPurchaseResult = {
     ok: boolean;
     transactionId?: string;

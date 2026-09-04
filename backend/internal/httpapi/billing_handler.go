@@ -191,16 +191,16 @@ func (h *Handler) SyncSubscriptionStatus(w http.ResponseWriter, r *http.Request)
 			writeError(w, http.StatusInternalServerError, "internal_error", "failed to refresh premium")
 			return
 		}
-		writeJSON(w, http.StatusOK, map[string]any{"ok": true, "hasPremium": true})
+		writeJSON(w, http.StatusOK, map[string]any{"ok": true, "hasPremium": true, "premiumSource": billing.ProviderRuStore})
 		return
 	}
 
 	if user.PremiumProductID == billing.ProductLifetime {
-		writeJSON(w, http.StatusOK, map[string]any{"ok": true, "hasPremium": true})
+		writeJSON(w, http.StatusOK, map[string]any{"ok": true, "hasPremium": true, "premiumSource": user.PremiumSource})
 		return
 	}
-	if !billing.IsStoreManaged(user.PremiumSource) {
-		writeJSON(w, http.StatusOK, map[string]any{"ok": true, "hasPremium": user.HasPremium})
+	if !billing.CanRevokeFrom(user.PremiumSource, billing.ProviderRuStore) {
+		writeJSON(w, http.StatusOK, map[string]any{"ok": true, "hasPremium": user.HasPremium, "premiumSource": user.PremiumSource})
 		return
 	}
 	if err = h.users.RevokePremium(r.Context(), user.ID); err != nil {
@@ -244,6 +244,9 @@ func (h *Handler) applyPurchaseEntitlement(
 func (h *Handler) grantPremium(r *http.Request, userID string, product billing.Product, source string, storeExpiry *time.Time) error {
 	if product.ID == "" {
 		return h.users.GrantPremium(r.Context(), userID, storage.PremiumGrant{Source: source})
+	}
+	if current, err := h.users.GetByID(r.Context(), userID); err == nil && current.HasPremium && billing.KeepLifetime(current.PremiumProductID, product.ID) {
+		return nil
 	}
 	return h.users.GrantPremium(r.Context(), userID, storage.PremiumGrant{
 		ProductID: product.ID,

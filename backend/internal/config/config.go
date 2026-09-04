@@ -34,6 +34,9 @@ type Config struct {
 	AdminPassword      string
 	AdminSessionTTL    time.Duration
 	DeckStorageDir     string
+	PublicBaseURL      string
+	YooKassaShopID     string
+	YooKassaSecretKey  string
 }
 
 func Load() (*Config, error) {
@@ -57,6 +60,9 @@ func Load() (*Config, error) {
 		AdminEmail:         strings.ToLower(strings.TrimSpace(os.Getenv("ADMIN_EMAIL"))),
 		AdminPassword:      os.Getenv("ADMIN_PASSWORD"),
 		DeckStorageDir:     getEnv("DECK_STORAGE_DIR", "data/decks"),
+		PublicBaseURL:      strings.TrimRight(getEnv("PUBLIC_BASE_URL", "https://tarot.sorapure.fun"), "/"),
+		YooKassaShopID:     strings.TrimSpace(os.Getenv("YOOKASSA_SHOP_ID")),
+		YooKassaSecretKey:  strings.TrimSpace(os.Getenv("YOOKASSA_SECRET_KEY")),
 	}
 
 	if cfg.DatabaseURL == "" {

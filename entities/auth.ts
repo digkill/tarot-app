@@ -6,6 +6,7 @@ export type AuthUser = {
     hasPremium: boolean;
     premiumExpiresAt?: string | null;
     premiumProductId?: string;
+    premiumSource?: string;
     emailVerified?: boolean;
     createdAt: string;
 };

@@ -30,6 +30,9 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {I18n} from './i18n';
 import {VideoSplash} from './components/VideoSplash';
 import {AppTabsParamList, HomeStackParamList, RootStackParamList} from './navigation/types';
+import * as WebBrowser from 'expo-web-browser';
+
+WebBrowser.maybeCompleteAuthSession();
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 const HomeStack = createNativeStackNavigator<HomeStackParamList>();

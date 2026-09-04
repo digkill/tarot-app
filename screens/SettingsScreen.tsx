@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {
     Alert,
+    Platform,
     ScrollView,
     StyleSheet,
     Switch,
@@ -136,6 +137,13 @@ export const SettingsScreen = () => {
                                         : t('premium.lifetimeAccess')}
                                 </Text>
                             ) : null}
+                            {settings.hasPremium && user?.premiumSource ? (
+                                <Text style={[styles.premiumStatus, {color: colors.muted}]}>
+                                    {t(`premium.source.${user.premiumSource}`, {
+                                        defaultValue: user.premiumSource,
+                                    })}
+                                </Text>
+                            ) : null}
                         </View>
                         <View
                             style={[
@@ -162,6 +170,10 @@ export const SettingsScreen = () => {
                         <TouchableOpacity
                             style={[styles.manageButton, {borderColor: hexAlpha(colors.gold, 0.4)}]}
                             onPress={() => {
+                                if (Platform.OS !== 'android' || user?.premiumSource === 'yookassa') {
+                                    setShowPremiumModal(true);
+                                    return;
+                                }
                                 openRuStoreSubscriptions().catch((error) => {
                                     if (error instanceof RuStoreMissingError) {
                                         Alert.alert(t('premium.rustoreMissingTitle'), t('premium.rustoreMissing'));

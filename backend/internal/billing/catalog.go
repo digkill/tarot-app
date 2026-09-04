@@ -15,10 +15,11 @@ const (
 	KindPromo        = "promo"
 	KindRestore      = "restore"
 
-	ProviderRuStore = "rustore"
-	ProviderAdmin   = "admin"
-	ProviderPromo   = "promo"
-	ProviderDev     = "dev"
+	ProviderRuStore  = "rustore"
+	ProviderAdmin    = "admin"
+	ProviderPromo    = "promo"
+	ProviderDev      = "dev"
+	ProviderYooKassa = "yookassa"
 
 	StatusPending  = "pending"
 	StatusPaid     = "paid"
@@ -65,6 +66,8 @@ func NormalizeProvider(v string) string {
 	switch strings.ToLower(strings.TrimSpace(v)) {
 	case ProviderRuStore:
 		return ProviderRuStore
+	case ProviderYooKassa, "apple", "ios":
+		return ProviderYooKassa
 	case ProviderPromo:
 		return ProviderPromo
 	case ProviderDev:
@@ -80,6 +83,8 @@ func NormalizeSource(v string) string {
 		return KindRestore
 	case ProviderDev:
 		return ProviderDev
+	case ProviderYooKassa, "apple", "ios":
+		return ProviderYooKassa
 	default:
 		return ProviderRuStore
 	}

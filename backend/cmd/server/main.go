@@ -68,6 +68,7 @@ func main() {
 	audit := storage.NewAuditRepo(pool)
 	deckRepo := storage.NewDeckRepo(pool)
 	usageRepo := storage.NewUsageRepo(pool)
+	checkoutRepo := storage.NewCheckoutRepo(pool)
 	if err = os.MkdirAll(cfg.DeckStorageDir, 0o755); err != nil {
 		slog.Error("create deck storage", "error", err)
 		os.Exit(1)
@@ -148,7 +149,7 @@ func main() {
 		slog.Warn("no AI providers configured; interpretations are disabled")
 	}
 
-	handler := httpapi.NewHandler(cfg, users, refreshTokens, readings, accessStats, codes, txns, stats, audit, deckRepo, usageRepo, mail, box, llmClient)
+	handler := httpapi.NewHandler(cfg, users, refreshTokens, readings, accessStats, codes, txns, stats, audit, deckRepo, usageRepo, checkoutRepo, mail, box, llmClient)
 
 	expireStop := make(chan struct{})
 	go func() {
