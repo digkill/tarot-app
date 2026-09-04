@@ -93,6 +93,8 @@ export type LanguagePreference = 'en' | 'ru' | 'th' | 'zh';
 
 export type Settings = {
     language: LanguagePreference;
+    /** Once true, language no longer follows the device locale. */
+    languageExplicit?: boolean;
     theme: ThemePreference;
     disableAnimations: boolean;
     disableSounds: boolean;

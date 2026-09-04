@@ -66,7 +66,7 @@ export const HomeScreen = () => {
         <SafeAreaView style={styles.safe}>
             <ScrollView contentContainerStyle={styles.container}>
                 <View style={styles.hero}>
-                    <Image source={require('../assets/tarot-bg.png')} style={styles.heroImage} />
+                    <Image source={require('../assets/home-hero.jpg')} style={styles.heroImage} />
                     <View style={styles.heroOverlay} />
                     <View style={styles.heroContent}>
                         <Text style={styles.heroGreeting}>{greeting}</Text>
@@ -152,13 +152,14 @@ const styles = StyleSheet.create({
     },
     hero: {
         marginHorizontal: 20,
-        height: 260,
+        height: 280,
         borderRadius: 24,
         overflow: 'hidden',
     },
     heroImage: {
         width: '100%',
         height: '100%',
+        resizeMode: 'cover',
     },
     heroOverlay: {
         position: 'absolute',
@@ -166,7 +167,7 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(8,7,15,0.55)',
+        backgroundColor: 'rgba(8,7,15,0.38)',
     },
     heroContent: {
         position: 'absolute',

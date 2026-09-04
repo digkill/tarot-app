@@ -1,6 +1,6 @@
 {
   "name": "tarot-app",
-  "version": "1.1.0",
+  "version": "1.1.5",
   "engines": {
     "node": ">=20.19.4"
   },
@@ -37,10 +37,10 @@
     "expo-system-ui": "~57.0.3",
     "expo-three": "^8.0.0",
     "expo-updates": "~57.0.19",
+    "expo-video": "~57.0.3",
     "expo-web-browser": "~57.0.2",
     "i18n-js": "^4.5.3",
     "i18next": "^26.3.4",
-    "openai": "^6.45.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-i18next": "^17.0.8",

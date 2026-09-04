@@ -23,11 +23,17 @@ func (h *Handler) Router() http.Handler {
 		r.Post("/auth/register", h.Register)
 		r.Post("/auth/login", h.Login)
 		r.Post("/auth/refresh", h.Refresh)
+		r.Post("/auth/logout", h.Logout)
+		r.Post("/auth/verify-email", h.VerifyEmail)
+		r.Post("/auth/resend-verification", h.ResendVerification)
+		r.Post("/auth/forgot-password", h.ForgotPassword)
+		r.Post("/auth/reset-password", h.ResetPassword)
 
 		r.Group(func(r chi.Router) {
 			r.Use(h.authMiddleware)
 
 			r.Get("/me", h.Me)
+			r.Delete("/me", h.DeleteMe)
 
 			r.Get("/readings", h.ListReadings)
 			r.Post("/readings", h.CreateReading)

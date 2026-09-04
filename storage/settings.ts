@@ -1,17 +1,35 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type {Settings} from '../entities';
 import {DEFAULT_SETTINGS} from '../entities';
+import {isLanguagePreference, resolveDeviceLanguage} from '../utils/locale';
 
 const STORAGE_KEY = 'tarot.settings';
 
+const withDeviceLanguage = (settings: Settings): Settings => ({
+    ...settings,
+    language: resolveDeviceLanguage(),
+    languageExplicit: false,
+});
+
 const parseSettings = (raw: string | null): Settings => {
-    if (!raw) return DEFAULT_SETTINGS;
+    if (!raw) {
+        return withDeviceLanguage(DEFAULT_SETTINGS);
+    }
     try {
-        const parsed = JSON.parse(raw);
-        return {...DEFAULT_SETTINGS, ...parsed};
+        const parsed = JSON.parse(raw) as Partial<Settings>;
+        const merged: Settings = {...DEFAULT_SETTINGS, ...parsed};
+        const storedLanguage = isLanguagePreference(parsed.language) ? parsed.language : null;
+
+        if (parsed.languageExplicit === true && storedLanguage) {
+            merged.language = storedLanguage;
+            merged.languageExplicit = true;
+            return merged;
+        }
+
+        return withDeviceLanguage(merged);
     } catch (error) {
         console.warn('[settings] failed to parse', error);
-        return DEFAULT_SETTINGS;
+        return withDeviceLanguage(DEFAULT_SETTINGS);
     }
 };
 

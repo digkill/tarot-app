@@ -1,5 +1,6 @@
 import type {LanguagePreference, Settings, ThemePreference} from './tarot';
 
+/** Fallback when the device locale is not one of en/ru/th/zh. */
 export const DEFAULT_LANGUAGE: LanguagePreference = 'en';
 
 export const DEFAULT_THEME: ThemePreference = 'system';

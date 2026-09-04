@@ -5,12 +5,21 @@ import (
 	"os"
 	"strings"
 	"time"
+
+	"github.com/digkill/tarot-app/backend/internal/atrest"
 )
 
 type Config struct {
 	Port               string
 	DatabaseURL        string
 	JWTSecret          string
+	PIIEncryptionKey   []byte
+	SMTPHost           string
+	SMTPPort           string
+	SMTPUsername       string
+	SMTPPassword       string
+	SMTPFrom           string
+	SMTPFromName       string
 	KieAPIKey          string
 	KieBaseURL         string
 	KieTarotModel      string
@@ -25,6 +34,12 @@ func Load() (*Config, error) {
 		Port:               getEnv("PORT", "8080"),
 		DatabaseURL:        os.Getenv("DATABASE_URL"),
 		JWTSecret:          os.Getenv("JWT_SECRET"),
+		SMTPHost:           getEnv("SMTP_HOST", "smtp.beget.com"),
+		SMTPPort:           getEnv("SMTP_PORT", "465"),
+		SMTPUsername:       os.Getenv("SMTP_USERNAME"),
+		SMTPPassword:       os.Getenv("SMTP_PASSWORD"),
+		SMTPFrom:           getEnv("SMTP_FROM", os.Getenv("SMTP_USERNAME")),
+		SMTPFromName:       getEnv("SMTP_FROM_NAME", "Tarot"),
 		KieAPIKey:          os.Getenv("KIE_API_KEY"),
 		KieBaseURL:         getEnv("KIE_BASE_URL", "https://api.kie.ai"),
 		KieTarotModel:      getEnv("KIE_TAROT_MODEL", "gpt-5-6-luna"),
@@ -34,8 +49,20 @@ func Load() (*Config, error) {
 	if cfg.DatabaseURL == "" {
 		return nil, fmt.Errorf("DATABASE_URL is required")
 	}
+	var err error
 	if len(cfg.JWTSecret) < 32 {
 		return nil, fmt.Errorf("JWT_SECRET must be at least 32 characters")
+	}
+
+	cfg.PIIEncryptionKey, err = atrest.ParseKey(os.Getenv("PII_ENCRYPTION_KEY"))
+	if err != nil {
+		return nil, err
+	}
+	if cfg.SMTPFrom == "" {
+		cfg.SMTPFrom = cfg.SMTPUsername
+	}
+	if cfg.SMTPUsername == "" || cfg.SMTPPassword == "" {
+		return nil, fmt.Errorf("SMTP_USERNAME and SMTP_PASSWORD are required")
 	}
 
 	switch cfg.KieReasoningEffort {
@@ -50,7 +77,6 @@ func Load() (*Config, error) {
 		}
 	}
 
-	var err error
 	cfg.AccessTokenTTL, err = parseDuration("ACCESS_TOKEN_TTL", 15*time.Minute)
 	if err != nil {
 		return nil, err

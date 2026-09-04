@@ -8,16 +8,12 @@ import {useSettings} from '../providers/SettingsProvider';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Disclaimer'>;
 
-export const DisclaimerScreen = ({navigation}: Props) => {
+export const DisclaimerScreen = (_props: Props) => {
     const {t} = useTranslation();
     const {setSetting} = useSettings();
 
     const accept = () => {
         setSetting('acceptedDisclaimer', true).catch(() => {});
-        navigation.reset({
-            index: 0,
-            routes: [{name: 'Main'}],
-        });
     };
 
     return (
@@ -26,6 +22,7 @@ export const DisclaimerScreen = ({navigation}: Props) => {
                 <Text style={styles.title}>{t('disclaimer.title')}</Text>
                 <Text style={styles.body}>{t('disclaimer.description1')}</Text>
                 <Text style={styles.body}>{t('disclaimer.description2')}</Text>
+                <Text style={styles.body}>{t('disclaimer.nextHint')}</Text>
                 <View style={styles.adviceBox}>
                     <Text style={styles.adviceTitle}>{t('disclaimer.remember')}</Text>
                     <Text style={styles.adviceText}>{t('disclaimer.rememberDescription')}</Text>

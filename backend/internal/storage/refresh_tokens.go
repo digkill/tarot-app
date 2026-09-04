@@ -62,3 +62,25 @@ func (r *RefreshTokenRepo) Consume(ctx context.Context, tokenHash string) (*Refr
 	}
 	return &t, nil
 }
+
+func (r *RefreshTokenRepo) RevokeByHash(ctx context.Context, tokenHash string) error {
+	_, err := r.pool.Exec(ctx, `
+		UPDATE refresh_tokens
+		SET revoked_at = NOW()
+		WHERE token_hash = $1 AND revoked_at IS NULL`, tokenHash)
+	if err != nil {
+		return fmt.Errorf("revoke refresh token: %w", err)
+	}
+	return nil
+}
+
+func (r *RefreshTokenRepo) RevokeAllForUser(ctx context.Context, userID string) error {
+	_, err := r.pool.Exec(ctx, `
+		UPDATE refresh_tokens
+		SET revoked_at = NOW()
+		WHERE user_id = $1 AND revoked_at IS NULL`, userID)
+	if err != nil {
+		return fmt.Errorf("revoke user refresh tokens: %w", err)
+	}
+	return nil
+}

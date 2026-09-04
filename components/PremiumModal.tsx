@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {
     Modal,
     View,
@@ -13,21 +13,57 @@ import {useTranslation} from 'react-i18next';
 import {useSettings} from '../providers/SettingsProvider';
 import {
     describePayError,
+    FALLBACK_PREMIUM_PRICES,
+    formatRub,
+    getPremiumProducts,
     hasActivePremiumSubscription,
     isPaymentsSupported,
+    PREMIUM_PRODUCT_IDS,
+    promptInstallRuStore,
     purchasePremium,
     PurchaseCancelledError,
+    RuStoreMissingError,
+    type PremiumProductId,
 } from '../features/payments';
+import type {Product} from '../libs/RuStoreReactPay';
 
 type PremiumModalProps = {
     visible: boolean;
     onClose: () => void;
 };
 
+const PLAN_COPY: Record<PremiumProductId, {name: string; period: string; hint: string}> = {
+    premium_monthly: {name: 'plans.monthly.name', period: 'plans.monthly.period', hint: 'plans.monthly.hint'},
+    premium_yearly: {name: 'plans.yearly.name', period: 'plans.yearly.period', hint: 'plans.yearly.hint'},
+    premium_lifetime: {name: 'plans.lifetime.name', period: 'plans.lifetime.period', hint: 'plans.lifetime.hint'},
+};
+
 export const PremiumModal = ({visible, onClose}: PremiumModalProps) => {
     const {t} = useTranslation();
     const {setSetting} = useSettings();
     const [processing, setProcessing] = useState(false);
+    const [selected, setSelected] = useState<PremiumProductId>('premium_monthly');
+    const [catalog, setCatalog] = useState<Product[]>([]);
+
+    useEffect(() => {
+        if (!visible || !isPaymentsSupported()) {
+            return;
+        }
+        getPremiumProducts()
+            .then(setCatalog)
+            .catch(() => {
+                setCatalog([]);
+            });
+    }, [visible]);
+
+    const priceById = useMemo(() => {
+        const next: Record<string, string> = {};
+        for (const id of PREMIUM_PRODUCT_IDS) {
+            const fromStore = catalog.find((item) => item.productId === id);
+            next[id] = fromStore?.amountLabel || formatRub(FALLBACK_PREMIUM_PRICES[id]);
+        }
+        return next;
+    }, [catalog]);
 
     const activatePremium = async () => {
         await setSetting('hasPremium', true);
@@ -35,11 +71,12 @@ export const PremiumModal = ({visible, onClose}: PremiumModalProps) => {
     };
 
     const handleSubscribe = async () => {
-        if (processing) return;
+        if (processing) {
+            return;
+        }
 
         if (!isPaymentsSupported()) {
             if (__DEV__) {
-                // В dev-окружении (Expo Go, iOS-симулятор) активируем премиум без оплаты
                 await activatePremium();
             } else {
                 Alert.alert(t('premium.paymentsUnavailable'));
@@ -49,21 +86,36 @@ export const PremiumModal = ({visible, onClose}: PremiumModalProps) => {
 
         setProcessing(true);
         try {
-            await purchasePremium('DARK');
+            await purchasePremium(selected, 'DARK');
             await activatePremium();
         } catch (error) {
-            if (!(error instanceof PurchaseCancelledError)) {
-                console.warn('[payments] purchase failed', error);
-                const details = describePayError(error);
-                Alert.alert(t('premium.purchaseError'), details ?? undefined);
+            if (error instanceof PurchaseCancelledError) {
+                return;
             }
+            if (error instanceof RuStoreMissingError) {
+                Alert.alert(t('premium.rustoreMissingTitle'), t('premium.rustoreMissing'), [
+                    {text: t('premium.cancel'), style: 'cancel'},
+                    {
+                        text: t('premium.installRuStore'),
+                        onPress: () => {
+                            promptInstallRuStore().catch(() => {});
+                        },
+                    },
+                ]);
+                return;
+            }
+            console.warn('[payments] purchase failed', error);
+            const details = describePayError(error);
+            Alert.alert(t('premium.purchaseError'), details ?? undefined);
         } finally {
             setProcessing(false);
         }
     };
 
     const handleRestore = async () => {
-        if (processing) return;
+        if (processing) {
+            return;
+        }
 
         if (!isPaymentsSupported()) {
             Alert.alert(t('premium.paymentsUnavailable'));
@@ -93,11 +145,29 @@ export const PremiumModal = ({visible, onClose}: PremiumModalProps) => {
                 <View style={styles.content}>
                     <ScrollView contentContainerStyle={styles.scrollContent}>
                         <Text style={styles.title}>{t('premium.title')}</Text>
-                        <View style={styles.priceBox}>
-                            <Text style={styles.price}>{t('premium.price')}</Text>
-                        </View>
-
                         <Text style={styles.benefitsText}>{t('premium.benefits')}</Text>
+                        <Text style={styles.selectLabel}>{t('premium.selectPlan')}</Text>
+
+                        {PREMIUM_PRODUCT_IDS.map((id) => {
+                            const copy = PLAN_COPY[id];
+                            const active = selected === id;
+                            const titleFromStore = catalog.find((item) => item.productId === id)?.title;
+                            return (
+                                <TouchableOpacity
+                                    key={id}
+                                    style={[styles.plan, active && styles.planActive]}
+                                    onPress={() => setSelected(id)}
+                                    disabled={processing}
+                                >
+                                    <View style={styles.planHeader}>
+                                        <Text style={styles.planName}>{titleFromStore || t(`premium.${copy.name}`)}</Text>
+                                        <Text style={styles.planPrice}>{priceById[id]}</Text>
+                                    </View>
+                                    <Text style={styles.planPeriod}>{t(`premium.${copy.period}`)}</Text>
+                                    <Text style={styles.planHint}>{t(`premium.${copy.hint}`)}</Text>
+                                </TouchableOpacity>
+                            );
+                        })}
 
                         <View style={styles.featuresBox}>
                             <Text style={styles.featuresTitle}>{t('premium.features.title')}</Text>
@@ -121,7 +191,9 @@ export const PremiumModal = ({visible, onClose}: PremiumModalProps) => {
 
                         <TouchableOpacity
                             style={styles.subscribeButton}
-                            onPress={handleSubscribe}
+                            onPress={() => {
+                                handleSubscribe().catch(() => {});
+                            }}
                             disabled={processing}
                         >
                             {processing ? (
@@ -133,7 +205,9 @@ export const PremiumModal = ({visible, onClose}: PremiumModalProps) => {
 
                         <TouchableOpacity
                             style={styles.restoreButton}
-                            onPress={handleRestore}
+                            onPress={() => {
+                                handleRestore().catch(() => {});
+                            }}
                             disabled={processing}
                         >
                             <Text style={styles.restoreButtonText}>{t('premium.restore')}</Text>
@@ -167,7 +241,7 @@ const styles = StyleSheet.create({
     },
     scrollContent: {
         padding: 24,
-        gap: 20,
+        gap: 16,
     },
     title: {
         color: '#f4d386',
@@ -175,14 +249,51 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         textAlign: 'center',
     },
-    priceBox: {
-        alignItems: 'center',
-        paddingVertical: 16,
+    selectLabel: {
+        color: '#f4d386',
+        fontSize: 16,
+        fontWeight: '600',
+        marginTop: 4,
     },
-    price: {
-        color: '#6c5ce7',
-        fontSize: 36,
+    plan: {
+        backgroundColor: 'rgba(247,244,234,0.06)',
+        borderRadius: 18,
+        padding: 16,
+        borderWidth: 1,
+        borderColor: 'rgba(244,211,134,0.2)',
+        gap: 4,
+    },
+    planActive: {
+        borderColor: '#6c5ce7',
+        backgroundColor: 'rgba(108,92,231,0.16)',
+    },
+    planHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        gap: 12,
+    },
+    planName: {
+        color: '#f7f4ea',
+        fontSize: 16,
         fontWeight: '700',
+        flex: 1,
+    },
+    planPrice: {
+        color: '#6c5ce7',
+        fontSize: 18,
+        fontWeight: '700',
+    },
+    planPeriod: {
+        color: '#f4d386',
+        fontSize: 13,
+        fontWeight: '600',
+    },
+    planHint: {
+        color: '#f7f4ea',
+        opacity: 0.7,
+        fontSize: 13,
+        lineHeight: 18,
     },
     benefitsText: {
         color: '#f7f4ea',

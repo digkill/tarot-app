@@ -3,6 +3,7 @@ package httpapi
 import (
 	"context"
 	"log/slog"
+	"net"
 	"net/http"
 	"strings"
 	"time"
@@ -35,6 +36,20 @@ func (h *Handler) authMiddleware(next http.Handler) http.Handler {
 func userIDFromCtx(ctx context.Context) string {
 	v, _ := ctx.Value(ctxUserID).(string)
 	return v
+}
+
+func clientIP(r *http.Request) string {
+	if forwarded := strings.TrimSpace(r.Header.Get("X-Forwarded-For")); forwarded != "" {
+		return strings.TrimSpace(strings.Split(forwarded, ",")[0])
+	}
+	if realIP := strings.TrimSpace(r.Header.Get("X-Real-IP")); realIP != "" {
+		return realIP
+	}
+	host, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err != nil {
+		return r.RemoteAddr
+	}
+	return host
 }
 
 func corsMiddleware(allowedOrigins []string) func(http.Handler) http.Handler {

@@ -11,13 +11,15 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/joho/godotenv"
 	_ "github.com/jackc/pgx/v5/stdlib"
+	"github.com/joho/godotenv"
 	"github.com/pressly/goose/v3"
 
+	"github.com/digkill/tarot-app/backend/internal/atrest"
 	"github.com/digkill/tarot-app/backend/internal/config"
 	"github.com/digkill/tarot-app/backend/internal/httpapi"
 	"github.com/digkill/tarot-app/backend/internal/llm"
+	"github.com/digkill/tarot-app/backend/internal/mailer"
 	"github.com/digkill/tarot-app/backend/internal/storage"
 )
 
@@ -58,6 +60,22 @@ func main() {
 	users := storage.NewUserRepo(pool)
 	refreshTokens := storage.NewRefreshTokenRepo(pool)
 	readings := storage.NewReadingRepo(pool)
+	accessStats := storage.NewAccessStatRepo(pool)
+	codes := storage.NewEmailCodeRepo(pool)
+	mail := mailer.New(mailer.Config{
+		Host:     cfg.SMTPHost,
+		Port:     cfg.SMTPPort,
+		Username: cfg.SMTPUsername,
+		Password: cfg.SMTPPassword,
+		From:     cfg.SMTPFrom,
+		FromName: cfg.SMTPFromName,
+	})
+
+	box, err := atrest.NewBox(cfg.PIIEncryptionKey)
+	if err != nil {
+		slog.Error("init pii encryption", "error", err)
+		os.Exit(1)
+	}
 
 	var llmClient *llm.Client
 	if cfg.KieAPIKey != "" {
@@ -67,7 +85,7 @@ func main() {
 		slog.Warn("KIE_API_KEY is empty; AI interpretations are disabled")
 	}
 
-	handler := httpapi.NewHandler(cfg, users, refreshTokens, readings, llmClient)
+	handler := httpapi.NewHandler(cfg, users, refreshTokens, readings, accessStats, codes, mail, box, llmClient)
 
 	srv := &http.Server{
 		Addr:         ":" + cfg.Port,

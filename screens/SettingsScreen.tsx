@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {
+    Alert,
     ScrollView,
     StyleSheet,
     Switch,
@@ -8,16 +9,30 @@ import {
     View,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useNavigation} from '@react-navigation/native';
+import type {CompositeNavigationProp} from '@react-navigation/native';
+import type {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
+import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useTranslation} from 'react-i18next';
 import {useSettings} from '../providers/SettingsProvider';
-import type {LanguagePreference, ThemePreference} from '../entities';
+import {useAuth} from '../providers/AuthProvider';
+import type {ThemePreference} from '../entities';
+import {SUPPORTED_LANGUAGES} from '../utils/locale';
 import {PremiumModal} from '../components/PremiumModal';
+import {openRuStoreSubscriptions, RuStoreMissingError} from '../features/payments';
+import type {AppTabsParamList, RootStackParamList} from '../navigation/types';
 
-const LANGUAGES: LanguagePreference[] = ['en', 'ru', 'th', 'zh'];
+type SettingsNav = CompositeNavigationProp<
+    BottomTabNavigationProp<AppTabsParamList, 'Settings'>,
+    NativeStackNavigationProp<RootStackParamList>
+>;
+
 const THEMES: ThemePreference[] = ['system', 'light', 'dark'];
 
 export const SettingsScreen = () => {
     const {settings, setSetting} = useSettings();
+    const {user, logout, deleteAccount} = useAuth();
+    const navigation = useNavigation<SettingsNav>();
     const {t} = useTranslation();
     const [showPremiumModal, setShowPremiumModal] = useState(false);
 
@@ -30,9 +45,59 @@ export const SettingsScreen = () => {
         setSetting('reversedChance', parseFloat(next.toFixed(2))).catch(() => {});
     };
 
+    const confirmLogout = () => {
+        Alert.alert(t('auth.logoutTitle'), t('auth.logoutDescription'), [
+            {text: t('history.cancel'), style: 'cancel'},
+            {
+                text: t('auth.logoutCta'),
+                onPress: () => {
+                    logout().catch(() => {});
+                },
+            },
+        ]);
+    };
+
+    const confirmDelete = () => {
+        Alert.alert(t('auth.deleteTitle'), t('auth.deleteDescription'), [
+            {text: t('history.cancel'), style: 'cancel'},
+            {
+                text: t('auth.deleteCta'),
+                style: 'destructive',
+                onPress: () => {
+                    deleteAccount().catch(() => {
+                        Alert.alert(t('auth.deleteTitle'), t('auth.errors.generic'));
+                    });
+                },
+            },
+        ]);
+    };
+
     return (
         <SafeAreaView style={styles.safe}>
             <ScrollView contentContainerStyle={styles.container}>
+                <Text style={styles.sectionTitle}>{t('settings.accountSection')}</Text>
+                <View style={styles.accountCard}>
+                    <Text style={styles.accountEmail}>{user?.email ?? ''}</Text>
+                    <TouchableOpacity
+                        style={styles.linkRow}
+                        onPress={() => navigation.navigate('LegalDocument', {doc: 'terms'})}
+                    >
+                        <Text style={styles.linkRowText}>{t('legal.termsTitle')}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.linkRow}
+                        onPress={() => navigation.navigate('LegalDocument', {doc: 'privacy'})}
+                    >
+                        <Text style={styles.linkRowText}>{t('legal.privacyTitle')}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.manageButton} onPress={confirmLogout}>
+                        <Text style={styles.manageButtonText}>{t('auth.logoutCta')}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.deleteButton} onPress={confirmDelete}>
+                        <Text style={styles.deleteButtonText}>{t('auth.deleteCta')}</Text>
+                    </TouchableOpacity>
+                </View>
+
                 <Text style={styles.sectionTitle}>{t('settings.premiumSection')}</Text>
                 <View style={styles.premiumCard}>
                     <View style={styles.premiumHeader}>
@@ -68,7 +133,15 @@ export const SettingsScreen = () => {
                     ) : (
                         <TouchableOpacity
                             style={styles.manageButton}
-                            onPress={() => setSetting('hasPremium', false).catch(() => {})}
+                            onPress={() => {
+                                openRuStoreSubscriptions().catch((error) => {
+                                    if (error instanceof RuStoreMissingError) {
+                                        Alert.alert(t('premium.rustoreMissingTitle'), t('premium.rustoreMissing'));
+                                        return;
+                                    }
+                                    Alert.alert(t('premium.purchaseError'));
+                                });
+                            }}
                         >
                             <Text style={styles.manageButtonText}>{t('premium.manage')}</Text>
                         </TouchableOpacity>
@@ -77,7 +150,7 @@ export const SettingsScreen = () => {
 
                 <Text style={styles.sectionTitle}>{t('settings.languageTitle')}</Text>
                 <View style={styles.row}>
-                    {LANGUAGES.map((language) => (
+                    {SUPPORTED_LANGUAGES.map((language) => (
                         <TouchableOpacity
                             key={language}
                             style={[styles.option, settings.language === language && styles.optionActive]}
@@ -313,6 +386,37 @@ const styles = StyleSheet.create({
     },
     manageButtonText: {
         color: '#f4d386',
+        fontWeight: '600',
+    },
+    accountCard: {
+        backgroundColor: 'rgba(244,211,134,0.08)',
+        borderRadius: 20,
+        padding: 20,
+        borderWidth: 1,
+        borderColor: 'rgba(244,211,134,0.25)',
+        gap: 12,
+    },
+    accountEmail: {
+        color: '#f7f4ea',
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    linkRow: {
+        paddingVertical: 8,
+    },
+    linkRowText: {
+        color: '#6c5ce7',
+        fontWeight: '600',
+    },
+    deleteButton: {
+        paddingVertical: 12,
+        borderRadius: 14,
+        borderWidth: 1,
+        borderColor: 'rgba(255,107,107,0.45)',
+        alignItems: 'center',
+    },
+    deleteButtonText: {
+        color: '#ff6b6b',
         fontWeight: '600',
     },
 });

@@ -34,7 +34,7 @@ type DrawnEntry = {
 };
 
 const BASE_CARD_W = 110;
-const BASE_CARD_H = 190;
+const BASE_CARD_H = 165;
 const ASPECT = BASE_CARD_H / BASE_CARD_W;
 const LABEL_H = 24;
 const CANVAS_PAD = 8;

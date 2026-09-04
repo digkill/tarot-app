@@ -1,5 +1,11 @@
+import type {LegalDocumentId} from '../entities';
+
 export type RootStackParamList = {
     Disclaimer: undefined;
+    Auth: undefined;
+    VerifyEmail: {email: string};
+    ForgotPassword: {email?: string};
+    LegalDocument: {doc: LegalDocumentId};
     Main: undefined;
     Reading: {spreadId: string; deckId: string; readingId?: string};
     Interpretation: {readingId: string};

@@ -51,64 +51,81 @@ export const DeckGalleryScreen = () => {
     };
 
     return (
-        <SafeAreaView style={styles.safe}>
-            <View style={styles.filters}>
-                <Text style={styles.filterLabel}>{t('deck.arcana')}</Text>
-                <View style={styles.filterRow}>
-                    {ARCANA_FILTERS.map((filter) => (
-                        <TouchableOpacity
-                            key={filter}
-                            style={[styles.chip, arcanaFilter === filter && styles.chipActive]}
-                            onPress={() => setArcanaFilter(filter)}
-                        >
-                            <Text
-                                style={[
-                                    styles.chipText,
-                                    arcanaFilter === filter && styles.chipTextActive,
-                                ]}
-                            >
-                                {t(`deck.arcanaFilter.${filter}`)}
-                            </Text>
-                        </TouchableOpacity>
-                    ))}
-                </View>
-                <Text style={[styles.filterLabel, {marginTop: 16}]}>{t('deck.suits')}</Text>
-                <View style={styles.filterRow}>
-                    {SUIT_FILTERS.map((filter) => (
-                        <TouchableOpacity
-                            key={filter}
-                            style={[styles.chip, suitFilter === filter && styles.chipActive]}
-                            onPress={() => setSuitFilter(filter)}
-                        >
-                            <Text
-                                style={[
-                                    styles.chipText,
-                                    suitFilter === filter && styles.chipTextActive,
-                                ]}
-                            >
-                                {t(`deck.suitFilter.${filter}`)}
-                            </Text>
-                        </TouchableOpacity>
-                    ))}
-                </View>
-            </View>
-            <FlatList
-                data={filtered}
-                keyExtractor={(item) => item.id}
-                renderItem={renderCard}
-                contentContainerStyle={styles.list}
-                numColumns={2}
-                columnWrapperStyle={{gap: 16}}
-                showsVerticalScrollIndicator={false}
+        <View style={styles.root}>
+            <Image
+                source={require('../assets/pattern-print.png')}
+                style={styles.backdrop}
+                resizeMode="repeat"
             />
-        </SafeAreaView>
+            <SafeAreaView style={styles.safe}>
+                <View style={styles.filters}>
+                    <Text style={styles.filterLabel}>{t('deck.arcana')}</Text>
+                    <View style={styles.filterRow}>
+                        {ARCANA_FILTERS.map((filter) => (
+                            <TouchableOpacity
+                                key={filter}
+                                style={[styles.chip, arcanaFilter === filter && styles.chipActive]}
+                                onPress={() => setArcanaFilter(filter)}
+                            >
+                                <Text
+                                    style={[
+                                        styles.chipText,
+                                        arcanaFilter === filter && styles.chipTextActive,
+                                    ]}
+                                >
+                                    {t(`deck.arcanaFilter.${filter}`)}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                    <Text style={[styles.filterLabel, {marginTop: 16}]}>{t('deck.suits')}</Text>
+                    <View style={styles.filterRow}>
+                        {SUIT_FILTERS.map((filter) => (
+                            <TouchableOpacity
+                                key={filter}
+                                style={[styles.chip, suitFilter === filter && styles.chipActive]}
+                                onPress={() => setSuitFilter(filter)}
+                            >
+                                <Text
+                                    style={[
+                                        styles.chipText,
+                                        suitFilter === filter && styles.chipTextActive,
+                                    ]}
+                                >
+                                    {t(`deck.suitFilter.${filter}`)}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                </View>
+                <FlatList
+                    data={filtered}
+                    keyExtractor={(item) => item.id}
+                    renderItem={renderCard}
+                    contentContainerStyle={styles.list}
+                    numColumns={2}
+                    columnWrapperStyle={{gap: 16}}
+                    showsVerticalScrollIndicator={false}
+                />
+            </SafeAreaView>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
-    safe: {
+    root: {
         flex: 1,
         backgroundColor: '#040307',
+    },
+    backdrop: {
+        ...StyleSheet.absoluteFill,
+        width: '100%',
+        height: '100%',
+        opacity: 0.25,
+    },
+    safe: {
+        flex: 1,
+        backgroundColor: 'transparent',
         paddingHorizontal: 16,
     },
     filters: {
@@ -172,7 +189,7 @@ const styles = StyleSheet.create({
     },
     cardImage: {
         width: '100%',
-        height: 160,
+        aspectRatio: 2 / 3,
         resizeMode: 'cover',
     },
     cardName: {

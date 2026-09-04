@@ -102,12 +102,20 @@ const addIntentProcessing = (config) =>
  *   scheme               — deeplink-схема возврата после оплаты (должна совпадать с expo.scheme)
  *   sdkVersion           — версия ru.rustore.sdk-wrapper.react-native:pay (по умолчанию 10.3.1)
  */
+const isAndroidNativeBuild = () => {
+    if (process.env.EAS_BUILD_PLATFORM === 'android') {
+        return true;
+    }
+    const argv = process.argv.join(' ');
+    return /\bprebuild\b/.test(argv) || /\brun:android\b/.test(argv);
+};
+
 const withRuStorePay = (config, props = {}) => {
-    const consoleApplicationId = String(props.consoleApplicationId ?? '');
+    const consoleApplicationId = String(props.consoleApplicationId ?? '').trim();
     const scheme = props.scheme ?? config.scheme;
     const sdkVersion = props.sdkVersion ?? DEFAULT_SDK_VERSION;
 
-    if (!consoleApplicationId) {
+    if (!consoleApplicationId && isAndroidNativeBuild()) {
         console.warn('[withRuStorePay] consoleApplicationId не задан — платежи RuStore работать не будут');
     }
     if (!scheme || typeof scheme !== 'string') {

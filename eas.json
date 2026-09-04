@@ -11,8 +11,24 @@
       },
       "rustore": {
         "extends": "production",
+        "env": {
+          "NODE_VERSION": "20.19.4",
+          "RUSTORE_CONSOLE_APP_ID": "2063733483",
+          "RUSTORE_PREMIUM_PRODUCT_ID": "premium_monthly"
+        },
         "android": {
           "buildType": "apk"
+        }
+      },
+      "rustore-aab": {
+        "extends": "production",
+        "env": {
+          "NODE_VERSION": "20.19.4",
+          "RUSTORE_CONSOLE_APP_ID": "2063733483",
+          "RUSTORE_PREMIUM_PRODUCT_ID": "premium_monthly"
+        },
+        "android": {
+          "buildType": "app-bundle"
         }
       }
     },

@@ -8,13 +8,18 @@
     "reading": "占卜",
     "interpretation": "解读"
   },
+  "splash": {
+    "skip": "跳过",
+    "poweredBy": "Powered by MediaRise"
+  },
   "disclaimer": {
     "title": "开始之前",
     "description1": "塔罗带来指引与自我反思，但不能替代法律、医疗、财务或心理方面的专业建议。",
     "description2": "请以觉知的态度使用每一次占卜，并为自己的决定负责。",
     "remember": "请记住",
     "rememberDescription": "把每个牌阵视作灵感。首先倾听你的直觉与内在智慧。",
-    "accept": "我明白了"
+    "accept": "我明白了",
+    "nextHint": "接下来需要注册或登录。创建账户时须同意用户协议并同意处理个人数据。"
   },
   "home": {
     "greeting": {
@@ -55,10 +60,11 @@
       "active": "已激活",
       "inactive": "未订阅"
     },
-    "price": "每月 499 ₽",
-    "benefits": "每月 499 ₽，即可解锁 OpenAI 深度解读、高级牌阵与优先更新。",
-    "subscribe": "开始订阅",
-    "manage": "取消订阅",
+    "price": "每月起 599 ₽",
+    "benefits": "订阅后可解锁全部牌阵、扩展 AI 解读与优先更新。",
+    "selectPlan": "选择套餐",
+    "subscribe": "订阅",
+    "manage": "在 RuStore 中管理",
     "cancel": "取消",
     "purchaseSuccess": "订阅已激活",
     "purchaseError": "订阅未能完成",
@@ -66,7 +72,27 @@
     "restore": "恢复购买",
     "restoreSuccess": "订阅已恢复",
     "restoreNone": "未找到有效订阅",
-    "disclaimer": "订阅通过 RuStore 结算并自动续订。您可以随时在 RuStore 订阅设置中取消。",
+    "rustoreMissingTitle": "需要 RuStore",
+    "rustoreMissing": "请安装 RuStore 并用测试员 VK ID 登录后再付款。",
+    "installRuStore": "安装 RuStore",
+    "disclaimer": "通过 RuStore 结算。包月和包年会自动续订；终身为 99 年订阅。可在 RuStore 订阅设置中取消续订。沙盒付款会显示「Тестовая покупка」。",
+    "plans": {
+      "monthly": {
+        "name": "月相周期",
+        "period": "1 个月",
+        "hint": "599 ₽，按月续订"
+      },
+      "yearly": {
+        "name": "年轮",
+        "period": "12 个月",
+        "hint": "4990 ₽，约每月 416 ₽"
+      },
+      "lifetime": {
+        "name": "大阿卡纳",
+        "period": "永久",
+        "hint": "6990 ₽ 一次付清，无月费"
+      }
+    },
     "features": {
       "title": "订阅权益",
       "aiInterpretations": "OpenAI 提供的扩展 AI 解读。",
@@ -145,7 +171,8 @@
     "premiumDescription": "解锁全部牌阵与 OpenAI 提供的深度解读，每月 {{price}}。",
     "premiumSubscribe": "开始订阅",
     "premiumManage": "取消订阅",
-    "premiumActive": "订阅已激活"
+    "premiumActive": "订阅已激活",
+    "accountSection": "账户"
   },
   "position": {
     "focus": "焦点",
@@ -342,8 +369,67 @@
     "unlockMessage": "订阅高级会员获取 AI 深度解读",
     "unlock": "解锁",
     "generate": "生成解读",
-    "missingKey": "未配置 API 密钥",
+    "needLogin": "请登录后再获取 AI 解读。",
+    "premiumRequired": "服务器上尚未开通高级会员。请使用已订阅的账号登录。",
+    "unavailable": "解读服务暂时不可用，请稍后再试。",
     "generatedBy": "由 {{model}} 生成",
     "refreshInterpretation": "刷新解读"
+  },
+  "auth": {
+    "loginTitle": "登录",
+    "loginSubtitle": "使用邮箱登录，以便使用应用并保存法律同意记录。",
+    "registerTitle": "注册",
+    "registerSubtitle": "使用应用需要账户。仅在您明确同意后才会处理邮箱等个人数据。",
+    "email": "邮箱",
+    "emailPlaceholder": "you@email.com",
+    "password": "密码",
+    "passwordPlaceholder": "至少 8 个字符",
+    "confirmPassword": "确认密码",
+    "confirmPasswordPlaceholder": "再次输入密码",
+    "passwordHint": "密码至少 8 个字符。",
+    "passwordMismatch": "两次输入的密码不一致。",
+    "loginCta": "登录",
+    "registerCta": "创建账户",
+    "needAccount": "还没有账户？去注册",
+    "haveAccount": "已有账户？去登录",
+    "forgotLink": "忘记密码？",
+    "forgotTitle": "重置密码",
+    "forgotSubtitle": "输入账户邮箱，我们将发送 6 位验证码。",
+    "resetSubtitle": "输入邮件中的验证码和新密码。",
+    "sendResetCta": "发送验证码",
+    "resetCta": "保存新密码",
+    "resetCodeSent": "如果账户存在，验证码已发送。",
+    "newPassword": "新密码",
+    "verifyTitle": "确认邮箱",
+    "verifySubtitle": "我们已向 {{email}} 发送 6 位验证码。",
+    "code": "邮件验证码",
+    "verifyCta": "确认",
+    "resendCode": "重新发送",
+    "codeSent": "新验证码已发送。",
+    "backToLogin": "返回登录",
+    "acceptTermsPrefix": "我接受",
+    "termsLink": "用户协议",
+    "acceptPrivacyPrefix": "我同意按照以下文件处理个人数据：",
+    "privacyLink": "隐私政策",
+    "ageNote": "注册即表示您已满 18 周岁，并亲自作出上述同意。",
+    "logoutCta": "退出登录",
+    "logoutTitle": "退出登录？",
+    "logoutDescription": "之后仍可用同一邮箱重新登录。",
+    "deleteCta": "删除账户",
+    "deleteTitle": "删除账户？",
+    "deleteDescription": "账户、同意记录和云端牌阵将被永久删除。",
+    "errors": {
+      "generic": "出错了，请重试。",
+      "network": "无法连接服务器，请检查网络。",
+      "email_taken": "该邮箱已注册，请直接登录。",
+      "invalid_credentials": "邮箱或密码不正确。",
+      "validation_error": "请检查邮箱和密码（至少 8 个字符）。",
+      "consent_required": "请先同意用户协议并同意处理个人数据。",
+      "consent_outdated": "法律文件已更新，请重新阅读并同意。",
+      "email_unverified": "请先确认邮箱，验证码在邮件中。",
+      "invalid_code": "验证码无效或已过期。",
+      "code_cooldown": "请稍后再请求新的验证码。",
+      "mail_failed": "邮件发送失败，请稍后重试。"
+    }
   }
 }

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {ActivityIndicator, useColorScheme, View} from 'react-native';
 import {
     DarkTheme as NavigationDarkTheme,
@@ -10,7 +10,12 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {useTranslation} from 'react-i18next';
 import {SettingsProvider, useSettings} from './providers/SettingsProvider';
 import {HistoryProvider} from './providers/HistoryProvider';
+import {AuthProvider, useAuth} from './providers/AuthProvider';
 import {DisclaimerScreen} from './screens/DisclaimerScreen';
+import {AuthScreen} from './screens/AuthScreen';
+import {VerifyEmailScreen} from './screens/VerifyEmailScreen';
+import {ForgotPasswordScreen} from './screens/ForgotPasswordScreen';
+import {LegalDocumentScreen} from './screens/LegalDocumentScreen';
 import {HomeScreen} from './screens/HomeScreen';
 import {SpreadCatalogScreen} from './screens/SpreadCatalogScreen';
 import {DeckGalleryScreen} from './screens/DeckGalleryScreen';
@@ -21,11 +26,22 @@ import {InterpretationScreen} from './screens/InterpretationScreen';
 import {Ionicons} from '@expo/vector-icons';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {I18n} from './i18n';
+import {VideoSplash} from './components/VideoSplash';
 import {AppTabsParamList, HomeStackParamList, RootStackParamList} from './navigation/types';
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 const HomeStack = createNativeStackNavigator<HomeStackParamList>();
 const Tab = createBottomTabNavigator<AppTabsParamList>();
+
+const legalScreenOptions = (t: (key: string) => string) => {
+    return ({route}: {route: {params: RootStackParamList['LegalDocument']}}) => ({
+        headerShown: true,
+        title: route.params.doc === 'privacy' ? t('legal.privacyTitle') : t('legal.termsTitle'),
+        headerTintColor: '#f7f4ea',
+        headerStyle: {backgroundColor: '#040307'},
+        headerShadowVisible: false,
+    });
+};
 
 const HomeStackNavigator = () => {
     const {t} = useTranslation();
@@ -75,59 +91,93 @@ const MainTabs = () => {
 };
 
 const AppNavigation = () => {
-    const {settings, loading} = useSettings();
+    const {settings, loading: settingsLoading, setSetting} = useSettings();
+    const {user, loading: authLoading} = useAuth();
     const systemScheme = useColorScheme();
     const {t} = useTranslation();
 
     useEffect(() => {
-        if (settings.language) {
-            I18n.changeLanguage(settings.language).catch(() => {});
+        if (settingsLoading) {
+            return;
         }
-    }, [settings.language]);
+        I18n.changeLanguage(settings.language).catch(() => {});
+    }, [settings.language, settingsLoading]);
+
+    useEffect(() => {
+        if (user?.hasPremium && !settings.hasPremium) {
+            setSetting('hasPremium', true).catch(() => {});
+        }
+    }, [setSetting, settings.hasPremium, user?.hasPremium]);
 
     const scheme =
         settings.theme === 'system' ? systemScheme ?? 'light' : settings.theme === 'dark' ? 'dark' : 'light';
     const theme = scheme === 'dark' ? NavigationDarkTheme : NavigationDefaultTheme;
-    const initialRoute: keyof RootStackParamList = !settings.acceptedDisclaimer
-        ? 'Disclaimer'
-        : 'Main';
 
-    if (loading) {
+    if (settingsLoading || authLoading) {
         return (
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                <ActivityIndicator />
+            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#040307'}}>
+                <ActivityIndicator color="#6c5ce7" />
             </View>
         );
     }
 
+    const showDisclaimer = !settings.acceptedDisclaimer;
+    const showAuth = !showDisclaimer && !user;
+
     return (
         <NavigationContainer theme={theme}>
-            <RootStack.Navigator screenOptions={{headerShown: false}} initialRouteName={initialRoute}>
-                <RootStack.Screen name="Disclaimer" component={DisclaimerScreen} />
-                <RootStack.Screen name="Main" component={MainTabs} />
-                <RootStack.Screen
-                    name="Reading"
-                    component={ReadingScreen}
-                    options={{headerShown: true, title: t('nav.reading')}}
-                />
-                <RootStack.Screen
-                    name="Interpretation"
-                    component={InterpretationScreen}
-                    options={{headerShown: true, title: t('nav.interpretation')}}
-                />
+            <RootStack.Navigator screenOptions={{headerShown: false}}>
+                {showDisclaimer ? (
+                    <RootStack.Screen name="Disclaimer" component={DisclaimerScreen} />
+                ) : showAuth ? (
+                    <>
+                        <RootStack.Screen name="Auth" component={AuthScreen} />
+                        <RootStack.Screen name="VerifyEmail" component={VerifyEmailScreen} />
+                        <RootStack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+                        <RootStack.Screen
+                            name="LegalDocument"
+                            component={LegalDocumentScreen}
+                            options={legalScreenOptions((key) => t(key))}
+                        />
+                    </>
+                ) : (
+                    <>
+                        <RootStack.Screen name="Main" component={MainTabs} />
+                        <RootStack.Screen
+                            name="Reading"
+                            component={ReadingScreen}
+                            options={{headerShown: true, title: t('nav.reading')}}
+                        />
+                        <RootStack.Screen
+                            name="Interpretation"
+                            component={InterpretationScreen}
+                            options={{headerShown: true, title: t('nav.interpretation')}}
+                        />
+                        <RootStack.Screen
+                            name="LegalDocument"
+                            component={LegalDocumentScreen}
+                            options={legalScreenOptions((key) => t(key))}
+                        />
+                    </>
+                )}
             </RootStack.Navigator>
         </NavigationContainer>
     );
 };
 
 export default function App() {
+    const [videoDone, setVideoDone] = useState(false);
+
     return (
         <GestureHandlerRootView style={{flex: 1}}>
             <SettingsProvider>
-                <HistoryProvider>
-                    <AppNavigation />
-                </HistoryProvider>
+                <AuthProvider>
+                    <HistoryProvider>
+                        {videoDone ? <AppNavigation /> : null}
+                    </HistoryProvider>
+                </AuthProvider>
             </SettingsProvider>
+            {videoDone ? null : <VideoSplash onDone={() => setVideoDone(true)} />}
         </GestureHandlerRootView>
     );
 }

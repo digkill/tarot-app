@@ -4,21 +4,38 @@ module.exports = {
   expo: {
     name: 'Tarot',
     slug: 'tarot',
-    version: '1.1.0',
+    version: '1.1.5',
     scheme: 'mediarisetarot',
     orientation: 'portrait',
     icon: './assets/icon.png',
-    userInterfaceStyle: 'light',
+    userInterfaceStyle: 'dark',
     newArchEnabled: true,
     plugins: [
       'expo-asset',
       'expo-font',
       'expo-image',
-      'expo-localization',
+      [
+        'expo-localization',
+        {
+          supportedLocales: {
+            ios: ['en', 'ru', 'th', 'zh-Hans', 'zh-Hant'],
+            android: ['en', 'ru', 'th', 'zh', 'zh-Hans', 'zh-Hant'],
+          },
+        },
+      ],
       'expo-sharing',
-      'expo-splash-screen',
+      [
+        'expo-splash-screen',
+        {
+          image: './assets/icon.png',
+          imageWidth: 200,
+          resizeMode: 'contain',
+          backgroundColor: '#0B1220',
+        },
+      ],
+      './plugins/withSplashBranding',
       'expo-status-bar',
-      'expo-web-browser',
+      'expo-video',
       [
         './plugins/withRuStorePay',
         {
@@ -26,22 +43,25 @@ module.exports = {
           scheme: 'mediarisetarot',
         },
       ],
+      './plugins/withGradleJdk17',
+      './plugins/withAndroidCleanCxx',
+      './plugins/withDebugInstallGuard',
     ],
     splash: {
-      image: './assets/splash-icon.png',
+      image: './assets/icon.png',
       resizeMode: 'contain',
-      backgroundColor: '#ffffff',
+      backgroundColor: '#0B1220',
     },
     ios: {
       supportsTablet: true,
     },
     android: {
       package: 'org.mediarise.tarot',
-      versionCode: 2,
+      versionCode: 7,
       permissions: [],
       adaptiveIcon: {
         foregroundImage: './assets/adaptive-icon.png',
-        backgroundColor: '#ffffff',
+        backgroundColor: '#0B1220',
       },
     },
     web: {
@@ -51,9 +71,9 @@ module.exports = {
       eas: {
         projectId: '2b61bc02-2377-4775-a6a3-2e7461cd14c6',
       },
-      openaiApiKey: process.env.OPENAI_API_KEY,
-      openaiTarotModel: process.env.OPENAI_TAROT_MODEL || 'gpt-4o-mini',
       rustorePremiumProductId: process.env.RUSTORE_PREMIUM_PRODUCT_ID || 'premium_monthly',
+      rustorePremiumProductIds: ['premium_monthly', 'premium_yearly', 'premium_lifetime'],
+      apiBaseUrl: process.env.API_BASE_URL || 'https://tarot.sorapure.fun',
     },
     runtimeVersion: {
       policy: 'appVersion',

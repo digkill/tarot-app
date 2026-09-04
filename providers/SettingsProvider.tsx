@@ -1,8 +1,9 @@
 import React, {createContext, useCallback, useContext, useEffect, useMemo, useState} from 'react';
 import type {ReactNode} from 'react';
-import type {Settings} from '../entities';
+import type {LanguagePreference, Settings} from '../entities';
 import {DEFAULT_SETTINGS} from '../entities';
 import {loadSettings, saveSettings} from '../storage/settings';
+import {resolveDeviceLanguage} from '../utils/locale';
 
 type SettingsContextValue = {
     settings: Settings;
@@ -14,7 +15,10 @@ type SettingsContextValue = {
 const SettingsContext = createContext<SettingsContextValue | null>(null);
 
 export const SettingsProvider = ({children}: {children: ReactNode}) => {
-    const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
+    const [settings, setSettings] = useState<Settings>(() => ({
+        ...DEFAULT_SETTINGS,
+        language: resolveDeviceLanguage(),
+    }));
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -38,6 +42,13 @@ export const SettingsProvider = ({children}: {children: ReactNode}) => {
 
     const setSetting = useCallback(
         async (key: keyof Settings, value: Settings[keyof Settings]) => {
+            if (key === 'language') {
+                await updateSettings({
+                    language: value as LanguagePreference,
+                    languageExplicit: true,
+                });
+                return;
+            }
             await updateSettings({[key]: value} as Partial<Settings>);
         },
         [updateSettings],

@@ -1,0 +1,36 @@
+{
+  "legal": {
+    "privacyTitle": "Privacy Policy",
+    "termsTitle": "User Agreement",
+    "version": "Version {{version}}",
+    "privacyParagraphs": [
+      "This Policy describes how the Tarot app (package org.mediarise.tarot) and the server at https://tarot.sorapure.fun process personal data. For users in Russia it is prepared under Federal Law No. 152-FZ.",
+      "Operator: MediaRise, the Tarot application. Data-subject requests: privacy@sorapure.fun. The current Policy is always available in the app under Settings.",
+      "Data we process: email; password hash (the password itself is not stored in plain text); the fact and time of your consent; premium flag. IP address and User-Agent are collected as technical sign-in statistics and stored only encrypted (AES-256-GCM); they are never returned to the app. Readings and notes stay on the device by default.",
+      "Purposes: account creation and sign-in; performing the User Agreement; storing your reading history when you use cloud features; generating AI interpretations for premium users; keeping proof of consent; handling support requests; abuse prevention.",
+      "Legal basis: your consent and performance of the User Agreement as needed to run the account.",
+      "Operations: collection, recording, organisation, storage, updating, use, transfer (as described below), blocking, deletion and destruction.",
+      "Third parties: hosting and the database run on the Operator’s infrastructure. For AI interpretations, spread text (card names, positions, UI language) may be sent to the Kie.ai language-model provider. Email and password are not sent there. This may involve cross-border transfer; registration includes consent to that transfer for the stated purposes.",
+      "Retention: until you delete the account or withdraw consent, unless a longer period is required by law. After deletion, production data is removed; backups expire on their rotation cycle.",
+      "Your rights: access, correction, blocking or deletion; withdraw consent; delete the account in Settings. Email privacy@sorapure.fun from the same address as your account.",
+      "Withdrawing consent does not make earlier processing unlawful. Without personal-data consent the account and cloud features are unavailable.",
+      "Safeguards include HTTPS, hashed passwords and short-lived access tokens. No online service can guarantee absolute security.",
+      "The app is not intended for people under 18. We do not knowingly collect children’s data.",
+      "We may update this Policy. A new edition is published in the app with a new version number. New registration under a new edition requires a fresh consent.",
+      "Tarot is for entertainment and self-reflection. It is not a medical, legal, financial or psychological service."
+    ],
+    "termsParagraphs": [
+      "This User Agreement is a public offer. Creating an account and ticking acceptance constitutes acceptance of the offer.",
+      "The Operator provides tarot spreads, a card reference, local and cloud history, an optional premium subscription and AI interpretations.",
+      "The service is entertainment. Readings, including AI text, are not fortune-telling as a professional service, a diagnosis or professional advice. You are responsible for decisions you make afterwards.",
+      "You need an account (email and password) and personal-data consent. Keep your email accurate and do not share your login.",
+      "Premium on Android is billed through RuStore. Renewal and cancellation follow RuStore rules and the in-app subscription screen.",
+      "You must not attack the service, overload it, present AI text as professional expertise, or use the app to break the law.",
+      "The Operator may change features, perform maintenance and restrict access in case of abuse or security risk.",
+      "The service is provided “as is”. The Operator is not liable for how you interpret a reading, for network failures or for third parties (app stores, the AI provider), except where Russian law requires otherwise.",
+      "You may delete the account in Settings. The Operator may delete an account for a serious breach of this Agreement.",
+      "The Agreement is governed by the law of the Russian Federation. Disputes go through a complaint procedure, then the court at the Operator’s location unless mandatory rules say otherwise.",
+      "The edition matches the version number shown in the app. Material changes are published in the app."
+    ]
+  }
+}

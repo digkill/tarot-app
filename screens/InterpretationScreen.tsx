@@ -22,7 +22,8 @@ import {useSettings} from '../providers/SettingsProvider';
 import {SPREADS} from '../data';
 import {loadDeck, findCardById} from '../utils/decks';
 import {generateInterpretation} from '../features/interpretation';
-import {fetchPremiumInterpretation, MissingOpenAiKeyError} from '../features/aiInterpretation';
+import {fetchPremiumInterpretation} from '../features/aiInterpretation';
+import {isApiError} from '../features/apiClient';
 import TarotCard from '../components/TarotCard';
 import {PremiumModal} from '../components/PremiumModal';
 import type {Card, SpreadPosition} from '../entities';
@@ -139,6 +140,7 @@ export const InterpretationScreen = () => {
         try {
             const aiRequest = {
                 language: settings.language,
+                spreadId: spread.id,
                 spreadName: t(spread.nameKey),
                 spreadDescription: t(spread.descriptionKey),
                 entries: entries.map((entry, index) => ({
@@ -158,8 +160,16 @@ export const InterpretationScreen = () => {
             await updateReading(reading.id, {aiInsights});
         } catch (error) {
             console.warn('[ai] interpretation failed', error);
-            if (error instanceof MissingOpenAiKeyError) {
-                setAiError(t('aiInterpretation.missingKey'));
+            if (isApiError(error)) {
+                if (error.code === 'unauthorized') {
+                    setAiError(t('aiInterpretation.needLogin'));
+                } else if (error.code === 'premium_required') {
+                    setAiError(t('aiInterpretation.premiumRequired'));
+                } else if (error.code === 'llm_unavailable') {
+                    setAiError(t('aiInterpretation.unavailable'));
+                } else {
+                    setAiError(`${t('aiInterpretation.error')}: ${error.message}`);
+                }
             } else {
                 const message = error instanceof Error ? error.message : String(error);
                 setAiError(`${t('aiInterpretation.error')}: ${message}`);
@@ -271,9 +281,7 @@ export const InterpretationScreen = () => {
                                         <Text style={styles.aiPositionText}>{pos.meaning}</Text>
                                     </View>
                                 ))}
-                                <Text style={styles.aiModel}>
-                                    {t('aiInterpretation.generatedBy', {model: reading.aiInsights.model})}
-                                </Text>
+                        
                                 <TouchableOpacity
                                     style={styles.refreshButton}
                                     onPress={handleGenerateAiInsights}
