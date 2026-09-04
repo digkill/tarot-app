@@ -11,17 +11,21 @@ import {
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {useSettings} from '../providers/SettingsProvider';
+import {useAuth} from '../providers/AuthProvider';
+import {useAppColors} from '../providers/DeckShopProvider';
+import {hexAlpha} from '../theme/appColors';
+import {reportPurchaseRequest} from '../features/billingApi';
 import {
     describePayError,
     FALLBACK_PREMIUM_PRICES,
     formatRub,
     getPremiumProducts,
-    hasActivePremiumSubscription,
     isPaymentsSupported,
     PREMIUM_PRODUCT_IDS,
     promptInstallRuStore,
     purchasePremium,
     PurchaseCancelledError,
+    readStorePremiumStatus,
     RuStoreMissingError,
     type PremiumProductId,
 } from '../features/payments';
@@ -30,6 +34,7 @@ import type {Product} from '../libs/RuStoreReactPay';
 type PremiumModalProps = {
     visible: boolean;
     onClose: () => void;
+    onActivated?: () => void;
 };
 
 const PLAN_COPY: Record<PremiumProductId, {name: string; period: string; hint: string}> = {
@@ -38,9 +43,11 @@ const PLAN_COPY: Record<PremiumProductId, {name: string; period: string; hint: s
     premium_lifetime: {name: 'plans.lifetime.name', period: 'plans.lifetime.period', hint: 'plans.lifetime.hint'},
 };
 
-export const PremiumModal = ({visible, onClose}: PremiumModalProps) => {
+export const PremiumModal = ({visible, onClose, onActivated}: PremiumModalProps) => {
     const {t} = useTranslation();
     const {setSetting} = useSettings();
+    const {user, refreshUser} = useAuth();
+    const colors = useAppColors();
     const [processing, setProcessing] = useState(false);
     const [selected, setSelected] = useState<PremiumProductId>('premium_monthly');
     const [catalog, setCatalog] = useState<Product[]>([]);
@@ -65,9 +72,29 @@ export const PremiumModal = ({visible, onClose}: PremiumModalProps) => {
         return next;
     }, [catalog]);
 
+    const syncPurchase = async (input: Parameters<typeof reportPurchaseRequest>[0]) => {
+        if (!user) {
+            return;
+        }
+        try {
+            await reportPurchaseRequest(input);
+            await refreshUser();
+        } catch (error) {
+            console.warn('[billing] report purchase failed', error);
+        }
+    };
+
     const activatePremium = async () => {
         await setSetting('hasPremium', true);
-        Alert.alert(t('premium.purchaseSuccess'), '', [{text: 'OK', onPress: onClose}]);
+        Alert.alert(t('premium.purchaseSuccess'), '', [
+            {
+                text: 'OK',
+                onPress: () => {
+                    onActivated?.();
+                    onClose();
+                },
+            },
+        ]);
     };
 
     const handleSubscribe = async () => {
@@ -77,6 +104,7 @@ export const PremiumModal = ({visible, onClose}: PremiumModalProps) => {
 
         if (!isPaymentsSupported()) {
             if (__DEV__) {
+                await syncPurchase({productId: selected, source: 'dev'});
                 await activatePremium();
             } else {
                 Alert.alert(t('premium.paymentsUnavailable'));
@@ -86,7 +114,15 @@ export const PremiumModal = ({visible, onClose}: PremiumModalProps) => {
 
         setProcessing(true);
         try {
-            await purchasePremium(selected, 'DARK');
+            const result = await purchasePremium(selected, 'DARK');
+            await syncPurchase({
+                productId: selected,
+                invoiceId: result.invoiceId,
+                purchaseId: result.purchaseId,
+                orderId: result.orderId,
+                source: 'rustore',
+                sandbox: result.sandbox,
+            });
             await activatePremium();
         } catch (error) {
             if (error instanceof PurchaseCancelledError) {
@@ -124,9 +160,23 @@ export const PremiumModal = ({visible, onClose}: PremiumModalProps) => {
 
         setProcessing(true);
         try {
-            if (await hasActivePremiumSubscription()) {
+            const status = await readStorePremiumStatus();
+            if (status.active && status.productId) {
+                await syncPurchase({
+                    productId: status.productId,
+                    source: 'restore',
+                    expiresAt: status.expiresAt,
+                });
                 await setSetting('hasPremium', true);
-                Alert.alert(t('premium.restoreSuccess'), '', [{text: 'OK', onPress: onClose}]);
+                Alert.alert(t('premium.restoreSuccess'), '', [
+                    {
+                        text: 'OK',
+                        onPress: () => {
+                            onActivated?.();
+                            onClose();
+                        },
+                    },
+                ]);
             } else {
                 Alert.alert(t('premium.restoreNone'));
             }
@@ -142,11 +192,16 @@ export const PremiumModal = ({visible, onClose}: PremiumModalProps) => {
     return (
         <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
             <View style={styles.overlay}>
-                <View style={styles.content}>
+                <View
+                    style={[
+                        styles.content,
+                        {backgroundColor: colors.tabBar, borderColor: hexAlpha(colors.accent, 0.3)},
+                    ]}
+                >
                     <ScrollView contentContainerStyle={styles.scrollContent}>
-                        <Text style={styles.title}>{t('premium.title')}</Text>
-                        <Text style={styles.benefitsText}>{t('premium.benefits')}</Text>
-                        <Text style={styles.selectLabel}>{t('premium.selectPlan')}</Text>
+                        <Text style={[styles.title, {color: colors.gold}]}>{t('premium.title')}</Text>
+                        <Text style={[styles.benefitsText, {color: colors.text}]}>{t('premium.benefits')}</Text>
+                        <Text style={[styles.selectLabel, {color: colors.gold}]}>{t('premium.selectPlan')}</Text>
 
                         {PREMIUM_PRODUCT_IDS.map((id) => {
                             const copy = PLAN_COPY[id];
@@ -155,42 +210,67 @@ export const PremiumModal = ({visible, onClose}: PremiumModalProps) => {
                             return (
                                 <TouchableOpacity
                                     key={id}
-                                    style={[styles.plan, active && styles.planActive]}
+                                    style={[
+                                        styles.plan,
+                                        {borderColor: hexAlpha(colors.gold, 0.2)},
+                                        active && {
+                                            borderColor: colors.accent,
+                                            backgroundColor: hexAlpha(colors.accent, 0.16),
+                                        },
+                                    ]}
                                     onPress={() => setSelected(id)}
                                     disabled={processing}
                                 >
                                     <View style={styles.planHeader}>
-                                        <Text style={styles.planName}>{titleFromStore || t(`premium.${copy.name}`)}</Text>
-                                        <Text style={styles.planPrice}>{priceById[id]}</Text>
+                                        <Text style={[styles.planName, {color: colors.text}]}>
+                                            {titleFromStore || t(`premium.${copy.name}`)}
+                                        </Text>
+                                        <Text style={[styles.planPrice, {color: colors.accent}]}>{priceById[id]}</Text>
                                     </View>
-                                    <Text style={styles.planPeriod}>{t(`premium.${copy.period}`)}</Text>
-                                    <Text style={styles.planHint}>{t(`premium.${copy.hint}`)}</Text>
+                                    <Text style={[styles.planPeriod, {color: colors.gold}]}>
+                                        {t(`premium.${copy.period}`)}
+                                    </Text>
+                                    <Text style={[styles.planHint, {color: colors.text}]}>
+                                        {t(`premium.${copy.hint}`)}
+                                    </Text>
                                 </TouchableOpacity>
                             );
                         })}
 
-                        <View style={styles.featuresBox}>
-                            <Text style={styles.featuresTitle}>{t('premium.features.title')}</Text>
+                        <View style={[styles.featuresBox, {backgroundColor: hexAlpha(colors.accent, 0.1)}]}>
+                            <Text style={[styles.featuresTitle, {color: colors.gold}]}>
+                                {t('premium.features.title')}
+                            </Text>
                             <View style={styles.feature}>
                                 <Text style={styles.featureBullet}>✨</Text>
-                                <Text style={styles.featureText}>{t('premium.features.aiInterpretations')}</Text>
+                                <Text style={[styles.featureText, {color: colors.text}]}>{t('premium.features.aiInterpretations')}</Text>
                             </View>
                             <View style={styles.feature}>
                                 <Text style={styles.featureBullet}>🔮</Text>
-                                <Text style={styles.featureText}>{t('premium.features.deeperInsights')}</Text>
+                                <Text style={[styles.featureText, {color: colors.text}]}>
+                                    {t('premium.features.deeperInsights')}
+                                </Text>
+                            </View>
+                            <View style={styles.feature}>
+                                <Text style={styles.featureBullet}>☀️</Text>
+                                <Text style={[styles.featureText, {color: colors.text}]}>
+                                    {t('premium.features.dailyCards')}
+                                </Text>
                             </View>
                             <View style={styles.feature}>
                                 <Text style={styles.featureBullet}>♾️</Text>
-                                <Text style={styles.featureText}>{t('premium.features.unlimitedReadings')}</Text>
+                                <Text style={[styles.featureText, {color: colors.text}]}>
+                                    {t('premium.features.unlimitedReadings')}
+                                </Text>
                             </View>
                             <View style={styles.feature}>
                                 <Text style={styles.featureBullet}>🎯</Text>
-                                <Text style={styles.featureText}>{t('premium.features.prioritySupport')}</Text>
+                                <Text style={[styles.featureText, {color: colors.text}]}>{t('premium.features.prioritySupport')}</Text>
                             </View>
                         </View>
 
                         <TouchableOpacity
-                            style={styles.subscribeButton}
+                            style={[styles.subscribeButton, {backgroundColor: colors.accent}]}
                             onPress={() => {
                                 handleSubscribe().catch(() => {});
                             }}
@@ -210,14 +290,14 @@ export const PremiumModal = ({visible, onClose}: PremiumModalProps) => {
                             }}
                             disabled={processing}
                         >
-                            <Text style={styles.restoreButtonText}>{t('premium.restore')}</Text>
+                            <Text style={[styles.restoreButtonText, {color: colors.accent}]}>{t('premium.restore')}</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-                            <Text style={styles.cancelButtonText}>{t('premium.cancel')}</Text>
+                            <Text style={[styles.cancelButtonText, {color: colors.text}]}>{t('premium.cancel')}</Text>
                         </TouchableOpacity>
 
-                        <Text style={styles.disclaimer}>{t('premium.disclaimer')}</Text>
+                        <Text style={[styles.disclaimer, {color: colors.muted}]}>{t('premium.disclaimer')}</Text>
                     </ScrollView>
                 </View>
             </View>

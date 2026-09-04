@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, useColorScheme, View} from 'react-native';
+import {ActivityIndicator, StatusBar, useColorScheme, View} from 'react-native';
 import {
     DarkTheme as NavigationDarkTheme,
     DefaultTheme as NavigationDefaultTheme,
@@ -11,6 +11,8 @@ import {useTranslation} from 'react-i18next';
 import {SettingsProvider, useSettings} from './providers/SettingsProvider';
 import {HistoryProvider} from './providers/HistoryProvider';
 import {AuthProvider, useAuth} from './providers/AuthProvider';
+import {DeckShopProvider, useAppColors} from './providers/DeckShopProvider';
+import type {AppColors} from './theme/appColors';
 import {DisclaimerScreen} from './screens/DisclaimerScreen';
 import {AuthScreen} from './screens/AuthScreen';
 import {VerifyEmailScreen} from './screens/VerifyEmailScreen';
@@ -33,20 +35,28 @@ const RootStack = createNativeStackNavigator<RootStackParamList>();
 const HomeStack = createNativeStackNavigator<HomeStackParamList>();
 const Tab = createBottomTabNavigator<AppTabsParamList>();
 
-const legalScreenOptions = (t: (key: string) => string) => {
+const legalScreenOptions = (t: (key: string) => string, colors: AppColors) => {
     return ({route}: {route: {params: RootStackParamList['LegalDocument']}}) => ({
         headerShown: true,
         title: route.params.doc === 'privacy' ? t('legal.privacyTitle') : t('legal.termsTitle'),
-        headerTintColor: '#f7f4ea',
-        headerStyle: {backgroundColor: '#040307'},
+        headerTintColor: colors.text,
+        headerStyle: {backgroundColor: colors.bg},
         headerShadowVisible: false,
     });
 };
 
+const stackHeader = (colors: AppColors) => ({
+    headerTintColor: colors.text,
+    headerStyle: {backgroundColor: colors.bg},
+    headerShadowVisible: false,
+    headerTitleStyle: {color: colors.gold, fontWeight: '700' as const},
+});
+
 const HomeStackNavigator = () => {
     const {t} = useTranslation();
+    const colors = useAppColors();
     return (
-        <HomeStack.Navigator>
+        <HomeStack.Navigator screenOptions={stackHeader(colors)}>
             <HomeStack.Screen name="Home" component={HomeScreen} options={{headerShown: false}} />
             <HomeStack.Screen
                 name="SpreadCatalog"
@@ -66,13 +76,14 @@ const TAB_ICONS: Record<keyof AppTabsParamList, keyof typeof Ionicons.glyphMap> 
 
 const MainTabs = () => {
     const {t} = useTranslation();
+    const colors = useAppColors();
     return (
         <Tab.Navigator
             screenOptions={({route}) => ({
                 headerShown: false,
-                tabBarActiveTintColor: '#6c5ce7',
-                tabBarInactiveTintColor: 'rgba(247,244,234,0.55)',
-                tabBarStyle: {backgroundColor: '#0c0a14', borderTopColor: 'rgba(244,211,134,0.15)'},
+                tabBarActiveTintColor: colors.accent,
+                tabBarInactiveTintColor: colors.muted,
+                tabBarStyle: {backgroundColor: colors.tabBar, borderTopColor: colors.gold},
                 tabBarIcon: ({color, size}) => (
                     <Ionicons name={TAB_ICONS[route.name]} size={size} color={color} />
                 ),
@@ -104,19 +115,37 @@ const AppNavigation = () => {
     }, [settings.language, settingsLoading]);
 
     useEffect(() => {
-        if (user?.hasPremium && !settings.hasPremium) {
-            setSetting('hasPremium', true).catch(() => {});
+        if (!user) {
+            return;
         }
-    }, [setSetting, settings.hasPremium, user?.hasPremium]);
+        if (user.hasPremium === settings.hasPremium) {
+            return;
+        }
+        setSetting('hasPremium', user.hasPremium).catch(() => {});
+    }, [setSetting, settings.hasPremium, user]);
 
+    const colors = useAppColors();
     const scheme =
         settings.theme === 'system' ? systemScheme ?? 'light' : settings.theme === 'dark' ? 'dark' : 'light';
-    const theme = scheme === 'dark' ? NavigationDarkTheme : NavigationDefaultTheme;
+    const baseTheme = scheme === 'dark' ? NavigationDarkTheme : NavigationDefaultTheme;
+    const theme = {
+        ...baseTheme,
+        colors: {
+            ...baseTheme.colors,
+            primary: colors.accent,
+            background: colors.bg,
+            card: colors.tabBar,
+            text: colors.text,
+            border: colors.gold,
+            notification: colors.danger,
+        },
+    };
 
     if (settingsLoading || authLoading) {
         return (
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#040307'}}>
-                <ActivityIndicator color="#6c5ce7" />
+            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.bg}}>
+                <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
+                <ActivityIndicator color={colors.accent} />
             </View>
         );
     }
@@ -126,7 +155,8 @@ const AppNavigation = () => {
 
     return (
         <NavigationContainer theme={theme}>
-            <RootStack.Navigator screenOptions={{headerShown: false}}>
+            <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
+            <RootStack.Navigator screenOptions={{headerShown: false, ...stackHeader(colors)}}>
                 {showDisclaimer ? (
                     <RootStack.Screen name="Disclaimer" component={DisclaimerScreen} />
                 ) : showAuth ? (
@@ -137,7 +167,7 @@ const AppNavigation = () => {
                         <RootStack.Screen
                             name="LegalDocument"
                             component={LegalDocumentScreen}
-                            options={legalScreenOptions((key) => t(key))}
+                            options={legalScreenOptions((key) => t(key), colors)}
                         />
                     </>
                 ) : (
@@ -156,7 +186,7 @@ const AppNavigation = () => {
                         <RootStack.Screen
                             name="LegalDocument"
                             component={LegalDocumentScreen}
-                            options={legalScreenOptions((key) => t(key))}
+                            options={legalScreenOptions((key) => t(key), colors)}
                         />
                     </>
                 )}
@@ -172,9 +202,11 @@ export default function App() {
         <GestureHandlerRootView style={{flex: 1}}>
             <SettingsProvider>
                 <AuthProvider>
-                    <HistoryProvider>
-                        {videoDone ? <AppNavigation /> : null}
-                    </HistoryProvider>
+                    <DeckShopProvider>
+                        <HistoryProvider>
+                            {videoDone ? <AppNavigation /> : null}
+                        </HistoryProvider>
+                    </DeckShopProvider>
                 </AuthProvider>
             </SettingsProvider>
             {videoDone ? null : <VideoSplash onDone={() => setVideoDone(true)} />}

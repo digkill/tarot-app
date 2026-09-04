@@ -1,0 +1,84 @@
+{{define "transactions"}}
+{{template "header" .}}
+<h1>Транзакции</h1>
+<p class="sub">{{.Total}} записей · возврат снимает премиум, если нет других оплаченных платежей</p>
+
+<form class="row" method="get" action="/admin/transactions">
+  <div class="field" style="flex:1">
+    <label>Email или invoice</label>
+    <input type="search" name="q" value="{{.Query}}">
+  </div>
+  <div class="field">
+    <label>Статус</label>
+    <select name="status">
+      <option value="" {{if eq .Status ""}}selected{{end}}>все</option>
+      <option value="paid" {{if eq .Status "paid"}}selected{{end}}>paid</option>
+      <option value="refunded" {{if eq .Status "refunded"}}selected{{end}}>refunded</option>
+      <option value="pending" {{if eq .Status "pending"}}selected{{end}}>pending</option>
+      <option value="canceled" {{if eq .Status "canceled"}}selected{{end}}>canceled</option>
+    </select>
+  </div>
+  <button class="btn" type="submit">Фильтр</button>
+</form>
+
+<h2>Создать вручную</h2>
+<form method="post" action="/admin/transactions" class="row">
+  <input type="hidden" name="csrf" value="{{.CSRF}}">
+  <div class="field" style="flex:1">
+    <label>Email пользователя</label>
+    <input type="email" name="email" required placeholder="user@example.com">
+  </div>
+  <div class="field">
+    <label>Продукт</label>
+    <select name="product_id">
+      {{range .Products}}
+      <option value="{{.ID}}">{{.Title}}</option>
+      {{end}}
+      {{range .Decks}}
+      <option value="{{.ProductID}}">Колода: {{.Slug}}</option>
+      {{end}}
+    </select>
+  </div>
+  <div class="field">
+    <label>Источник</label>
+    <select name="provider">
+      <option value="admin">admin</option>
+      <option value="promo">promo</option>
+      <option value="rustore">rustore</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>Сумма, ₽ (пусто = цена тарифа)</label>
+    <input name="amount_rub" inputmode="decimal" placeholder="599">
+  </div>
+  <div class="field">
+    <label>Invoice</label>
+    <input name="invoice_id">
+  </div>
+  <div class="field">
+    <label>Заметка</label>
+    <input name="notes">
+  </div>
+  <button class="btn" type="submit">Начислить</button>
+</form>
+
+{{if .Tx}}
+<table>
+  <thead><tr><th>Когда</th><th>Пользователь</th><th>Продукт</th><th>Сумма</th><th>Источник</th><th>Статус</th></tr></thead>
+  <tbody>
+  {{range .Tx}}
+    <tr>
+      <td>{{fmtTime .CreatedAt}}</td>
+      <td><a href="/admin/users/{{.UserID}}">{{.UserEmail}}</a></td>
+      <td>{{titleOf .ProductID}}</td>
+      <td>{{fmtRubI .AmountKop}}</td>
+      <td>{{.Provider}}{{if .Sandbox}} · sandbox{{end}}</td>
+      <td><a href="/admin/transactions/{{.ID}}"><span class="tag {{.Status}}">{{.Status}}</span></a></td>
+    </tr>
+  {{end}}
+  </tbody>
+</table>
+{{template "pager" .}}
+{{else}}<p class="sub">Ничего не найдено.</p>{{end}}
+{{template "footer"}}
+{{end}}

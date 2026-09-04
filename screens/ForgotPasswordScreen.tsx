@@ -16,12 +16,14 @@ import {isApiError} from '../features/apiClient';
 import {RootStackParamList} from '../navigation/types';
 import {useAuth} from '../providers/AuthProvider';
 import {useSettings} from '../providers/SettingsProvider';
+import {useAppColors} from '../providers/DeckShopProvider';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'ForgotPassword'>;
 
 export const ForgotPasswordScreen = ({navigation, route}: Props) => {
     const {t} = useTranslation();
     const {settings} = useSettings();
+    const colors = useAppColors();
     const {forgotPassword, resetPassword} = useAuth();
     const [email, setEmail] = useState(route.params.email ?? '');
     const [code, setCode] = useState('');
@@ -81,7 +83,7 @@ export const ForgotPasswordScreen = ({navigation, route}: Props) => {
     };
 
     return (
-        <SafeAreaView style={styles.safe}>
+        <SafeAreaView style={[styles.safe, {backgroundColor: colors.bg}]}>
             <KeyboardAvoidingView
                 style={styles.flex}
                 behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -134,6 +136,7 @@ export const ForgotPasswordScreen = ({navigation, route}: Props) => {
                     <TouchableOpacity
                         style={[
                             styles.button,
+                            {backgroundColor: colors.accent},
                             (step === 'request' ? !canRequest : !canReset) && styles.buttonDisabled,
                         ]}
                         onPress={() => {

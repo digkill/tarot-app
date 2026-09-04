@@ -1,0 +1,9 @@
+{{define "pager"}}
+{{if gt .Pages 1}}
+<div class="pager">
+  {{if .HasPrev}}<a class="btn ghost" href="{{.PrevURL}}">Назад</a>{{end}}
+  <span>стр. {{.Page}} из {{.Pages}}</span>
+  {{if .HasNext}}<a class="btn ghost" href="{{.NextURL}}">Вперёд</a>{{end}}
+</div>
+{{end}}
+{{end}}

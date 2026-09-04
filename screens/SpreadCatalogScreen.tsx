@@ -16,6 +16,11 @@ import {SPREADS} from '../data';
 import {AppTabsParamList, HomeStackParamList, RootStackParamList} from '../navigation/types';
 import type {Spread} from '../entities';
 import {useSettings} from '../providers/SettingsProvider';
+import {useDeckShop} from '../providers/DeckShopProvider';
+import {hexAlpha} from '../theme/appColors';
+import {ONE_CARD_SPREAD_ID} from '../features/dailyCard';
+import {useOneCardGate} from '../hooks/useOneCardGate';
+import {DailyLimitModal} from '../components/DailyLimitModal';
 
 type Navigation = CompositeNavigationProp<
     NativeStackNavigationProp<HomeStackParamList, 'SpreadCatalog'>,
@@ -36,6 +41,12 @@ export const SpreadCatalogScreen = () => {
     const navigation = useNavigation<Navigation>();
     const {t} = useTranslation();
     const {settings} = useSettings();
+    const {colors, selectedSlug} = useDeckShop();
+    const gate = useOneCardGate(
+        (params) => navigation.navigate('Reading', params),
+        (readingId) => navigation.navigate('Interpretation', {readingId}),
+        selectedSlug,
+    );
 
     const sections = useMemo<Section[]>(() => {
         const grouped = SPREADS.reduce<Record<string, Spread[]>>((acc, spread) => {
@@ -64,36 +75,61 @@ export const SpreadCatalogScreen = () => {
             ]);
             return;
         }
-        navigation.navigate('Reading', {spreadId: spread.id, deckId: 'rws'});
+        if (spread.id === ONE_CARD_SPREAD_ID) {
+            gate.start(true).catch(() => {});
+            return;
+        }
+        navigation.navigate('Reading', {spreadId: spread.id, deckId: selectedSlug});
     };
 
     const renderItem = ({item}: {item: Spread}) => (
         <TouchableOpacity
-            style={[styles.card, item.premium && styles.cardPremium]}
+            style={[
+                styles.card,
+                {backgroundColor: colors.panel, borderColor: hexAlpha(colors.gold, 0.25)},
+                item.premium && {
+                    borderColor: hexAlpha(colors.accent, 0.5),
+                    backgroundColor: hexAlpha(colors.accent, 0.12),
+                },
+            ]}
             onPress={() => startSpread(item)}
         >
             <View style={styles.cardHeader}>
-                <Text style={styles.cardTitle}>{t(item.nameKey)}</Text>
-                {item.premium && <Text style={styles.badge}>{t('spread.premium')}</Text>}
+                <Text style={[styles.cardTitle, {color: colors.text}]}>{t(item.nameKey)}</Text>
+                {item.premium && (
+                    <Text style={[styles.badge, {backgroundColor: colors.accent}]}>{t('spread.premium')}</Text>
+                )}
             </View>
-            <Text style={styles.cardDescription}>{t(item.descriptionKey)}</Text>
+            <Text style={[styles.cardDescription, {color: colors.text}]}>{t(item.descriptionKey)}</Text>
             <View style={styles.metaRow}>
-                <Text style={styles.meta}>{t('spread.cards', {count: item.maxCards})}</Text>
-                <Text style={styles.meta}>{t(categoryKey(item.category))}</Text>
+                <Text style={[styles.meta, {color: colors.gold}]}>{t('spread.cards', {count: item.maxCards})}</Text>
+                <Text style={[styles.meta, {color: colors.gold}]}>{t(categoryKey(item.category))}</Text>
             </View>
         </TouchableOpacity>
     );
 
     return (
-        <SafeAreaView style={styles.safe}>
+        <SafeAreaView style={[styles.safe, {backgroundColor: colors.bg}]}>
             <SectionList
                 sections={sections}
                 keyExtractor={(item) => item.id}
                 renderItem={renderItem}
                 renderSectionHeader={({section}) => (
-                    <Text style={styles.sectionTitle}>{t(section.title)}</Text>
+                    <Text style={[styles.sectionTitle, {color: colors.gold}]}>{t(section.title)}</Text>
                 )}
                 contentContainerStyle={styles.listContent}
+            />
+            <DailyLimitModal
+                visible={gate.limitOpen}
+                todayReadingId={gate.today?.id}
+                onClose={() => gate.setLimitOpen(false)}
+                onOpenToday={() => {
+                    gate.setLimitOpen(false);
+                    gate.openToday();
+                }}
+                onUnlocked={(result) => {
+                    gate.onUnlocked(result).catch(() => {});
+                }}
             />
         </SafeAreaView>
     );

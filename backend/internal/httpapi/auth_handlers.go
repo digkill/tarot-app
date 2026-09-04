@@ -37,20 +37,24 @@ type authResponse struct {
 }
 
 type userView struct {
-	ID            string    `json:"id"`
-	Email         string    `json:"email"`
-	HasPremium    bool      `json:"hasPremium"`
-	EmailVerified bool      `json:"emailVerified"`
-	CreatedAt     time.Time `json:"createdAt"`
+	ID               string     `json:"id"`
+	Email            string     `json:"email"`
+	HasPremium       bool       `json:"hasPremium"`
+	PremiumExpiresAt *time.Time `json:"premiumExpiresAt"`
+	PremiumProductID string     `json:"premiumProductId,omitempty"`
+	EmailVerified    bool       `json:"emailVerified"`
+	CreatedAt        time.Time  `json:"createdAt"`
 }
 
 func toUserView(u *storage.User) userView {
 	return userView{
-		ID:            u.ID,
-		Email:         u.Email,
-		HasPremium:    u.HasPremium,
-		EmailVerified: u.EmailVerified(),
-		CreatedAt:     u.CreatedAt,
+		ID:               u.ID,
+		Email:            u.Email,
+		HasPremium:       u.HasPremium,
+		PremiumExpiresAt: u.PremiumExpiresAt,
+		PremiumProductID: u.PremiumProductID,
+		EmailVerified:    u.EmailVerified(),
+		CreatedAt:        u.CreatedAt,
 	}
 }
 

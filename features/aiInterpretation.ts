@@ -1,5 +1,5 @@
 import type {LanguagePreference, ReadingAiInsight} from '../entities';
-import {apiRequest} from './apiClient';
+import {apiRequest, deviceTimezone} from './apiClient';
 
 type PremiumEntry = {
     positionIndex: number;
@@ -30,22 +30,24 @@ type InterpretApiResponse = {
         orientation: string;
         meaning: string;
     }>;
-    model: string;
 };
 
 export const fetchPremiumInterpretation = async (
     request: PremiumInterpretationRequest,
 ): Promise<ReadingAiInsight> => {
-    const data = await apiRequest<InterpretApiResponse>('/api/v1/interpretations', {
-        method: 'POST',
-        body: {
-            spreadId: request.spreadId,
-            spreadName: request.spreadName,
-            spreadDescription: request.spreadDescription ?? '',
-            language: request.language,
-            cards: request.entries,
+    const data = await apiRequest<InterpretApiResponse>(
+        `/api/v1/interpretations?tz=${encodeURIComponent(deviceTimezone())}`,
+        {
+            method: 'POST',
+            body: {
+                spreadId: request.spreadId,
+                spreadName: request.spreadName,
+                spreadDescription: request.spreadDescription ?? '',
+                language: request.language,
+                cards: request.entries,
+            },
         },
-    });
+    );
 
     return {
         summary: data.summary,
@@ -56,7 +58,7 @@ export const fetchPremiumInterpretation = async (
             orientation: item.orientation === 'reversed' ? 'reversed' : 'upright',
             meaning: item.meaning,
         })),
-        model: data.model,
+        model: '',
         language: request.language,
         generatedAt: Date.now(),
     };

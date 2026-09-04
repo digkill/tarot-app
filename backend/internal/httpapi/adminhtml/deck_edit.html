@@ -1,0 +1,107 @@
+{{define "deck_edit"}}
+{{template "header" .}}
+{{if .IsNew}}<h1>Новая колода</h1>{{else}}<h1>{{.Deck.Slug}}</h1><p class="sub mono">{{.Deck.ID}} · SKU {{deref .Deck.RustoreProductID}}</p>{{end}}
+
+{{if .IsNew}}
+<form method="post" action="/admin/decks">
+{{else}}
+<form method="post" action="/admin/decks/{{.Deck.ID}}">
+{{end}}
+  <input type="hidden" name="csrf" value="{{.CSRF}}">
+  <div class="row">
+    <div class="field">
+      <label>Slug (латиница, в URL и SKU deck_slug)</label>
+      {{if .IsNew}}
+      <input name="slug" required pattern="[a-z0-9][a-z0-9_-]{1,62}" placeholder="japanese">
+      {{else}}
+      <input value="{{.Deck.Slug}}" disabled>
+      {{end}}
+    </div>
+    <div class="field">
+      <label>Цена, ₽</label>
+      <input name="price_rub" inputmode="decimal" value="{{if .Deck}}{{kopRub .Deck.PriceKop}}{{end}}" placeholder="349">
+    </div>
+    <div class="field">
+      <label>RuStore product id</label>
+      <input name="rustore_product_id" value="{{if .Deck}}{{deref .Deck.RustoreProductID}}{{end}}" placeholder="deck_japanese">
+    </div>
+    <div class="field">
+      <label>Порядок</label>
+      <input name="sort_order" value="{{if .Deck}}{{.Deck.SortOrder}}{{else}}0{{end}}">
+    </div>
+  </div>
+  <label><input type="checkbox" name="is_free" value="1" {{if and .Deck .Deck.IsFree}}checked{{end}}> Бесплатная</label>
+  <label><input type="checkbox" name="is_published" value="1" {{if and .Deck .Deck.IsPublished}}checked{{end}}> Показать в магазине приложения</label>
+
+  <h2>Названия</h2>
+  <div class="row">
+    <div class="field" style="flex:1"><label>RU</label><input name="title_ru" value="{{if .Deck}}{{index .Deck.TitleI18n "ru"}}{{end}}" placeholder="Японская колода"></div>
+    <div class="field" style="flex:1"><label>EN</label><input name="title_en" value="{{if .Deck}}{{index .Deck.TitleI18n "en"}}{{end}}" placeholder="Japanese deck"></div>
+    <div class="field" style="flex:1"><label>TH</label><input name="title_th" value="{{if .Deck}}{{index .Deck.TitleI18n "th"}}{{end}}"></div>
+    <div class="field" style="flex:1"><label>ZH</label><input name="title_zh" value="{{if .Deck}}{{index .Deck.TitleI18n "zh"}}{{end}}"></div>
+  </div>
+  <h2>Описание</h2>
+  <div class="row">
+    <div class="field" style="flex:1"><label>RU</label><textarea name="description_ru">{{if .Deck}}{{index .Deck.DescriptionI18n "ru"}}{{end}}</textarea></div>
+    <div class="field" style="flex:1"><label>EN</label><textarea name="description_en">{{if .Deck}}{{index .Deck.DescriptionI18n "en"}}{{end}}</textarea></div>
+  </div>
+
+  <h2>Тема приложения</h2>
+  <p class="note">При выборе этой колоды в приложении меняются фон, акцент, текст и табы.</p>
+  <div class="row">
+    <div class="field">
+      <label>Пресет</label>
+      <select name="theme_preset">
+        {{range .Presets}}<option value="{{.}}">{{.}}</option>{{end}}
+      </select>
+    </div>
+    <label style="align-self:center"><input type="checkbox" name="use_preset" value="1"> Заполнить цвета из пресета (японский, ink, forest…)</label>
+  </div>
+  <div class="row">
+    <div class="field"><label>Фон</label><input name="theme_bg" value="{{if .Deck}}{{.Deck.Theme.Bg}}{{else}}#040307{{end}}"></div>
+    <div class="field"><label>Панель</label><input name="theme_panel" value="{{if .Deck}}{{.Deck.Theme.Panel}}{{else}}#1a1030{{end}}"></div>
+    <div class="field"><label>Акцент</label><input name="theme_accent" value="{{if .Deck}}{{.Deck.Theme.Accent}}{{else}}#6c5ce7{{end}}"></div>
+    <div class="field"><label>Текст</label><input name="theme_text" value="{{if .Deck}}{{.Deck.Theme.Text}}{{else}}#f7f4ea{{end}}"></div>
+    <div class="field"><label>Приглушённый</label><input name="theme_muted" value="{{if .Deck}}{{.Deck.Theme.Muted}}{{else}}#9a93b3{{end}}"></div>
+    <div class="field"><label>Золото / рамка</label><input name="theme_gold" value="{{if .Deck}}{{.Deck.Theme.Gold}}{{else}}#d4af37{{end}}"></div>
+    <div class="field"><label>Ошибка</label><input name="theme_danger" value="{{if .Deck}}{{.Deck.Theme.Danger}}{{else}}#ff6b6b{{end}}"></div>
+    <div class="field"><label>Таббар</label><input name="theme_tabbar" value="{{if .Deck}}{{.Deck.Theme.TabBar}}{{else}}#0c0a14{{end}}"></div>
+  </div>
+  <p>
+    {{if .Deck}}
+    <span class="swatch" style="background:{{.Deck.Theme.Bg}}"></span>
+    <span class="swatch" style="background:{{.Deck.Theme.Accent}}"></span>
+    <span class="swatch" style="background:{{.Deck.Theme.Gold}}"></span>
+    {{end}}
+  </p>
+  <button class="btn" type="submit">Сохранить</button>
+</form>
+
+{{if not .IsNew}}
+<h2>Карты (ZIP)</h2>
+<p class="note">Архив с именами генератора. Сервер сожмёт в JPEG ~720px. Сейчас карт: {{.Deck.CardCount}}{{if .Deck.HasBack}}, рубашка есть{{else}}, рубашки нет{{end}}.</p>
+<form method="post" action="/admin/decks/{{.Deck.ID}}/import" enctype="multipart/form-data">
+  <input type="hidden" name="csrf" value="{{.CSRF}}">
+  <div class="row">
+    <div class="field"><label>ZIP</label><input type="file" name="archive" accept=".zip" required></div>
+    <button class="btn" type="submit">Импортировать</button>
+  </div>
+</form>
+{{if .Cover}}<p>Обложка:</p><div class="thumbs"><img src="{{.Cover}}" alt="cover"></div>{{end}}
+{{if .Back}}<p>Рубашка:</p><div class="thumbs"><img src="{{.Back}}" alt="back"></div>{{end}}
+{{if .Cards}}
+<p>Карты ({{len .Cards}})</p>
+<div class="thumbs">
+  {{range $k, $u := .Cards}}<img src="{{$u}}" alt="{{$k}}" title="{{$k}}">{{end}}
+</div>
+{{end}}
+
+<h2>Выдать пользователю</h2>
+<form method="post" action="/admin/decks/{{.Deck.ID}}/grant" class="row">
+  <input type="hidden" name="csrf" value="{{.CSRF}}">
+  <div class="field" style="flex:1"><label>Email</label><input type="email" name="email" required></div>
+  <button class="btn" type="submit">Выдать</button>
+</form>
+{{end}}
+{{template "footer"}}
+{{end}}

@@ -80,11 +80,13 @@ export type Reading = {
     deckId: string;
     drawnAt: number;
     items: ReadingCard[];
-    summaryText: string;
+	summaryText: string;
     notes?: string;
     tags?: string[];
     favorite?: boolean;
     aiInsights?: ReadingAiInsight;
+    /** First card of the day vs extra draws after an ad. */
+    kind?: 'daily' | 'bonus';
 };
 
 export type ThemePreference = 'light' | 'dark' | 'system';
@@ -103,4 +105,8 @@ export type Settings = {
     hasPremium: boolean;
     dailyReminder?: boolean;
     acceptedDisclaimer?: boolean;
+    /** Visual deck + app palette. Built-in classic is `rws`. */
+    selectedDeckId?: string;
+    /** Extra purchased deck slugs (classic `rws` is always owned). */
+    ownedDeckIds?: string[];
 };

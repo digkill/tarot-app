@@ -24,9 +24,16 @@ type Config struct {
 	KieBaseURL         string
 	KieTarotModel      string
 	KieReasoningEffort string
+	OpenAIAPIKey       string
+	OpenAIBaseURL      string
+	OpenAITarotModel   string
 	AccessTokenTTL     time.Duration
 	RefreshTokenTTL    time.Duration
 	CORSAllowedOrigins []string
+	AdminEmail         string
+	AdminPassword      string
+	AdminSessionTTL    time.Duration
+	DeckStorageDir     string
 }
 
 func Load() (*Config, error) {
@@ -44,6 +51,12 @@ func Load() (*Config, error) {
 		KieBaseURL:         getEnv("KIE_BASE_URL", "https://api.kie.ai"),
 		KieTarotModel:      getEnv("KIE_TAROT_MODEL", "gpt-5-6-luna"),
 		KieReasoningEffort: getEnv("KIE_REASONING_EFFORT", "low"),
+		OpenAIAPIKey:       os.Getenv("OPENAI_API_KEY"),
+		OpenAIBaseURL:      getEnv("OPENAI_BASE_URL", "https://api.openai.com"),
+		OpenAITarotModel:   getEnv("OPENAI_TAROT_MODEL", "gpt-4o-mini"),
+		AdminEmail:         strings.ToLower(strings.TrimSpace(os.Getenv("ADMIN_EMAIL"))),
+		AdminPassword:      os.Getenv("ADMIN_PASSWORD"),
+		DeckStorageDir:     getEnv("DECK_STORAGE_DIR", "data/decks"),
 	}
 
 	if cfg.DatabaseURL == "" {
@@ -82,6 +95,10 @@ func Load() (*Config, error) {
 		return nil, err
 	}
 	cfg.RefreshTokenTTL, err = parseDuration("REFRESH_TOKEN_TTL", 30*24*time.Hour)
+	if err != nil {
+		return nil, err
+	}
+	cfg.AdminSessionTTL, err = parseDuration("ADMIN_SESSION_TTL", 12*time.Hour)
 	if err != nil {
 		return nil, err
 	}

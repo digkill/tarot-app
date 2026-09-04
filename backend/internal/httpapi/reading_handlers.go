@@ -13,14 +13,14 @@ import (
 )
 
 type readingView struct {
-	ID          string               `json:"id"`
-	SpreadID    string               `json:"spreadId"`
-	DeckID      string               `json:"deckId"`
+	ID          string                `json:"id"`
+	SpreadID    string                `json:"spreadId"`
+	DeckID      string                `json:"deckId"`
 	Items       []storage.ReadingItem `json:"items"`
-	SummaryText string               `json:"summaryText"`
-	Notes       string               `json:"notes"`
-	Favorite    bool                 `json:"favorite"`
-	CreatedAt   time.Time            `json:"createdAt"`
+	SummaryText string                `json:"summaryText"`
+	Notes       string                `json:"notes"`
+	Favorite    bool                  `json:"favorite"`
+	CreatedAt   time.Time             `json:"createdAt"`
 }
 
 func toReadingView(rd *storage.Reading) readingView {
@@ -41,11 +41,11 @@ func toReadingView(rd *storage.Reading) readingView {
 }
 
 type createReadingRequest struct {
-	SpreadID    string               `json:"spreadId"`
-	DeckID      string               `json:"deckId"`
+	SpreadID    string                `json:"spreadId"`
+	DeckID      string                `json:"deckId"`
 	Items       []storage.ReadingItem `json:"items"`
-	SummaryText string               `json:"summaryText"`
-	Notes       string               `json:"notes"`
+	SummaryText string                `json:"summaryText"`
+	Notes       string                `json:"notes"`
 }
 
 func (h *Handler) CreateReading(w http.ResponseWriter, r *http.Request) {

@@ -13,6 +13,8 @@ import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useTranslation} from 'react-i18next';
 import {useHistory} from '../providers/HistoryProvider';
 import {useSettings} from '../providers/SettingsProvider';
+import {useAppColors} from '../providers/DeckShopProvider';
+import {hexAlpha} from '../theme/appColors';
 import {SPREADS} from '../data';
 import {getReadingSummary} from '../features/interpretation';
 import {RootStackParamList} from '../navigation/types';
@@ -25,6 +27,7 @@ type Filter = (typeof FILTERS)[number];
 export const HistoryListScreen = () => {
     const {readings, deleteReading, clearAll, toggleFavorite} = useHistory();
     const {settings} = useSettings();
+    const colors = useAppColors();
     const navigation = useNavigation<Navigation>();
     const {t} = useTranslation();
     const [filter, setFilter] = useState<Filter>('all');
@@ -41,23 +44,28 @@ export const HistoryListScreen = () => {
         const summary = getReadingSummary(item, settings.language);
         return (
             <TouchableOpacity
-                style={styles.card}
+                style={[
+                    styles.card,
+                    {backgroundColor: colors.panel, borderColor: hexAlpha(colors.gold, 0.2)},
+                ]}
                 onPress={() => navigation.navigate('Interpretation', {readingId: item.id})}
             >
                 <View style={styles.cardHeader}>
-                    <Text style={styles.cardTitle}>{spread ? t(spread.nameKey) : item.spreadId}</Text>
+                    <Text style={[styles.cardTitle, {color: colors.gold}]}>
+                        {spread ? t(spread.nameKey) : item.spreadId}
+                    </Text>
                     <TouchableOpacity
                         onPress={() => toggleFavorite(item.id)}
                         style={styles.favoriteBtn}
                     >
-                        <Text style={styles.favoriteIcon}>{item.favorite ? '★' : '☆'}</Text>
+                        <Text style={[styles.favoriteIcon, {color: colors.gold}]}>{item.favorite ? '★' : '☆'}</Text>
                     </TouchableOpacity>
                 </View>
-                <Text style={styles.cardDate}>
+                <Text style={[styles.cardDate, {color: colors.muted}]}>
                     {new Date(item.drawnAt).toLocaleString(settings.language)}
                 </Text>
                 {summary ? (
-                    <Text style={styles.cardSummary} numberOfLines={3}>
+                    <Text style={[styles.cardSummary, {color: colors.text}]} numberOfLines={3}>
                         {summary}
                     </Text>
                 ) : null}
@@ -94,16 +102,24 @@ export const HistoryListScreen = () => {
     };
 
     return (
-        <SafeAreaView style={styles.safe}>
+        <SafeAreaView style={[styles.safe, {backgroundColor: colors.bg}]}>
             <View style={styles.filterRow}>
                 {FILTERS.map((item) => (
                     <TouchableOpacity
                         key={item}
-                        style={[styles.filterButton, filter === item && styles.filterButtonActive]}
+                        style={[
+                            styles.filterButton,
+                            {borderColor: hexAlpha(colors.gold, 0.3)},
+                            filter === item && {backgroundColor: colors.accent, borderColor: colors.accent},
+                        ]}
                         onPress={() => setFilter(item)}
                     >
                         <Text
-                            style={[styles.filterText, filter === item && styles.filterTextActive]}
+                            style={[
+                                styles.filterText,
+                                {color: colors.text},
+                                filter === item && styles.filterTextActive,
+                            ]}
                         >
                             {t(`history.filter.${item}`)}
                         </Text>
@@ -121,8 +137,8 @@ export const HistoryListScreen = () => {
                 contentContainerStyle={styles.listContent}
                 ListEmptyComponent={() => (
                     <View style={styles.emptyState}>
-                        <Text style={styles.emptyTitle}>{t('history.emptyTitle')}</Text>
-                        <Text style={styles.emptySubtitle}>{t('history.emptySubtitle')}</Text>
+                        <Text style={[styles.emptyTitle, {color: colors.text}]}>{t('history.emptyTitle')}</Text>
+                        <Text style={[styles.emptySubtitle, {color: colors.muted}]}>{t('history.emptySubtitle')}</Text>
                     </View>
                 )}
             />

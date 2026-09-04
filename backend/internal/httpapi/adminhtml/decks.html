@@ -1,0 +1,24 @@
+{{define "decks"}}
+{{template "header" .}}
+<h1>Колоды</h1>
+<p class="sub">Тематические колоды для витрины: карты + рубашка + палитра приложения. ZIP как в tarot_deck_hq: <span class="mono">00_THE_FOOL.png</span>, <span class="mono">ACE_OF_WANDS.png</span>, <span class="mono">CARD_BACK.png</span>.</p>
+<p><a class="btn" href="/admin/decks/new">Новая колода</a></p>
+{{if .Decks}}
+<table>
+  <thead><tr><th>Slug</th><th>Название</th><th>Цена</th><th>SKU</th><th>Карт</th><th>Статус</th></tr></thead>
+  <tbody>
+  {{range .Decks}}
+    <tr>
+      <td class="mono"><a href="/admin/decks/{{.ID}}">{{.Slug}}</a></td>
+      <td>{{index .TitleI18n "ru"}} {{index .TitleI18n "en"}}</td>
+      <td>{{if .IsFree}}бесплатно{{else}}{{fmtRubI .PriceKop}}{{end}}</td>
+      <td class="mono">{{deref .RustoreProductID}}</td>
+      <td>{{.CardCount}}</td>
+      <td>{{if .IsPublished}}<span class="tag paid">в магазине</span>{{else}}черновик{{end}}</td>
+    </tr>
+  {{end}}
+  </tbody>
+</table>
+{{else}}<p class="sub">Пока нет колод — создайте японскую или любую другую тему.</p>{{end}}
+{{template "footer"}}
+{{end}}

@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/digkill/tarot-app/backend/internal/usage"
 )
 
 type contextKey string
@@ -33,9 +35,29 @@ func (h *Handler) authMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+func (h *Handler) optionalAuth(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		authHeader := r.Header.Get("Authorization")
+		if strings.HasPrefix(authHeader, "Bearer ") {
+			token := strings.TrimPrefix(authHeader, "Bearer ")
+			if userID, err := h.jwtSecret.parse(token); err == nil {
+				r = r.WithContext(context.WithValue(r.Context(), ctxUserID, userID))
+			}
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
 func userIDFromCtx(ctx context.Context) string {
 	v, _ := ctx.Value(ctxUserID).(string)
 	return v
+}
+
+func requestLocation(r *http.Request) *time.Location {
+	if q := strings.TrimSpace(r.URL.Query().Get("tz")); q != "" {
+		return usage.LoadLocation(q)
+	}
+	return usage.LoadLocation(r.Header.Get("X-Timezone"))
 }
 
 func clientIP(r *http.Request) string {
@@ -73,7 +95,7 @@ func corsMiddleware(allowedOrigins []string) func(http.Handler) http.Handler {
 				w.Header().Add("Vary", "Origin")
 			}
 			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS")
-			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Timezone")
 			if r.Method == http.MethodOptions {
 				w.WriteHeader(http.StatusNoContent)
 				return
@@ -85,7 +107,11 @@ func corsMiddleware(allowedOrigins []string) func(http.Handler) http.Handler {
 
 func bodyLimit(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		r.Body = http.MaxBytesReader(w, r.Body, 1<<20)
+		limit := int64(1 << 20)
+		if strings.HasSuffix(r.URL.Path, "/import") {
+			limit = 512 << 20
+		}
+		r.Body = http.MaxBytesReader(w, r.Body, limit)
 		next.ServeHTTP(w, r)
 	})
 }

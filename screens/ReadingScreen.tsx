@@ -1,5 +1,6 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {
+    Alert,
     Animated,
     Easing,
     LayoutChangeEvent,
@@ -19,8 +20,11 @@ import {SPREADS} from '../data';
 import type {Card, Spread, SpreadPosition} from '../entities';
 import {useSettings} from '../providers/SettingsProvider';
 import {useHistory} from '../providers/HistoryProvider';
+import {useAppColors} from '../providers/DeckShopProvider';
+import {hexAlpha} from '../theme/appColors';
 import {loadDeck} from '../utils/decks';
 import {generateInterpretation} from '../features/interpretation';
+import {consumeOneCardSlot, isOneCardSpread, isQuotaExceeded} from '../features/dailyCard';
 import TarotCard from '../components/TarotCard';
 import {ZoomableView} from '../components/ZoomableView';
 
@@ -95,8 +99,9 @@ export const ReadingScreen = () => {
     const route = useRoute<Route>();
     const navigation = useNavigation<Navigation>();
     const {t} = useTranslation();
-    const {spreadId, deckId} = route.params;
+    const {spreadId, deckId, quotaGranted, readingKind} = route.params;
     const {settings} = useSettings();
+    const colors = useAppColors();
     const {addReading} = useHistory();
     const [entries, setEntries] = useState<DrawnEntry[]>([]);
     const [phase, setPhase] = useState<'shuffle' | 'dealing' | 'review'>('shuffle');
@@ -104,6 +109,10 @@ export const ReadingScreen = () => {
     const [layout, setLayout] = useState({width: 0, height: 0});
     const [saving, setSaving] = useState(false);
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const savedIdRef = useRef<string | null>(null);
+    const persistInFlight = useRef<Promise<string | null> | null>(null);
+    const startedRef = useRef(false);
+    const isDailyDraw = isOneCardSpread(spreadId);
 
     const spread = useMemo<Spread | undefined>(() => SPREADS.find((s) => s.id === spreadId), [spreadId]);
     const deck = useMemo(() => loadDeck(settings.language), [settings.language]);
@@ -116,8 +125,34 @@ export const ReadingScreen = () => {
     const cardHeight = Math.round(cardWidth * ASPECT);
 
     useEffect(() => {
-        startReading(settings.disableAnimations);
+        let cancelled = false;
+        const boot = async () => {
+            if (startedRef.current) {
+                return;
+            }
+            startedRef.current = true;
+            if (isDailyDraw && !quotaGranted) {
+                try {
+                    await consumeOneCardSlot(Boolean(readingKind === 'bonus'), settings.hasPremium);
+                } catch (error) {
+                    if (cancelled) {
+                        return;
+                    }
+                    Alert.alert(
+                        t('dailyCard.limitTitle'),
+                        isQuotaExceeded(error) ? t('dailyCard.quotaReached') : t('dailyCard.unlockError'),
+                    );
+                    navigation.goBack();
+                    return;
+                }
+            }
+            if (!cancelled) {
+                startReading(settings.disableAnimations);
+            }
+        };
+        boot().catch(() => {});
         return () => {
+            cancelled = true;
             if (timeoutRef.current) {
                 clearTimeout(timeoutRef.current);
             }
@@ -178,6 +213,9 @@ export const ReadingScreen = () => {
             setEntries(drawn);
             setAnimatedValues(values);
             animateEntries(values, skipAnimation);
+            if (isDailyDraw) {
+                persistDaily(drawn).catch(() => {});
+            }
         };
 
         if (skipAnimation || settings.disableAnimations) {
@@ -227,20 +265,68 @@ export const ReadingScreen = () => {
                 key={entry.position.index}
                 style={[styles.cardWrapper, {left, top, width: cardWidth}, animatedStyle]}
             >
-                <TarotCard card={entry.card} isReversed={entry.isReversed} startFaceDown width={cardWidth} />
-                <Text style={styles.cardLabel} numberOfLines={2}>
+                <TarotCard
+                    card={entry.card}
+                    isReversed={entry.isReversed}
+                    startFaceDown
+                    width={cardWidth}
+                    artDeckId={deckId}
+                />
+                <Text style={[styles.cardLabel, {color: colors.text}]} numberOfLines={2}>
                     {t(entry.position.titleKey)}
                 </Text>
             </Animated.View>
         );
     };
 
+    const persistDaily = (drawn: DrawnEntry[]): Promise<string | null> => {
+        if (savedIdRef.current) {
+            return Promise.resolve(savedIdRef.current);
+        }
+        if (persistInFlight.current) {
+            return persistInFlight.current;
+        }
+        persistInFlight.current = (async () => {
+            if (!spread || !drawn.length) {
+                return null;
+            }
+            const interpretation = generateInterpretation(
+                spread,
+                drawn,
+                (key, vars) => String(t(key, vars ?? {})),
+            );
+            const reading = await addReading({
+                spreadId: spread.id,
+                deckId,
+                items: drawn.map((entry) => ({
+                    positionIndex: entry.position.index,
+                    cardId: entry.card.id,
+                    isReversed: entry.isReversed,
+                })),
+                summaryText: interpretation.summary,
+                notes: '',
+                kind: readingKind ?? 'daily',
+            });
+            savedIdRef.current = reading.id;
+            return reading.id;
+        })();
+        return persistInFlight.current;
+    };
+
     const skipAnimations = () => {
         if (phase === 'review') return;
+        if (isDailyDraw) {
+            animatedValues.forEach((value) => value.setValue(1));
+            setPhase('review');
+            return;
+        }
         startReading(true);
     };
 
     const redraw = () => {
+        if (isDailyDraw) {
+            return;
+        }
         startReading(false);
     };
 
@@ -248,6 +334,13 @@ export const ReadingScreen = () => {
         if (!spread || !entries.length) return;
         setSaving(true);
         try {
+            if (isDailyDraw) {
+                const existingId = savedIdRef.current ?? (await persistDaily(entries));
+                if (existingId) {
+                    navigation.replace('Interpretation', {readingId: existingId});
+                }
+                return;
+            }
             const interpretation = generateInterpretation(
                 spread,
                 entries,
@@ -263,6 +356,7 @@ export const ReadingScreen = () => {
                 })),
                 summaryText: interpretation.summary,
                 notes: '',
+                kind: isDailyDraw ? readingKind ?? 'daily' : undefined,
             });
             navigation.replace('Interpretation', {readingId: reading.id});
         } finally {
@@ -272,9 +366,9 @@ export const ReadingScreen = () => {
 
     if (!spread) {
         return (
-            <SafeAreaView style={styles.safe}>
+            <SafeAreaView style={[styles.safe, {backgroundColor: colors.bg}]}>
                 <View style={styles.centered}>
-                    <Text style={styles.errorText}>{t('reading.missingSpread')}</Text>
+                    <Text style={[styles.errorText, {color: colors.text}]}>{t('reading.missingSpread')}</Text>
                 </View>
             </SafeAreaView>
         );
@@ -284,19 +378,35 @@ export const ReadingScreen = () => {
     const zoomResetKey = `${spread.id}-${phase === 'shuffle' ? 'shuffle' : entries.map((entry) => `${entry.position.index}:${entry.card.id}`).join(',')}`;
 
     return (
-        <SafeAreaView style={styles.safe}>
+        <SafeAreaView style={[styles.safe, {backgroundColor: colors.bg}]}>
             <View style={styles.header}>
                 <View>
-                    <Text style={styles.spreadTitle}>{t(spread.nameKey)}</Text>
-                    <Text style={styles.spreadMeta}>{t('reading.cardCount', {count: spread.maxCards})}</Text>
+                    <Text style={[styles.spreadTitle, {color: colors.gold}]}>{t(spread.nameKey)}</Text>
+                    <Text style={[styles.spreadMeta, {color: colors.muted}]}>
+                        {t('reading.cardCount', {count: spread.maxCards})}
+                    </Text>
                 </View>
-                <TouchableOpacity onPress={redraw}>
-                    <Text style={styles.action}>{t('reading.redraw')}</Text>
-                </TouchableOpacity>
+                {!isDailyDraw ? (
+                    <TouchableOpacity onPress={redraw}>
+                        <Text style={[styles.action, {color: colors.accent}]}>{t('reading.redraw')}</Text>
+                    </TouchableOpacity>
+                ) : (
+                    <View />
+                )}
             </View>
 
             <View style={styles.canvasContainer}>
-                <View style={[styles.canvas, {height: canvasHeight}]} onLayout={handleLayout}>
+                <View
+                    style={[
+                        styles.canvas,
+                        {
+                            height: canvasHeight,
+                            borderColor: hexAlpha(colors.gold, 0.25),
+                            backgroundColor: colors.panel,
+                        },
+                    ]}
+                    onLayout={handleLayout}
+                >
                     <ZoomableView
                         style={styles.zoomLayer}
                         enabled={phase === 'review'}
@@ -308,7 +418,7 @@ export const ReadingScreen = () => {
                     </ZoomableView>
                     {phase === 'shuffle' && (
                         <View style={[styles.centered, styles.shuffleOverlay]}>
-                            <Text style={styles.shuffleText}>{t('reading.shuffling')}</Text>
+                            <Text style={[styles.shuffleText, {color: colors.text}]}>{t('reading.shuffling')}</Text>
                         </View>
                     )}
                 </View>
@@ -317,9 +427,11 @@ export const ReadingScreen = () => {
             <ScrollView style={styles.details} contentContainerStyle={{paddingBottom: 20}}>
                 {entries.map((entry) => (
                     <View key={`detail-${entry.position.index}`} style={styles.detailItem}>
-                        <Text style={styles.detailTitle}>{t(entry.position.titleKey)}</Text>
-                        <Text style={styles.detailSubtitle}>{t(entry.position.descriptionKey)}</Text>
-                        <Text style={styles.detailCardName}>
+                        <Text style={[styles.detailTitle, {color: colors.text}]}>{t(entry.position.titleKey)}</Text>
+                        <Text style={[styles.detailSubtitle, {color: colors.muted}]}>
+                            {t(entry.position.descriptionKey)}
+                        </Text>
+                        <Text style={[styles.detailCardName, {color: colors.gold}]}>
                             {entry.card.name} {entry.isReversed ? t('reading.reversed') : ''}
                         </Text>
                     </View>
@@ -327,11 +439,18 @@ export const ReadingScreen = () => {
             </ScrollView>
 
             <View style={styles.footer}>
-                <TouchableOpacity style={styles.secondaryButton} onPress={skipAnimations}>
-                    <Text style={styles.secondaryText}>{t('reading.skipAnimations')}</Text>
+                <TouchableOpacity
+                    style={[styles.secondaryButton, {borderColor: hexAlpha(colors.gold, 0.4)}]}
+                    onPress={skipAnimations}
+                >
+                    <Text style={[styles.secondaryText, {color: colors.gold}]}>{t('reading.skipAnimations')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={[styles.primaryButton, (phase !== 'review' || saving) && styles.primaryButtonDisabled]}
+                    style={[
+                        styles.primaryButton,
+                        {backgroundColor: colors.accent},
+                        (phase !== 'review' || saving) && {opacity: 0.5},
+                    ]}
                     onPress={handleContinue}
                     disabled={phase !== 'review' || saving}
                 >

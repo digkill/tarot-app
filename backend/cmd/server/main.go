@@ -16,6 +16,7 @@ import (
 	"github.com/pressly/goose/v3"
 
 	"github.com/digkill/tarot-app/backend/internal/atrest"
+	"github.com/digkill/tarot-app/backend/internal/auth"
 	"github.com/digkill/tarot-app/backend/internal/config"
 	"github.com/digkill/tarot-app/backend/internal/httpapi"
 	"github.com/digkill/tarot-app/backend/internal/llm"
@@ -62,6 +63,57 @@ func main() {
 	readings := storage.NewReadingRepo(pool)
 	accessStats := storage.NewAccessStatRepo(pool)
 	codes := storage.NewEmailCodeRepo(pool)
+	txns := storage.NewTransactionRepo(pool)
+	stats := storage.NewStatsRepo(pool)
+	audit := storage.NewAuditRepo(pool)
+	deckRepo := storage.NewDeckRepo(pool)
+	usageRepo := storage.NewUsageRepo(pool)
+	if err = os.MkdirAll(cfg.DeckStorageDir, 0o755); err != nil {
+		slog.Error("create deck storage", "error", err)
+		os.Exit(1)
+	}
+
+	if cfg.AdminEmail != "" {
+		bootCtx := context.Background()
+		existing, getErr := users.GetByEmail(bootCtx, cfg.AdminEmail)
+		switch {
+		case getErr == nil:
+			if existing.Role != storage.RoleAdmin {
+				if err = users.SetRole(bootCtx, existing.ID, storage.RoleAdmin); err != nil {
+					slog.Error("promote admin user", "error", err)
+					os.Exit(1)
+				}
+			}
+			slog.Info("admin role ensured", "email", cfg.AdminEmail)
+		case errors.Is(getErr, storage.ErrNotFound):
+			if cfg.AdminPassword == "" {
+				slog.Warn("ADMIN_EMAIL is not registered and ADMIN_PASSWORD is empty; admin bootstrap skipped")
+				break
+			}
+			hash, hashErr := auth.HashPassword(cfg.AdminPassword)
+			if hashErr != nil {
+				slog.Error("hash admin password", "error", hashErr)
+				os.Exit(1)
+			}
+			created, ensErr := users.EnsureAdmin(bootCtx, storage.EnsureAdminParams{
+				Email:        cfg.AdminEmail,
+				PasswordHash: hash,
+			})
+			if ensErr != nil {
+				slog.Error("ensure admin user", "error", ensErr)
+				os.Exit(1)
+			}
+			if created {
+				slog.Info("admin user created", "email", cfg.AdminEmail)
+			} else {
+				slog.Info("admin role ensured", "email", cfg.AdminEmail)
+			}
+		default:
+			slog.Error("lookup admin user", "error", getErr)
+			os.Exit(1)
+		}
+	}
+
 	mail := mailer.New(mailer.Config{
 		Host:     cfg.SMTPHost,
 		Port:     cfg.SMTPPort,
@@ -77,21 +129,57 @@ func main() {
 		os.Exit(1)
 	}
 
-	var llmClient *llm.Client
+	var llmClient llm.Interpreter
+	var primary llm.Interpreter
 	if cfg.KieAPIKey != "" {
-		llmClient = llm.NewClient(cfg.KieAPIKey, cfg.KieBaseURL, cfg.KieTarotModel, cfg.KieReasoningEffort)
-		slog.Info("kie llm enabled", "model", cfg.KieTarotModel, "effort", cfg.KieReasoningEffort)
+		primary = llm.NewClient(cfg.KieAPIKey, cfg.KieBaseURL, cfg.KieTarotModel, cfg.KieReasoningEffort)
+		slog.Info("primary llm enabled")
 	} else {
-		slog.Warn("KIE_API_KEY is empty; AI interpretations are disabled")
+		slog.Warn("KIE_API_KEY is empty; primary AI provider is disabled")
+	}
+	var fallback llm.Interpreter
+	if cfg.OpenAIAPIKey != "" {
+		fallback = llm.NewOpenAIClient(cfg.OpenAIAPIKey, cfg.OpenAIBaseURL, cfg.OpenAITarotModel)
+		slog.Info("openai fallback enabled")
+	}
+	if primary != nil || fallback != nil {
+		llmClient = llm.NewService(primary, fallback)
+	} else {
+		slog.Warn("no AI providers configured; interpretations are disabled")
 	}
 
-	handler := httpapi.NewHandler(cfg, users, refreshTokens, readings, accessStats, codes, mail, box, llmClient)
+	handler := httpapi.NewHandler(cfg, users, refreshTokens, readings, accessStats, codes, txns, stats, audit, deckRepo, usageRepo, mail, box, llmClient)
+
+	expireStop := make(chan struct{})
+	go func() {
+		run := func() {
+			n, expErr := users.ExpireDue(context.Background())
+			if expErr != nil {
+				slog.Error("expire premium", "error", expErr)
+				return
+			}
+			if n > 0 {
+				slog.Info("expired premium subscriptions", "count", n)
+			}
+		}
+		run()
+		ticker := time.NewTicker(15 * time.Minute)
+		defer ticker.Stop()
+		for {
+			select {
+			case <-expireStop:
+				return
+			case <-ticker.C:
+				run()
+			}
+		}
+	}()
 
 	srv := &http.Server{
 		Addr:         ":" + cfg.Port,
 		Handler:      handler.Router(),
-		ReadTimeout:  15 * time.Second,
-		WriteTimeout: 90 * time.Second,
+		ReadTimeout:  15 * time.Minute,
+		WriteTimeout: 15 * time.Minute,
 		IdleTimeout:  120 * time.Second,
 	}
 
@@ -107,6 +195,7 @@ func main() {
 	}()
 
 	<-quit
+	close(expireStop)
 	slog.Info("shutting down")
 
 	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 15*time.Second)

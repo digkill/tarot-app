@@ -27,10 +27,17 @@ type Handler struct {
 	readings      *storage.ReadingRepo
 	accessStats   *storage.AccessStatRepo
 	codes         *storage.EmailCodeRepo
+	txns          *storage.TransactionRepo
+	stats         *storage.StatsRepo
+	audit         *storage.AuditRepo
+	decks         *storage.DeckRepo
+	usage         *storage.UsageRepo
 	mail          *mailer.Sender
 	box           *atrest.Box
-	llmClient     *llm.Client
+	llmClient     llm.Interpreter
 	jwtSecret     jwtHolder
+	limiter       *rateLimiter
+	ads           *adTokenStore
 }
 
 func NewHandler(
@@ -40,9 +47,14 @@ func NewHandler(
 	readings *storage.ReadingRepo,
 	accessStats *storage.AccessStatRepo,
 	codes *storage.EmailCodeRepo,
+	txns *storage.TransactionRepo,
+	stats *storage.StatsRepo,
+	audit *storage.AuditRepo,
+	deckRepo *storage.DeckRepo,
+	usageRepo *storage.UsageRepo,
 	mail *mailer.Sender,
 	box *atrest.Box,
-	llmClient *llm.Client,
+	llmClient llm.Interpreter,
 ) *Handler {
 	return &Handler{
 		cfg:           cfg,
@@ -51,10 +63,17 @@ func NewHandler(
 		readings:      readings,
 		accessStats:   accessStats,
 		codes:         codes,
+		txns:          txns,
+		stats:         stats,
+		audit:         audit,
+		decks:         deckRepo,
+		usage:         usageRepo,
 		mail:          mail,
 		box:           box,
 		llmClient:     llmClient,
 		jwtSecret:     jwtHolder{secret: cfg.JWTSecret},
+		limiter:       newRateLimiter(),
+		ads:           newAdTokenStore(),
 	}
 }
 

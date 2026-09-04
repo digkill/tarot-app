@@ -19,6 +19,8 @@ import {useAuth} from '../providers/AuthProvider';
 import type {ThemePreference} from '../entities';
 import {SUPPORTED_LANGUAGES} from '../utils/locale';
 import {PremiumModal} from '../components/PremiumModal';
+import {useAppColors} from '../providers/DeckShopProvider';
+import {hexAlpha} from '../theme/appColors';
 import {openRuStoreSubscriptions, RuStoreMissingError} from '../features/payments';
 import type {AppTabsParamList, RootStackParamList} from '../navigation/types';
 
@@ -34,6 +36,7 @@ export const SettingsScreen = () => {
     const {user, logout, deleteAccount} = useAuth();
     const navigation = useNavigation<SettingsNav>();
     const {t} = useTranslation();
+    const colors = useAppColors();
     const [showPremiumModal, setShowPremiumModal] = useState(false);
 
     const toggle = (key: 'disableAnimations' | 'disableSounds' | 'showMysticMode') => {
@@ -73,41 +76,66 @@ export const SettingsScreen = () => {
     };
 
     return (
-        <SafeAreaView style={styles.safe}>
+        <SafeAreaView style={[styles.safe, {backgroundColor: colors.bg}]}>
             <ScrollView contentContainerStyle={styles.container}>
-                <Text style={styles.sectionTitle}>{t('settings.accountSection')}</Text>
-                <View style={styles.accountCard}>
-                    <Text style={styles.accountEmail}>{user?.email ?? ''}</Text>
+                <Text style={[styles.sectionTitle, {color: colors.gold}]}>{t('settings.accountSection')}</Text>
+                <View
+                    style={[
+                        styles.accountCard,
+                        {backgroundColor: hexAlpha(colors.gold, 0.08), borderColor: hexAlpha(colors.gold, 0.25)},
+                    ]}
+                >
+                    <Text style={[styles.accountEmail, {color: colors.text}]}>{user?.email ?? ''}</Text>
                     <TouchableOpacity
                         style={styles.linkRow}
                         onPress={() => navigation.navigate('LegalDocument', {doc: 'terms'})}
                     >
-                        <Text style={styles.linkRowText}>{t('legal.termsTitle')}</Text>
+                        <Text style={[styles.linkRowText, {color: colors.accent}]}>{t('legal.termsTitle')}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.linkRow}
                         onPress={() => navigation.navigate('LegalDocument', {doc: 'privacy'})}
                     >
-                        <Text style={styles.linkRowText}>{t('legal.privacyTitle')}</Text>
+                        <Text style={[styles.linkRowText, {color: colors.accent}]}>{t('legal.privacyTitle')}</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.manageButton} onPress={confirmLogout}>
-                        <Text style={styles.manageButtonText}>{t('auth.logoutCta')}</Text>
+                    <TouchableOpacity
+                        style={[styles.manageButton, {borderColor: hexAlpha(colors.gold, 0.4)}]}
+                        onPress={confirmLogout}
+                    >
+                        <Text style={[styles.manageButtonText, {color: colors.gold}]}>{t('auth.logoutCta')}</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.deleteButton} onPress={confirmDelete}>
-                        <Text style={styles.deleteButtonText}>{t('auth.deleteCta')}</Text>
+                    <TouchableOpacity
+                        style={[styles.deleteButton, {borderColor: hexAlpha(colors.danger, 0.45)}]}
+                        onPress={confirmDelete}
+                    >
+                        <Text style={[styles.deleteButtonText, {color: colors.danger}]}>{t('auth.deleteCta')}</Text>
                     </TouchableOpacity>
                 </View>
 
-                <Text style={styles.sectionTitle}>{t('settings.premiumSection')}</Text>
-                <View style={styles.premiumCard}>
+                <Text style={[styles.sectionTitle, {color: colors.gold}]}>{t('settings.premiumSection')}</Text>
+                <View
+                    style={[
+                        styles.premiumCard,
+                        {backgroundColor: hexAlpha(colors.accent, 0.15), borderColor: hexAlpha(colors.accent, 0.3)},
+                    ]}
+                >
                     <View style={styles.premiumHeader}>
                         <View>
-                            <Text style={styles.premiumTitle}>{t('premium.title')}</Text>
-                            <Text style={styles.premiumStatus}>
+                            <Text style={[styles.premiumTitle, {color: colors.gold}]}>{t('premium.title')}</Text>
+                            <Text style={[styles.premiumStatus, {color: colors.text}]}>
                                 {settings.hasPremium
                                     ? t('premium.status.active')
                                     : t('premium.status.inactive')}
                             </Text>
+                            {settings.hasPremium ? (
+                                <Text style={[styles.premiumStatus, {color: colors.muted}]}>
+                                    {user?.premiumExpiresAt
+                                        ? t('premium.expiresOn', {
+                                              date: new Date(user.premiumExpiresAt).toLocaleDateString(),
+                                          })
+                                        : t('premium.lifetimeAccess')}
+                                </Text>
+                            ) : null}
                         </View>
                         <View
                             style={[
@@ -122,9 +150,9 @@ export const SettingsScreen = () => {
                     </View>
                     {!settings.hasPremium ? (
                         <>
-                            <Text style={styles.premiumDescription}>{t('premium.benefits')}</Text>
+                            <Text style={[styles.premiumDescription, {color: colors.text}]}>{t('premium.benefits')}</Text>
                             <TouchableOpacity
-                                style={styles.premiumButton}
+                                style={[styles.premiumButton, {backgroundColor: colors.accent}]}
                                 onPress={() => setShowPremiumModal(true)}
                             >
                                 <Text style={styles.premiumButtonText}>{t('premium.subscribe')}</Text>
@@ -132,7 +160,7 @@ export const SettingsScreen = () => {
                         </>
                     ) : (
                         <TouchableOpacity
-                            style={styles.manageButton}
+                            style={[styles.manageButton, {borderColor: hexAlpha(colors.gold, 0.4)}]}
                             onPress={() => {
                                 openRuStoreSubscriptions().catch((error) => {
                                     if (error instanceof RuStoreMissingError) {
@@ -143,21 +171,32 @@ export const SettingsScreen = () => {
                                 });
                             }}
                         >
-                            <Text style={styles.manageButtonText}>{t('premium.manage')}</Text>
+                            <Text style={[styles.manageButtonText, {color: colors.gold}]}>{t('premium.manage')}</Text>
                         </TouchableOpacity>
                     )}
                 </View>
 
-                <Text style={styles.sectionTitle}>{t('settings.languageTitle')}</Text>
+                <Text style={[styles.sectionTitle, {color: colors.gold}]}>{t('settings.languageTitle')}</Text>
                 <View style={styles.row}>
                     {SUPPORTED_LANGUAGES.map((language) => (
                         <TouchableOpacity
                             key={language}
-                            style={[styles.option, settings.language === language && styles.optionActive]}
+                            style={[
+                                styles.option,
+                                {borderColor: hexAlpha(colors.gold, 0.3), backgroundColor: hexAlpha(colors.gold, 0.12)},
+                                settings.language === language && {
+                                    backgroundColor: colors.accent,
+                                    borderColor: colors.accent,
+                                },
+                            ]}
                             onPress={() => setSetting('language', language).catch(() => {})}
                         >
                             <Text
-                                style={[styles.optionText, settings.language === language && styles.optionTextActive]}
+                                style={[
+                                    styles.optionText,
+                                    {color: colors.text},
+                                    settings.language === language && styles.optionTextActive,
+                                ]}
                             >
                                 {t(`settings.language.${language}`)}
                             </Text>
@@ -165,16 +204,27 @@ export const SettingsScreen = () => {
                     ))}
                 </View>
 
-                <Text style={styles.sectionTitle}>{t('settings.themeTitle')}</Text>
+                <Text style={[styles.sectionTitle, {color: colors.gold}]}>{t('settings.themeTitle')}</Text>
                 <View style={styles.row}>
                     {THEMES.map((theme) => (
                         <TouchableOpacity
                             key={theme}
-                            style={[styles.option, settings.theme === theme && styles.optionActive]}
+                            style={[
+                                styles.option,
+                                {borderColor: hexAlpha(colors.gold, 0.3), backgroundColor: hexAlpha(colors.gold, 0.12)},
+                                settings.theme === theme && {
+                                    backgroundColor: colors.accent,
+                                    borderColor: colors.accent,
+                                },
+                            ]}
                             onPress={() => setSetting('theme', theme).catch(() => {})}
                         >
                             <Text
-                                style={[styles.optionText, settings.theme === theme && styles.optionTextActive]}
+                                style={[
+                                    styles.optionText,
+                                    {color: colors.text},
+                                    settings.theme === theme && styles.optionTextActive,
+                                ]}
                             >
                                 {t(`settings.theme.${theme}`)}
                             </Text>
@@ -182,49 +232,66 @@ export const SettingsScreen = () => {
                     ))}
                 </View>
 
-                <Text style={styles.sectionTitle}>{t('settings.behaviorTitle')}</Text>
+                <Text style={[styles.sectionTitle, {color: colors.gold}]}>{t('settings.behaviorTitle')}</Text>
                 <View style={styles.toggleRow}>
                     <View>
-                        <Text style={styles.toggleTitle}>{t('settings.animations')}</Text>
-                        <Text style={styles.toggleSubtitle}>{t('settings.animationsDescription')}</Text>
+                        <Text style={[styles.toggleTitle, {color: colors.text}]}>{t('settings.animations')}</Text>
+                        <Text style={[styles.toggleSubtitle, {color: colors.muted}]}>
+                            {t('settings.animationsDescription')}
+                        </Text>
                     </View>
                     <Switch
                         value={!settings.disableAnimations}
                         onValueChange={(value) => setSetting('disableAnimations', !value)}
+                        trackColor={{false: colors.panel, true: colors.accent}}
                     />
                 </View>
                 <View style={styles.toggleRow}>
                     <View>
-                        <Text style={styles.toggleTitle}>{t('settings.sounds')}</Text>
-                        <Text style={styles.toggleSubtitle}>{t('settings.soundsDescription')}</Text>
+                        <Text style={[styles.toggleTitle, {color: colors.text}]}>{t('settings.sounds')}</Text>
+                        <Text style={[styles.toggleSubtitle, {color: colors.muted}]}>
+                            {t('settings.soundsDescription')}
+                        </Text>
                     </View>
                     <Switch
                         value={!settings.disableSounds}
                         onValueChange={(value) => setSetting('disableSounds', !value)}
+                        trackColor={{false: colors.panel, true: colors.accent}}
                     />
                 </View>
                 <View style={styles.toggleRow}>
                     <View>
-                        <Text style={styles.toggleTitle}>{t('settings.mysticMode')}</Text>
-                        <Text style={styles.toggleSubtitle}>{t('settings.mysticModeDescription')}</Text>
+                        <Text style={[styles.toggleTitle, {color: colors.text}]}>{t('settings.mysticMode')}</Text>
+                        <Text style={[styles.toggleSubtitle, {color: colors.muted}]}>
+                            {t('settings.mysticModeDescription')}
+                        </Text>
                     </View>
                     <Switch
                         value={settings.showMysticMode}
                         onValueChange={() => toggle('showMysticMode')}
+                        trackColor={{false: colors.panel, true: colors.accent}}
                     />
                 </View>
 
-                <Text style={styles.sectionTitle}>{t('settings.reversedChanceTitle')}</Text>
+                <Text style={[styles.sectionTitle, {color: colors.gold}]}>{t('settings.reversedChanceTitle')}</Text>
                 <View style={styles.reversedRow}>
-                    <TouchableOpacity style={styles.stepper} onPress={() => adjustReversedChance(-0.05)}>
-                        <Text style={styles.stepperText}>−</Text>
+                    <TouchableOpacity
+                        style={[styles.stepper, {backgroundColor: hexAlpha(colors.accent, 0.15)}]}
+                        onPress={() => adjustReversedChance(-0.05)}
+                    >
+                        <Text style={[styles.stepperText, {color: colors.text}]}>−</Text>
                     </TouchableOpacity>
-                    <Text style={styles.reversedValue}>{Math.round(settings.reversedChance * 100)}%</Text>
-                    <TouchableOpacity style={styles.stepper} onPress={() => adjustReversedChance(0.05)}>
-                        <Text style={styles.stepperText}>+</Text>
+                    <Text style={[styles.reversedValue, {color: colors.gold}]}>
+                        {Math.round(settings.reversedChance * 100)}%
+                    </Text>
+                    <TouchableOpacity
+                        style={[styles.stepper, {backgroundColor: hexAlpha(colors.accent, 0.15)}]}
+                        onPress={() => adjustReversedChance(0.05)}
+                    >
+                        <Text style={[styles.stepperText, {color: colors.text}]}>+</Text>
                     </TouchableOpacity>
                 </View>
-                <Text style={styles.reversedHint}>{t('settings.reversedHint')}</Text>
+                <Text style={[styles.reversedHint, {color: colors.muted}]}>{t('settings.reversedHint')}</Text>
             </ScrollView>
 
             <PremiumModal visible={showPremiumModal} onClose={() => setShowPremiumModal(false)} />

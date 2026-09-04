@@ -19,11 +19,14 @@ import {useTranslation} from 'react-i18next';
 import {RootStackParamList} from '../navigation/types';
 import {useHistory} from '../providers/HistoryProvider';
 import {useSettings} from '../providers/SettingsProvider';
+import {useAppColors} from '../providers/DeckShopProvider';
+import {hexAlpha} from '../theme/appColors';
 import {SPREADS} from '../data';
 import {loadDeck, findCardById} from '../utils/decks';
 import {generateInterpretation} from '../features/interpretation';
 import {fetchPremiumInterpretation} from '../features/aiInterpretation';
 import {isApiError} from '../features/apiClient';
+import {fetchUsage, type UsageSnapshot} from '../features/usageApi';
 import TarotCard from '../components/TarotCard';
 import {PremiumModal} from '../components/PremiumModal';
 import type {Card, SpreadPosition} from '../entities';
@@ -37,12 +40,14 @@ export const InterpretationScreen = () => {
     const {readingId} = route.params;
     const {readings, updateReading, toggleFavorite} = useHistory();
     const {settings} = useSettings();
+    const colors = useAppColors();
     const {t} = useTranslation();
     const viewRef = useRef<ViewShotRef>(null);
     const [savingNotes, setSavingNotes] = useState(false);
     const [loadingAiInsights, setLoadingAiInsights] = useState(false);
     const [aiError, setAiError] = useState<string | null>(null);
     const [showPremiumPrompt, setShowPremiumPrompt] = useState(false);
+    const [usage, setUsage] = useState<UsageSnapshot | null>(null);
 
     const reading = readings.find((item) => item.id === readingId);
     const spread = useMemo(
@@ -76,13 +81,22 @@ export const InterpretationScreen = () => {
         }
     }, [reading?.notes]);
 
+    useEffect(() => {
+        if (!settings.hasPremium) {
+            return;
+        }
+        fetchUsage()
+            .then(setUsage)
+            .catch(() => {});
+    }, [settings.hasPremium, readingId]);
+
     if (!reading || !spread) {
         return (
-            <SafeAreaView style={styles.safe}>
+            <SafeAreaView style={[styles.safe, {backgroundColor: colors.bg}]}>
                 <View style={styles.centered}>
-                    <Text style={styles.missingText}>{t('interpretation.missingReading')}</Text>
+                    <Text style={[styles.missingText, {color: colors.text}]}>{t('interpretation.missingReading')}</Text>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <Text style={styles.link}>{t('interpretation.goBack')}</Text>
+                        <Text style={[styles.link, {color: colors.accent}]}>{t('interpretation.goBack')}</Text>
                     </TouchableOpacity>
                 </View>
             </SafeAreaView>
@@ -158,6 +172,9 @@ export const InterpretationScreen = () => {
 
             const aiInsights = await fetchPremiumInterpretation(aiRequest);
             await updateReading(reading.id, {aiInsights});
+            fetchUsage()
+                .then(setUsage)
+                .catch(() => {});
         } catch (error) {
             console.warn('[ai] interpretation failed', error);
             if (isApiError(error)) {
@@ -165,14 +182,19 @@ export const InterpretationScreen = () => {
                     setAiError(t('aiInterpretation.needLogin'));
                 } else if (error.code === 'premium_required') {
                     setAiError(t('aiInterpretation.premiumRequired'));
-                } else if (error.code === 'llm_unavailable') {
-                    setAiError(t('aiInterpretation.unavailable'));
+                } else if (error.code === 'quota_exceeded') {
+                    setAiError(
+                        t('aiInterpretation.quotaReached', {
+                            limit: usage?.interpretations.limit || 50,
+                        }),
+                    );
+                } else if (error.code === 'rate_limited') {
+                    setAiError(t('aiInterpretation.rateLimited'));
                 } else {
-                    setAiError(`${t('aiInterpretation.error')}: ${error.message}`);
+                    setAiError(t('aiInterpretation.unavailable'));
                 }
             } else {
-                const message = error instanceof Error ? error.message : String(error);
-                setAiError(`${t('aiInterpretation.error')}: ${message}`);
+                setAiError(t('aiInterpretation.unavailable'));
             }
         } finally {
             setLoadingAiInsights(false);
@@ -180,20 +202,40 @@ export const InterpretationScreen = () => {
     };
 
     return (
-        <SafeAreaView style={styles.safe}>
+        <SafeAreaView style={[styles.safe, {backgroundColor: colors.bg}]}>
             <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-                <ViewShot ref={viewRef} options={{format: 'png', quality: 1}} style={styles.capture}>
-                    <Text style={styles.title}>{t(spread.nameKey)}</Text>
-                    <Text style={styles.date}>{new Date(reading.drawnAt).toLocaleString(settings.language)}</Text>
+                <ViewShot
+                    ref={viewRef}
+                    options={{format: 'png', quality: 1}}
+                    style={[
+                        styles.capture,
+                        {
+                            backgroundColor: colors.panel,
+                            borderColor: hexAlpha(colors.gold, 0.2),
+                        },
+                    ]}
+                >
+                    <Text style={[styles.title, {color: colors.gold}]}>{t(spread.nameKey)}</Text>
+                    <Text style={[styles.date, {color: colors.muted}]}>
+                        {new Date(reading.drawnAt).toLocaleString(settings.language)}
+                    </Text>
                     {interpretation && (
                         <View style={styles.summaryBox}>
-                            <Text style={styles.summaryTitle}>{t('interpretation.summaryTitle')}</Text>
-                            <Text style={styles.summaryText}>{interpretation.summary}</Text>
+                            <Text style={[styles.summaryTitle, {color: colors.text}]}>
+                                {t('interpretation.summaryTitle')}
+                            </Text>
+                            <Text style={[styles.summaryText, {color: colors.text}]}>{interpretation.summary}</Text>
                             {interpretation.keywords.length ? (
                                 <View style={styles.keywordsRow}>
                                     {interpretation.keywords.map((keyword) => (
-                                        <View key={keyword} style={styles.keywordChip}>
-                                            <Text style={styles.keywordText}>{keyword}</Text>
+                                        <View
+                                            key={keyword}
+                                            style={[
+                                                styles.keywordChip,
+                                                {backgroundColor: hexAlpha(colors.accent, 0.2)},
+                                            ]}
+                                        >
+                                            <Text style={[styles.keywordText, {color: colors.gold}]}>{keyword}</Text>
                                         </View>
                                     ))}
                                 </View>
@@ -203,16 +245,20 @@ export const InterpretationScreen = () => {
                     {entries.map((entry) => (
                         <View key={`entry-${entry.position.index}`} style={styles.cardBlock}>
                             <View style={styles.cardHeader}>
-                                <Text style={styles.cardTitle}>{t(entry.position.titleKey)}</Text>
-                                <Text style={styles.cardSubtitle}>{t(entry.position.descriptionKey)}</Text>
+                                <Text style={[styles.cardTitle, {color: colors.text}]}>
+                                    {t(entry.position.titleKey)}
+                                </Text>
+                                <Text style={[styles.cardSubtitle, {color: colors.muted}]}>
+                                    {t(entry.position.descriptionKey)}
+                                </Text>
                             </View>
                             <View style={styles.cardRow}>
-                                <TarotCard card={entry.card} isReversed={entry.isReversed} />
+                                <TarotCard card={entry.card} isReversed={entry.isReversed} artDeckId={reading.deckId} />
                                 <View style={styles.cardNarrative}>
-                                    <Text style={styles.cardName}>
+                                    <Text style={[styles.cardName, {color: colors.gold}]}>
                                         {entry.card.name} {entry.isReversed ? t('reading.reversed') : ''}
                                     </Text>
-                                    <Text style={styles.cardNarrativeText}>
+                                    <Text style={[styles.cardNarrativeText, {color: colors.text}]}>
                                         {entry.isReversed ? entry.card.reversed.general : entry.card.upright.general}
                                     </Text>
                                 </View>
@@ -222,22 +268,40 @@ export const InterpretationScreen = () => {
                 </ViewShot>
 
                 <View style={styles.actionsRow}>
-                    <TouchableOpacity style={styles.secondaryButton} onPress={handleFavorite}>
-                        <Text style={styles.secondaryText}>
+                    <TouchableOpacity
+                        style={[styles.secondaryButton, {borderColor: hexAlpha(colors.gold, 0.4)}]}
+                        onPress={handleFavorite}
+                    >
+                        <Text style={[styles.secondaryText, {color: colors.gold}]}>
                             {reading.favorite ? t('interpretation.unfavorite') : t('interpretation.favorite')}
                         </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.primaryButton} onPress={handleShare}>
+                    <TouchableOpacity
+                        style={[styles.primaryButton, {backgroundColor: colors.accent}]}
+                        onPress={handleShare}
+                    >
                         <Text style={styles.primaryText}>{t('interpretation.share')}</Text>
                     </TouchableOpacity>
                 </View>
 
                 {!settings.hasPremium && (
-                    <View style={styles.premiumBox}>
-                        <Text style={styles.premiumTitle}>{t('aiInterpretation.premiumFeature')}</Text>
-                        <Text style={styles.premiumText}>{t('aiInterpretation.unlockMessage')}</Text>
+                    <View
+                        style={[
+                            styles.premiumBox,
+                            {
+                                backgroundColor: hexAlpha(colors.accent, 0.1),
+                                borderColor: hexAlpha(colors.accent, 0.3),
+                            },
+                        ]}
+                    >
+                        <Text style={[styles.premiumTitle, {color: colors.gold}]}>
+                            {t('aiInterpretation.premiumFeature')}
+                        </Text>
+                        <Text style={[styles.premiumText, {color: colors.text}]}>
+                            {t('aiInterpretation.unlockMessage')}
+                        </Text>
                         <TouchableOpacity
-                            style={styles.unlockButton}
+                            style={[styles.unlockButton, {backgroundColor: colors.accent}]}
                             onPress={() => setShowPremiumPrompt(true)}
                         >
                             <Text style={styles.unlockButtonText}>{t('aiInterpretation.unlock')}</Text>
@@ -246,11 +310,29 @@ export const InterpretationScreen = () => {
                 )}
 
                 {settings.hasPremium && (
-                    <View style={styles.aiInsightsBox}>
-                        <Text style={styles.aiInsightsTitle}>{t('aiInterpretation.title')}</Text>
+                    <View
+                        style={[
+                            styles.aiInsightsBox,
+                            {
+                                backgroundColor: colors.panel,
+                                borderColor: hexAlpha(colors.accent, 0.4),
+                            },
+                        ]}
+                    >
+                        <Text style={[styles.aiInsightsTitle, {color: colors.gold}]}>
+                            {t('aiInterpretation.title')}
+                        </Text>
+                        {usage ? (
+                            <Text style={[styles.quotaHint, {color: colors.muted}]}>
+                                {t('aiInterpretation.quotaHint', {
+                                    remaining: usage.interpretations.remaining,
+                                    limit: usage.interpretations.limit,
+                                })}
+                            </Text>
+                        ) : null}
                         {!reading.aiInsights && !loadingAiInsights && (
                             <TouchableOpacity
-                                style={styles.generateButton}
+                                style={[styles.generateButton, {backgroundColor: colors.accent}]}
                                 onPress={handleGenerateAiInsights}
                             >
                                 <Text style={styles.generateButtonText}>{t('aiInterpretation.generate')}</Text>
@@ -258,35 +340,43 @@ export const InterpretationScreen = () => {
                         )}
                         {loadingAiInsights && (
                             <View style={styles.loadingBox}>
-                                <ActivityIndicator color="#6c5ce7" />
-                                <Text style={styles.loadingText}>{t('aiInterpretation.loading')}</Text>
+                                <ActivityIndicator color={colors.accent} />
+                                <Text style={[styles.loadingText, {color: colors.text}]}>
+                                    {t('aiInterpretation.loading')}
+                                </Text>
                             </View>
                         )}
                         {aiError && (
                             <View style={styles.errorBox}>
-                                <Text style={styles.errorText}>{aiError}</Text>
+                                <Text style={[styles.errorText, {color: colors.danger}]}>{aiError}</Text>
                                 <TouchableOpacity onPress={handleGenerateAiInsights}>
-                                    <Text style={styles.retryText}>{t('aiInterpretation.retry')}</Text>
+                                    <Text style={[styles.retryText, {color: colors.accent}]}>
+                                        {t('aiInterpretation.retry')}
+                                    </Text>
                                 </TouchableOpacity>
                             </View>
                         )}
                         {reading.aiInsights && !loadingAiInsights && (
                             <View style={styles.aiContent}>
-                                <Text style={styles.aiSummary}>{reading.aiInsights.summary}</Text>
+                                <Text style={[styles.aiSummary, {color: colors.text}]}>
+                                    {reading.aiInsights.summary}
+                                </Text>
                                 {reading.aiInsights.positions.map((pos) => (
                                     <View key={pos.positionIndex} style={styles.aiPositionBlock}>
-                                        <Text style={styles.aiPositionTitle}>
+                                        <Text style={[styles.aiPositionTitle, {color: colors.gold}]}>
                                             {pos.positionTitle} - {pos.cardName}
                                         </Text>
-                                        <Text style={styles.aiPositionText}>{pos.meaning}</Text>
+                                        <Text style={[styles.aiPositionText, {color: colors.text}]}>
+                                            {pos.meaning}
+                                        </Text>
                                     </View>
                                 ))}
                         
                                 <TouchableOpacity
-                                    style={styles.refreshButton}
+                                    style={[styles.refreshButton, {borderColor: hexAlpha(colors.accent, 0.5)}]}
                                     onPress={handleGenerateAiInsights}
                                 >
-                                    <Text style={styles.refreshButtonText}>
+                                    <Text style={[styles.refreshButtonText, {color: colors.accent}]}>
                                         {t('aiInterpretation.refreshInterpretation')}
                                     </Text>
                                 </TouchableOpacity>
@@ -295,17 +385,29 @@ export const InterpretationScreen = () => {
                     </View>
                 )}
 
-                <View style={styles.notesBox}>
-                    <Text style={styles.notesTitle}>{t('interpretation.notesTitle')}</Text>
+                <View
+                    style={[
+                        styles.notesBox,
+                        {
+                            backgroundColor: colors.panel,
+                            borderColor: hexAlpha(colors.accent, 0.2),
+                        },
+                    ]}
+                >
+                    <Text style={[styles.notesTitle, {color: colors.text}]}>{t('interpretation.notesTitle')}</Text>
                     <TextInput
                         multiline
                         value={notes}
                         onChangeText={setNotes}
                         placeholder={t('interpretation.notesPlaceholder')}
-                        placeholderTextColor="rgba(247,244,234,0.5)"
-                        style={styles.notesInput}
+                        placeholderTextColor={colors.muted}
+                        style={[styles.notesInput, {color: colors.text}]}
                     />
-                    <TouchableOpacity style={styles.saveButton} onPress={handleSaveNotes} disabled={savingNotes}>
+                    <TouchableOpacity
+                        style={[styles.saveButton, {backgroundColor: colors.accent}]}
+                        onPress={handleSaveNotes}
+                        disabled={savingNotes}
+                    >
                         <Text style={styles.saveButtonText}>
                             {savingNotes ? t('interpretation.saving') : t('interpretation.saveNotes')}
                         </Text>
@@ -520,6 +622,10 @@ const styles = StyleSheet.create({
         color: '#f4d386',
         fontSize: 18,
         fontWeight: '700',
+    },
+    quotaHint: {
+        fontSize: 13,
+        marginTop: -4,
     },
     generateButton: {
         paddingVertical: 14,

@@ -20,6 +20,8 @@ func (h *Handler) Router() http.Handler {
 	})
 
 	r.Route("/api/v1", func(r chi.Router) {
+		r.Use(h.ipRateLimit)
+
 		r.Post("/auth/register", h.Register)
 		r.Post("/auth/login", h.Login)
 		r.Post("/auth/refresh", h.Refresh)
@@ -31,6 +33,7 @@ func (h *Handler) Router() http.Handler {
 
 		r.Group(func(r chi.Router) {
 			r.Use(h.authMiddleware)
+			r.Use(h.userRateLimit)
 
 			r.Get("/me", h.Me)
 			r.Delete("/me", h.DeleteMe)
@@ -42,6 +45,46 @@ func (h *Handler) Router() http.Handler {
 			r.Delete("/readings/{id}", h.DeleteReading)
 
 			r.Post("/interpretations", h.Interpret)
+			r.Get("/usage", h.GetUsage)
+			r.Post("/usage/daily-card", h.ConsumeDailyCard)
+			r.Post("/usage/ad-session", h.StartAdSession)
+			r.Post("/billing/purchases", h.ReportPurchase)
+			r.Post("/billing/subscription-status", h.SyncSubscriptionStatus)
+			r.Get("/me/decks", h.MyDecks)
+		})
+
+		r.Group(func(r chi.Router) {
+			r.Use(h.optionalAuth)
+			r.Get("/shop/decks", h.ShopListDecks)
+			r.Get("/shop/decks/{slug}", h.ShopGetDeck)
+		})
+	})
+
+	r.Get("/media/decks/{slug}/{file}", h.ServeDeckMedia)
+
+	r.Route("/admin", func(r chi.Router) {
+		r.Get("/login", h.AdminLoginPage)
+		r.Post("/login", h.AdminLogin)
+
+		r.Group(func(r chi.Router) {
+			r.Use(h.adminMiddleware)
+			r.Get("/", h.AdminDashboard)
+			r.Post("/logout", h.AdminLogout)
+			r.Get("/users", h.AdminUsers)
+			r.Get("/users/{id}", h.AdminUser)
+			r.Post("/users/{id}/premium", h.AdminSetPremium)
+			r.Get("/transactions", h.AdminTransactions)
+			r.Post("/transactions", h.AdminCreateTransaction)
+			r.Get("/transactions/{id}", h.AdminTransaction)
+			r.Post("/transactions/{id}/refund", h.AdminRefund)
+			r.Get("/decks", h.AdminDecks)
+			r.Get("/decks/new", h.AdminDeckNew)
+			r.Post("/decks", h.AdminDeckCreate)
+			r.Get("/decks/{id}", h.AdminDeck)
+			r.Post("/decks/{id}", h.AdminDeckUpdate)
+			r.Post("/decks/{id}/import", h.AdminDeckImport)
+			r.Post("/decks/{id}/grant", h.AdminDeckGrant)
+			r.Post("/users/{id}/decks", h.AdminDeckGrantOnUser)
 		})
 	})
 

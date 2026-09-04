@@ -15,8 +15,13 @@ import {useTranslation} from 'react-i18next';
 import {AppTabsParamList, HomeStackParamList, RootStackParamList} from '../navigation/types';
 import {SPREADS, BASIC_SPREAD_IDS} from '../data';
 import {getReadingSummary} from '../features/interpretation';
+import {ONE_CARD_SPREAD_ID} from '../features/dailyCard';
 import {useHistory} from '../providers/HistoryProvider';
 import {useSettings} from '../providers/SettingsProvider';
+import {useDeckShop} from '../providers/DeckShopProvider';
+import {hexAlpha} from '../theme/appColors';
+import {useOneCardGate} from '../hooks/useOneCardGate';
+import {DailyLimitModal} from '../components/DailyLimitModal';
 
 type Navigation = CompositeNavigationProp<
     NativeStackNavigationProp<HomeStackParamList, 'Home'>,
@@ -35,6 +40,12 @@ export const HomeScreen = () => {
     const {t} = useTranslation();
     const {readings} = useHistory();
     const {settings} = useSettings();
+    const {colors, selectedSlug} = useDeckShop();
+    const gate = useOneCardGate(
+        (params) => navigation.navigate('Reading', params),
+        (readingId) => navigation.navigate('Interpretation', {readingId}),
+        selectedSlug,
+    );
 
     const recentReading = readings[0];
     const recentSpread = recentReading ? SPREADS.find((spread) => spread.id === recentReading.spreadId) : null;
@@ -51,7 +62,11 @@ export const HomeScreen = () => {
     }, [t]);
 
     const startSpread = (spreadId: string) => {
-        navigation.navigate('Reading', {spreadId, deckId: 'rws'});
+        if (spreadId === ONE_CARD_SPREAD_ID) {
+            gate.start(true).catch(() => {});
+            return;
+        }
+        navigation.navigate('Reading', {spreadId, deckId: selectedSlug});
     };
 
     const goToCatalog = () => {
@@ -63,37 +78,64 @@ export const HomeScreen = () => {
     };
 
     return (
-        <SafeAreaView style={styles.safe}>
+        <SafeAreaView style={[styles.safe, {backgroundColor: colors.bg}]}>
             <ScrollView contentContainerStyle={styles.container}>
                 <View style={styles.hero}>
                     <Image source={require('../assets/home-hero.jpg')} style={styles.heroImage} />
                     <View style={styles.heroOverlay} />
                     <View style={styles.heroContent}>
-                        <Text style={styles.heroGreeting}>{greeting}</Text>
-                        <Text style={styles.heroTitle}>{t('home.hero.title')}</Text>
-                        <Text style={styles.heroSubtitle}>{t('home.hero.subtitle')}</Text>
-                        <TouchableOpacity style={styles.heroButton} onPress={() => startSpread('one-card')}>
-                            <Text style={styles.heroButtonText}>{t('home.hero.cta')}</Text>
+                        <Text style={[styles.heroGreeting, {color: colors.text}]}>{greeting}</Text>
+                        <Text style={[styles.heroTitle, {color: colors.gold}]}>{t('home.hero.title')}</Text>
+                        <Text style={[styles.heroSubtitle, {color: colors.text}]}>{t('home.hero.subtitle')}</Text>
+                        <TouchableOpacity
+                            style={[styles.heroButton, {backgroundColor: colors.accent}]}
+                            onPress={() => {
+                                gate.start(true).catch(() => {});
+                            }}
+                            disabled={gate.busy}
+                        >
+                            <Text style={styles.heroButtonText}>
+                                {gate.today ? t('dailyCard.ctaOpen') : t('home.hero.cta')}
+                            </Text>
                         </TouchableOpacity>
+                        {gate.today ? (
+                            <TouchableOpacity
+                                style={[styles.heroGhost, {borderColor: colors.gold}]}
+                                onPress={() => {
+                                    gate.start(false).catch(() => {});
+                                }}
+                                disabled={gate.busy}
+                            >
+                                <Text style={[styles.heroGhostText, {color: colors.gold}]}>
+                                    {t('home.hero.another')}
+                                </Text>
+                            </TouchableOpacity>
+                        ) : null}
                     </View>
                 </View>
 
                 <View style={styles.section}>
                     <View style={styles.sectionHeader}>
-                        <Text style={styles.sectionTitle}>{t('home.quickAccess.title')}</Text>
+                        <Text style={[styles.sectionTitle, {color: colors.text}]}>{t('home.quickAccess.title')}</Text>
                         <TouchableOpacity onPress={goToCatalog}>
-                            <Text style={styles.sectionLink}>{t('home.quickAccess.more')}</Text>
+                            <Text style={[styles.sectionLink, {color: colors.accent}]}>{t('home.quickAccess.more')}</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.spreadsRow}>
                         {featured.map((spread) => (
                             <TouchableOpacity
                                 key={spread.id}
-                                style={styles.spreadCard}
+                                style={[
+                                    styles.spreadCard,
+                                    {
+                                        backgroundColor: hexAlpha(colors.accent, 0.12),
+                                        borderColor: hexAlpha(colors.accent, 0.35),
+                                    },
+                                ]}
                                 onPress={() => startSpread(spread.id)}
                             >
-                                <Text style={styles.spreadTitle}>{t(spread.nameKey)}</Text>
-                                <Text style={styles.spreadSubtitle}>
+                                <Text style={[styles.spreadTitle, {color: colors.gold}]}>{t(spread.nameKey)}</Text>
+                                <Text style={[styles.spreadSubtitle, {color: colors.text}]}>
                                     {t('home.quickAccess.cardCount', {count: spread.maxCards})}
                                 </Text>
                             </TouchableOpacity>
@@ -104,22 +146,30 @@ export const HomeScreen = () => {
                 {recentReading && (
                     <View style={styles.section}>
                         <View style={styles.sectionHeader}>
-                            <Text style={styles.sectionTitle}>{t('home.recent.title')}</Text>
+                            <Text style={[styles.sectionTitle, {color: colors.text}]}>{t('home.recent.title')}</Text>
                             <TouchableOpacity onPress={goToHistory}>
-                                <Text style={styles.sectionLink}>{t('home.recent.viewAll')}</Text>
+                                <Text style={[styles.sectionLink, {color: colors.accent}]}>{t('home.recent.viewAll')}</Text>
                             </TouchableOpacity>
                         </View>
-                        <View style={styles.recentCard}>
-                            <Text style={styles.recentLabel}>{t('home.recent.spread')}</Text>
-                            <Text style={styles.recentValue}>
+                        <View
+                            style={[
+                                styles.recentCard,
+                                {
+                                    backgroundColor: colors.panel,
+                                    borderColor: hexAlpha(colors.gold, 0.3),
+                                },
+                            ]}
+                        >
+                            <Text style={[styles.recentLabel, {color: colors.muted}]}>{t('home.recent.spread')}</Text>
+                            <Text style={[styles.recentValue, {color: colors.gold}]}>
                                 {recentSpread ? t(recentSpread.nameKey) : recentReading.spreadId}
                             </Text>
-                            <Text style={styles.recentLabel}>{t('home.recent.date')}</Text>
-                            <Text style={styles.recentValue}>
+                            <Text style={[styles.recentLabel, {color: colors.muted}]}>{t('home.recent.date')}</Text>
+                            <Text style={[styles.recentValue, {color: colors.gold}]}>
                                 {new Date(recentReading.drawnAt).toLocaleString(settings.language)}
                             </Text>
                             {recentSummary ? (
-                                <Text style={styles.recentSummary} numberOfLines={3}>
+                                <Text style={[styles.recentSummary, {color: colors.text}]} numberOfLines={3}>
                                     {recentSummary}
                                 </Text>
                             ) : null}
@@ -128,15 +178,38 @@ export const HomeScreen = () => {
                 )}
 
                 <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>{t('home.education.title')}</Text>
-                    <View style={styles.educationCard}>
-                        <Text style={styles.educationText}>{t('home.education.body')}</Text>
-                        <TouchableOpacity style={styles.educationButton} onPress={() => navigation.navigate('Decks')}>
+                    <Text style={[styles.sectionTitle, {color: colors.text}]}>{t('home.education.title')}</Text>
+                    <View
+                        style={[
+                            styles.educationCard,
+                            {
+                                backgroundColor: hexAlpha(colors.accent, 0.12),
+                                borderColor: hexAlpha(colors.accent, 0.35),
+                            },
+                        ]}
+                    >
+                        <Text style={[styles.educationText, {color: colors.text}]}>{t('home.education.body')}</Text>
+                        <TouchableOpacity
+                            style={[styles.educationButton, {backgroundColor: colors.gold}]}
+                            onPress={() => navigation.navigate('Decks')}
+                        >
                             <Text style={styles.educationButtonText}>{t('home.education.cta')}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
             </ScrollView>
+            <DailyLimitModal
+                visible={gate.limitOpen}
+                todayReadingId={gate.today?.id}
+                onClose={() => gate.setLimitOpen(false)}
+                onOpenToday={() => {
+                    gate.setLimitOpen(false);
+                    gate.openToday();
+                }}
+                onUnlocked={(result) => {
+                    gate.onUnlocked(result).catch(() => {});
+                }}
+            />
         </SafeAreaView>
     );
 };
@@ -205,6 +278,18 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontWeight: '600',
         fontSize: 16,
+    },
+    heroGhost: {
+        alignSelf: 'flex-start',
+        marginTop: 10,
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderRadius: 20,
+        borderWidth: 1,
+    },
+    heroGhostText: {
+        fontWeight: '600',
+        fontSize: 14,
     },
     section: {
         marginHorizontal: 20,

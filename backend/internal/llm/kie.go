@@ -47,7 +47,7 @@ type InsightPosition struct {
 type Insight struct {
 	Summary   string            `json:"summary"`
 	Positions []InsightPosition `json:"positions"`
-	Model     string            `json:"model"`
+	Model     string            `json:"-"`
 }
 
 type kieContentPart struct {
@@ -84,7 +84,7 @@ type kieResponse struct {
 		Role    string          `json:"role"`
 		Content json.RawMessage `json:"content"`
 	} `json:"output"`
-	Error *kieAPIError `json:"error"`
+	Error *kieAPIError    `json:"error"`
 	Code  json.RawMessage `json:"code"`
 	Msg   string          `json:"msg"`
 }

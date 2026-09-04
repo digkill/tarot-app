@@ -5,31 +5,39 @@ import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useTranslation} from 'react-i18next';
 import {RootStackParamList} from '../navigation/types';
 import {useSettings} from '../providers/SettingsProvider';
+import {useAppColors} from '../providers/DeckShopProvider';
+import {hexAlpha} from '../theme/appColors';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Disclaimer'>;
 
 export const DisclaimerScreen = (_props: Props) => {
     const {t} = useTranslation();
     const {setSetting} = useSettings();
+    const colors = useAppColors();
 
     const accept = () => {
         setSetting('acceptedDisclaimer', true).catch(() => {});
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, {backgroundColor: colors.bg}]}>
             <ScrollView contentContainerStyle={styles.content}>
-                <Text style={styles.title}>{t('disclaimer.title')}</Text>
-                <Text style={styles.body}>{t('disclaimer.description1')}</Text>
-                <Text style={styles.body}>{t('disclaimer.description2')}</Text>
-                <Text style={styles.body}>{t('disclaimer.nextHint')}</Text>
-                <View style={styles.adviceBox}>
-                    <Text style={styles.adviceTitle}>{t('disclaimer.remember')}</Text>
-                    <Text style={styles.adviceText}>{t('disclaimer.rememberDescription')}</Text>
+                <Text style={[styles.title, {color: colors.gold}]}>{t('disclaimer.title')}</Text>
+                <Text style={[styles.body, {color: colors.text}]}>{t('disclaimer.description1')}</Text>
+                <Text style={[styles.body, {color: colors.text}]}>{t('disclaimer.description2')}</Text>
+                <Text style={[styles.body, {color: colors.text}]}>{t('disclaimer.nextHint')}</Text>
+                <View
+                    style={[
+                        styles.adviceBox,
+                        {backgroundColor: hexAlpha(colors.accent, 0.1), borderColor: hexAlpha(colors.accent, 0.4)},
+                    ]}
+                >
+                    <Text style={[styles.adviceTitle, {color: colors.accent}]}>{t('disclaimer.remember')}</Text>
+                    <Text style={[styles.adviceText, {color: colors.text}]}>{t('disclaimer.rememberDescription')}</Text>
                 </View>
             </ScrollView>
             <View style={styles.footer}>
-                <TouchableOpacity style={styles.button} onPress={accept}>
+                <TouchableOpacity style={[styles.button, {backgroundColor: colors.accent}]} onPress={accept}>
                     <Text style={styles.buttonText}>{t('disclaimer.accept')}</Text>
                 </TouchableOpacity>
             </View>

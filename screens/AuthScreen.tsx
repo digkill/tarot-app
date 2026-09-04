@@ -18,6 +18,7 @@ import {isApiError} from '../features/apiClient';
 import {RootStackParamList} from '../navigation/types';
 import {useAuth} from '../providers/AuthProvider';
 import {useSettings} from '../providers/SettingsProvider';
+import {useAppColors} from '../providers/DeckShopProvider';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Auth'>;
 type Mode = 'login' | 'register';
@@ -26,6 +27,7 @@ export const AuthScreen = ({navigation}: Props) => {
     const {t} = useTranslation();
     const {login, register} = useAuth();
     const {settings} = useSettings();
+    const colors = useAppColors();
     const [mode, setMode] = useState<Mode>('login');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -103,7 +105,7 @@ export const AuthScreen = ({navigation}: Props) => {
     };
 
     return (
-        <SafeAreaView style={styles.safe}>
+        <SafeAreaView style={[styles.safe, {backgroundColor: colors.bg}]}>
             <KeyboardAvoidingView
                 style={styles.flex}
                 behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -112,10 +114,10 @@ export const AuthScreen = ({navigation}: Props) => {
                     contentContainerStyle={styles.content}
                     keyboardShouldPersistTaps="handled"
                 >
-                    <Text style={styles.title}>
+                    <Text style={[styles.title, {color: colors.gold}]}>
                         {mode === 'login' ? t('auth.loginTitle') : t('auth.registerTitle')}
                     </Text>
-                    <Text style={styles.subtitle}>
+                    <Text style={[styles.subtitle, {color: colors.text}]}>
                         {mode === 'login' ? t('auth.loginSubtitle') : t('auth.registerSubtitle')}
                     </Text>
 
@@ -203,7 +205,7 @@ export const AuthScreen = ({navigation}: Props) => {
                     {error ? <Text style={styles.error}>{error}</Text> : null}
 
                     <TouchableOpacity
-                        style={[styles.button, !canSubmit && styles.buttonDisabled]}
+                        style={[styles.button, {backgroundColor: colors.accent}, !canSubmit && styles.buttonDisabled]}
                         onPress={() => {
                             submit().catch(() => {});
                         }}

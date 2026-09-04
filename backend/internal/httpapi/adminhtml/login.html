@@ -1,0 +1,40 @@
+{{define "login"}}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Вход · Tarot admin</title>
+<style>
+:root { --bg:#040307; --panel:#12101c; --line:#2a2540; --text:#f7f4ea; --muted:#9a93b3; --accent:#6c5ce7; --danger:#ff6b6b; }
+* { box-sizing:border-box; }
+body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center; background:var(--bg); color:var(--text); font:15px/1.45 ui-sans-serif,system-ui,sans-serif; padding:24px; }
+.box { width:100%; max-width:380px; background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:28px; }
+h1 { margin:0 0 6px; font-size:24px; }
+p { color:var(--muted); margin:0 0 20px; }
+label { display:block; color:var(--muted); font-size:12px; margin:12px 0 6px; }
+input { width:100%; background:#0b0914; border:1px solid var(--line); color:var(--text); border-radius:8px; padding:10px 12px; font:inherit; }
+button { margin-top:18px; width:100%; border:0; background:var(--accent); color:#fff; padding:12px; border-radius:10px; font-weight:700; cursor:pointer; }
+.err { background:#3a1418; color:var(--danger); padding:10px 12px; border-radius:10px; margin-bottom:14px; }
+</style>
+</head>
+<body>
+<div class="box">
+  <h1>Админка Tarot</h1>
+  <p>Статистика, биллинг и возвраты</p>
+  {{if .Flash}}<div class="err" style="background:#14301f;color:#7bed9f">{{.Flash}}</div>{{end}}
+  {{if .Error}}<div class="err">{{.Error}}</div>{{end}}
+  <form method="post" action="/admin/login">
+    <input type="hidden" name="csrf" value="{{.CSRF}}">
+    <input type="hidden" name="next" value="{{.Next}}">
+    <label>Email</label>
+    <input type="email" name="email" autocomplete="username" required>
+    <label>Пароль</label>
+    <input type="password" name="password" autocomplete="current-password" required>
+    <button type="submit">Войти</button>
+  </form>
+</div>
+</body>
+</html>
+{{end}}

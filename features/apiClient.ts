@@ -1,4 +1,5 @@
 import Constants from 'expo-constants';
+import * as Localization from 'expo-localization';
 import type {AuthSession} from '../entities';
 
 export class ApiError extends Error {
@@ -31,6 +32,14 @@ export const getApiBaseUrl = (): string => {
     const fromExtra = extra?.apiBaseUrl?.trim();
     const url = fromExtra || 'https://tarot.sorapure.fun';
     return url.replace(/\/+$/, '');
+};
+
+export const deviceTimezone = (): string => {
+    try {
+        return Localization.getCalendars()[0]?.timeZone || 'Europe/Moscow';
+    } catch {
+        return 'Europe/Moscow';
+    }
 };
 
 type ErrorPayload = {

@@ -5,21 +5,23 @@ import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useTranslation} from 'react-i18next';
 import {CURRENT_CONSENT_VERSION} from '../entities';
 import {RootStackParamList} from '../navigation/types';
+import {useAppColors} from '../providers/DeckShopProvider';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'LegalDocument'>;
 
 export const LegalDocumentScreen = ({route}: Props) => {
     const {t} = useTranslation();
+    const colors = useAppColors();
     const key = route.params.doc === 'privacy' ? 'legal.privacyParagraphs' : 'legal.termsParagraphs';
     const paragraphs = t(key, {returnObjects: true});
     const items = Array.isArray(paragraphs) ? paragraphs.filter((item) => typeof item === 'string') : [];
 
     return (
-        <SafeAreaView style={styles.safe} edges={['bottom']}>
+        <SafeAreaView style={[styles.safe, {backgroundColor: colors.bg}]} edges={['bottom']}>
             <ScrollView contentContainerStyle={styles.content}>
-                <Text style={styles.version}>{t('legal.version', {version: CURRENT_CONSENT_VERSION})}</Text>
+                <Text style={[styles.version, {color: colors.muted}]}>{t('legal.version', {version: CURRENT_CONSENT_VERSION})}</Text>
                 {items.map((paragraph, index) => (
-                    <Text key={`${route.params.doc}-${index}`} style={styles.paragraph}>
+                    <Text key={`${route.params.doc}-${index}`} style={[styles.paragraph, {color: colors.text}]}>
                         {paragraph}
                     </Text>
                 ))}

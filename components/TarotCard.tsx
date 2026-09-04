@@ -8,9 +8,8 @@ import Animated, {
     withTiming,
 } from 'react-native-reanimated';
 import type {Card} from '../entities';
-import {cardImages} from '../utils/cardImages';
+import {useDeckShop} from '../providers/DeckShopProvider';
 
-const CARD_BACK = require('../assets/cards/card_back.jpeg');
 const BASE_W = 110;
 const BASE_H = 165;
 const ASPECT = BASE_H / BASE_W;
@@ -20,9 +19,19 @@ type Props = {
     isReversed?: boolean;
     startFaceDown?: boolean;
     width?: number;
+    artDeckId?: string;
 };
 
-export const TarotCard = ({card, isReversed = false, startFaceDown = false, width = BASE_W}: Props) => {
+export const TarotCard = ({
+    card,
+    isReversed = false,
+    startFaceDown = false,
+    width = BASE_W,
+    artDeckId,
+}: Props) => {
+    const {faceSource, backSource, colors} = useDeckShop();
+    const imageSource = faceSource(card.image, artDeckId);
+    const cardBack = backSource(artDeckId);
     const cardW = width;
     const cardH = Math.round(cardW * ASPECT);
 
@@ -76,8 +85,6 @@ export const TarotCard = ({card, isReversed = false, startFaceDown = false, widt
         setVisible(true);
     }, []);
 
-    const imageSource = cardImages[card.image];
-
     return (
         <Pressable onPress={handleFlip}>
             <Animated.View style={[styles.cardBox, {width: cardW, height: cardH}, containerFade]}>
@@ -93,13 +100,13 @@ export const TarotCard = ({card, isReversed = false, startFaceDown = false, widt
                             ]}
                         />
                     ) : (
-                        <View style={[styles.placeholder, {width: cardW, height: cardH}]} />
+                        <View style={[styles.placeholder, {width: cardW, height: cardH, backgroundColor: colors.panel}]} />
                     )}
                 </Animated.View>
 
                 <Animated.View style={[styles.face, {width: cardW, height: cardH}, backAnimatedStyle]}>
                     <Animated.Image
-                        source={CARD_BACK}
+                        source={cardBack}
                         resizeMode="cover"
                         style={[styles.fullImage, {width: cardW, height: cardH}]}
                     />
@@ -114,6 +121,7 @@ export default TarotCard;
 const styles = StyleSheet.create({
     cardBox: {
         borderRadius: 12,
+        overflow: 'hidden',
         shadowColor: '#000',
         shadowOpacity: 0.45,
         shadowOffset: {width: 0, height: 6},
@@ -125,6 +133,8 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
     },
     fullImage: {
+        width: '100%',
+        height: '100%',
         borderRadius: 12,
         resizeMode: 'cover',
     },

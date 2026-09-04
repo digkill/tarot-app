@@ -30,7 +30,8 @@
     "hero": {
       "title": "抽一张牌开启今日旅程",
       "subtitle": "当你需要清晰时，连结象征、仪式与引导。",
-      "cta": "每日一抽"
+      "cta": "每日一抽",
+      "another": "再抽一张"
     },
     "quickAccess": {
       "title": "快速牌阵",
@@ -60,8 +61,10 @@
       "active": "已激活",
       "inactive": "未订阅"
     },
+    "expiresOn": "有效期至 {{date}}",
+    "lifetimeAccess": "永久有效",
     "price": "每月起 599 ₽",
-    "benefits": "订阅后可解锁全部牌阵、扩展 AI 解读与优先更新。",
+    "benefits": "订阅后可解锁全部牌阵、每日最多 20 张日签、每天 50 次 AI 解读，以及优先更新。",
     "selectPlan": "选择套餐",
     "subscribe": "订阅",
     "manage": "在 RuStore 中管理",
@@ -95,8 +98,9 @@
     },
     "features": {
       "title": "订阅权益",
-      "aiInterpretations": "OpenAI 提供的扩展 AI 解读。",
+      "aiInterpretations": "每天 50 次任意牌阵的 AI 解读。",
       "deeperInsights": "针对每次抽牌的详细含义与行动建议。",
+      "dailyCards": "每天最多 20 张日签，无需观看视频。",
       "unlimitedReadings": "无限次访问高级牌阵。",
       "prioritySupport": "优先支持与反馈通道。"
     }
@@ -168,7 +172,7 @@
     "reversedChanceTitle": "逆位概率",
     "reversedHint": "调整抽牌时出现逆位的频率。",
     "premiumTitle": "Tarot Premium",
-    "premiumDescription": "解锁全部牌阵与 OpenAI 提供的深度解读，每月 {{price}}。",
+    "premiumDescription": "解锁全部牌阵与深度 AI 解读，每月 {{price}}。",
     "premiumSubscribe": "开始订阅",
     "premiumManage": "取消订阅",
     "premiumActive": "订阅已激活",
@@ -315,12 +319,12 @@
     "missingReading": "解读不可用",
     "goBack": "返回",
     "premiumHeading": "AI 深度解读",
-    "premiumLocked": "订阅用户可通过 OpenAI 获取更个性化的解读。",
+    "premiumLocked": "订阅用户可获取更个性化的 AI 解读。",
     "premiumCta": "前往设置订阅",
     "premiumGenerate": "生成 AI 解读",
-    "premiumGenerating": "正在向 OpenAI 请求...",
+    "premiumGenerating": "正在生成解读...",
     "premiumError": "无法生成 AI 解读，请稍后再试。",
-    "premiumMissingKey": "请添加 OpenAI API Key 以启用 AI 功能。",
+    "premiumMissingKey": "AI 解读暂时不可用。",
     "premiumSummaryTitle": "AI 摘要",
     "premiumPositionsTitle": "牌位指引",
     "orientation": {
@@ -345,6 +349,15 @@
     "confirm": "移除"
   },
   "deck": {
+    "shopTitle": "牌组与主题",
+    "shopHint": "选择牌组即可更换卡牌画面和应用配色。",
+    "classicName": "莱德韦特",
+    "classicHint": "经典莱德韦特牌面与原版紫色主题。",
+    "buy": "购买",
+    "select": "使用主题",
+    "selected": "已选用",
+    "owned": "已拥有",
+    "free": "免费",
     "arcana": "奥秘",
     "arcanaFilter": {
       "all": "全部",
@@ -372,8 +385,24 @@
     "needLogin": "请登录后再获取 AI 解读。",
     "premiumRequired": "服务器上尚未开通高级会员。请使用已订阅的账号登录。",
     "unavailable": "解读服务暂时不可用，请稍后再试。",
-    "generatedBy": "由 {{model}} 生成",
+    "quotaReached": "今日 AI 解读次数已用完（每天 {{limit}} 次），请明天再来。",
+    "quotaHint": "今日还剩 {{remaining}} / {{limit}} 次 AI 解读",
+    "rateLimited": "请求过于频繁，请稍等几秒。",
     "refreshInterpretation": "刷新解读"
+  },
+  "dailyCard": {
+    "ctaOpen": "打开今日日签",
+    "limitTitle": "今日日签已经抽过",
+    "limitBody": "免费每天 1 张。看完短视频可再抽（最多 5 次），订阅后每天最多 20 张日签和 50 次 AI 解读。",
+    "watch": "观看视频",
+    "subscribe": "去订阅",
+    "watching": "请看到计时结束",
+    "secondsLeft": "{{count}} 秒",
+    "unlockError": "无法再抽一张，请重试。",
+    "needWait": "请稍后再看下一条视频。",
+    "quotaReached": "今日次数已用完，请明天再来。",
+    "adMax": "今日视频次数已用完。请订阅或明天再来。",
+    "watchIncomplete": "请看完视频才能解锁。"
   },
   "auth": {
     "loginTitle": "登录",

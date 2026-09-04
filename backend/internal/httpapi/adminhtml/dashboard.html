@@ -1,0 +1,80 @@
+{{define "dashboard"}}
+{{template "header" .}}
+<h1>Сводка</h1>
+<p class="sub">Пользователи, расклады и биллинг</p>
+
+<div class="grid">
+  <div class="card"><div class="k">Пользователи</div><div class="v">{{.Stats.UsersTotal}}</div><div class="s">{{.Stats.UsersVerified}} подтвердили почту</div></div>
+  <div class="card"><div class="k">Премиум</div><div class="v">{{.Stats.UsersPremium}}</div><div class="s">{{.Stats.UsersAdmin}} админов</div></div>
+  <div class="card"><div class="k">Расклады</div><div class="v">{{.Stats.ReadingsTotal}}</div><div class="s">{{.Stats.Readings7d}} за 7 дней · {{.Stats.Readings30d}} за 30</div></div>
+  <div class="card"><div class="k">Выручка (оплачено)</div><div class="v">{{fmtRub .Stats.RevenuePaidKop}}</div><div class="s">{{.Stats.TxPaid}} платежей</div></div>
+  <div class="card"><div class="k">Возвраты</div><div class="v">{{fmtRub .Stats.RevenueRefundKop}}</div><div class="s">{{.Stats.TxRefunded}} транзакций</div></div>
+  <div class="card"><div class="k">Регистрации</div><div class="v">{{.Stats.Signups7d}}</div><div class="s">за 7 дней · {{.Stats.Signups30d}} за 30</div></div>
+</div>
+
+<div class="cols">
+  <div>
+    <h2>Регистрации, 14 дней</h2>
+    {{if .Stats.SignupsByDay}}
+    <table>
+      <thead><tr><th>День</th><th>Кол-во</th></tr></thead>
+      <tbody>
+      {{range .Stats.SignupsByDay}}
+        <tr><td>{{fmtDay .Day}}</td><td>{{.Count}}</td></tr>
+      {{end}}
+      </tbody>
+    </table>
+    {{else}}<p class="sub">Пока нет регистраций за период.</p>{{end}}
+  </div>
+  <div>
+    <h2>События доступа, 30 дней</h2>
+    {{if .Stats.Events30d}}
+    <table>
+      <thead><tr><th>Событие</th><th>Кол-во</th></tr></thead>
+      <tbody>
+      {{range .Stats.Events30d}}
+        <tr><td>{{.Event}}</td><td>{{.Count}}</td></tr>
+      {{end}}
+      </tbody>
+    </table>
+    {{else}}<p class="sub">Нет событий.</p>{{end}}
+  </div>
+</div>
+
+<h2>Последние транзакции</h2>
+{{if .RecentTx}}
+<table>
+  <thead><tr><th>Когда</th><th>Пользователь</th><th>Продукт</th><th>Сумма</th><th>Статус</th></tr></thead>
+  <tbody>
+  {{range .RecentTx}}
+    <tr>
+      <td>{{fmtTime .CreatedAt}}</td>
+      <td><a href="/admin/users/{{.UserID}}">{{.UserEmail}}</a></td>
+      <td>{{titleOf .ProductID}}</td>
+      <td>{{fmtRubI .AmountKop}}</td>
+      <td><span class="tag {{.Status}}">{{.Status}}</span></td>
+    </tr>
+  {{end}}
+  </tbody>
+</table>
+{{else}}<p class="sub">Транзакций ещё нет — покупки из приложения появятся после оплаты, либо создайте вручную.</p>{{end}}
+
+<h2>Журнал админки</h2>
+{{if .Audit}}
+<table>
+  <thead><tr><th>Когда</th><th>Кто</th><th>Действие</th><th>Объект</th><th>Детали</th></tr></thead>
+  <tbody>
+  {{range .Audit}}
+    <tr>
+      <td>{{fmtTime .CreatedAt}}</td>
+      <td>{{.AdminEmail}}</td>
+      <td>{{.Action}}</td>
+      <td>{{.TargetType}} {{short .TargetID}}</td>
+      <td>{{.Details}}</td>
+    </tr>
+  {{end}}
+  </tbody>
+</table>
+{{else}}<p class="sub">Пока пусто.</p>{{end}}
+{{template "footer"}}
+{{end}}

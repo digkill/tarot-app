@@ -1,6 +1,6 @@
 import {Linking, NativeModules, Platform} from 'react-native';
 import {RuStoreReactPay} from '../libs/RuStoreReactPay';
-import type {Product, RuStorePayError} from '../libs/RuStoreReactPay';
+import type {Product, ProductPurchaseResult, RuStorePayError} from '../libs/RuStoreReactPay';
 
 export const PREMIUM_PRODUCT_IDS = ['premium_monthly', 'premium_yearly', 'premium_lifetime'] as const;
 
@@ -73,10 +73,10 @@ export const getPremiumProducts = async (): Promise<Product[]> => {
 const isPayError = (error: unknown): error is RuStorePayError =>
     RuStoreReactPay.isRuStorePayError(error);
 
-export const purchasePremium = async (
-    productId: PremiumProductId,
+export const purchaseStoreProduct = async (
+    productId: string,
     theme: 'LIGHT' | 'DARK' = 'DARK',
-): Promise<void> => {
+): Promise<ProductPurchaseResult> => {
     assertAvailable();
     if (hasNativeModule()) {
         const installed = await RuStoreReactPay.isRuStoreInstalled();
@@ -85,8 +85,7 @@ export const purchasePremium = async (
         }
     }
     try {
-        // Подписки в RuStore поддерживают только одностадийную оплату (ONE_STEP)
-        await RuStoreReactPay.purchase({
+        return await RuStoreReactPay.purchase({
             productId,
             preferredPurchaseType: 'ONE_STEP',
             sdkTheme: theme,
@@ -102,13 +101,48 @@ export const purchasePremium = async (
     }
 };
 
+export const purchasePremium = async (
+    productId: PremiumProductId,
+    theme: 'LIGHT' | 'DARK' = 'DARK',
+): Promise<ProductPurchaseResult> => purchaseStoreProduct(productId, theme);
+
 export const hasActivePremiumSubscription = async (): Promise<boolean> => {
+    const status = await readStorePremiumStatus();
+    return status.active;
+};
+
+export type StorePremiumStatus = {
+    active: boolean;
+    productId?: PremiumProductId;
+    expiresAt?: string;
+};
+
+const LIVE_SUB_STATUSES = new Set<string>(['ACTIVE', 'PAUSED']);
+const PAID_PRODUCT_STATUSES = new Set<string>(['CONFIRMED', 'PAID']);
+
+export const readStorePremiumStatus = async (): Promise<StorePremiumStatus> => {
     assertAvailable();
-    const purchases = await RuStoreReactPay.getPurchases({productType: 'SUBSCRIPTION'});
-    return purchases.some((purchase) => {
-        const sub = purchase.subscriptionPurchase;
-        return Boolean(sub && isPremiumProductId(sub.productId) && sub.status === 'ACTIVE');
-    });
+    const subscriptions = await RuStoreReactPay.getPurchases({productType: 'SUBSCRIPTION'});
+    for (const row of subscriptions) {
+        const sub = row.subscriptionPurchase;
+        if (!sub || !isPremiumProductId(sub.productId) || !LIVE_SUB_STATUSES.has(sub.status)) {
+            continue;
+        }
+        return {
+            active: true,
+            productId: sub.productId,
+            expiresAt: sub.expirationDate || undefined,
+        };
+    }
+    const owned = await RuStoreReactPay.getPurchases({productType: 'NON_CONSUMABLE_PRODUCT'});
+    for (const row of owned) {
+        const item = row.productPurchase;
+        if (!item || item.productId !== 'premium_lifetime' || !PAID_PRODUCT_STATUSES.has(item.status)) {
+            continue;
+        }
+        return {active: true, productId: 'premium_lifetime'};
+    }
+    return {active: false};
 };
 
 export const openRuStoreSubscriptions = async (): Promise<void> => {

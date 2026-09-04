@@ -7,7 +7,13 @@ export type RootStackParamList = {
     ForgotPassword: {email?: string};
     LegalDocument: {doc: LegalDocumentId};
     Main: undefined;
-    Reading: {spreadId: string; deckId: string; readingId?: string};
+    Reading: {
+        spreadId: string;
+        deckId: string;
+        readingId?: string;
+        quotaGranted?: boolean;
+        readingKind?: 'daily' | 'bonus';
+    };
     Interpretation: {readingId: string};
 };
 

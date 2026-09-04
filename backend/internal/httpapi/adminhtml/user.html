@@ -1,0 +1,100 @@
+{{define "user"}}
+{{template "header" .}}
+<h1>{{.User.Email}}</h1>
+<p class="sub mono">{{.User.ID}}</p>
+
+<div class="card" style="margin-bottom:20px">
+  <div class="dl">
+    <div>Премиум</div><div>{{if .User.HasPremium}}да{{else}}нет{{end}}</div>
+    <div>Тариф</div><div>{{if .User.PremiumProductID}}{{titleOf .User.PremiumProductID}}{{else}}—{{end}}</div>
+    <div>Источник</div><div>{{if .User.PremiumSource}}{{.User.PremiumSource}}{{else}}—{{end}}</div>
+    <div>Действует до</div><div>{{if .User.HasPremium}}{{if .User.PremiumExpiresAt}}{{fmtTimePtr .User.PremiumExpiresAt}}{{else}}без срока{{end}}{{else}}—{{end}}</div>
+    <div>Роль</div><div>{{.User.Role}}</div>
+    <div>Почта подтверждена</div><div>{{if .User.EmailVerified}}да{{else}}нет{{end}}</div>
+    <div>Регистрация</div><div>{{fmtTime .User.CreatedAt}}</div>
+    <div>Раскладов</div><div>{{.Readings}}</div>
+  </div>
+</div>
+
+<form class="inline" method="post" action="/admin/users/{{.User.ID}}/premium">
+  <input type="hidden" name="csrf" value="{{.CSRF}}">
+  {{if .User.HasPremium}}
+    <input type="hidden" name="premium" value="0">
+    <button class="btn danger" type="submit">Снять премиум</button>
+  {{else}}
+    <input type="hidden" name="premium" value="1">
+    <button class="btn" type="submit">Выдать премиум</button>
+  {{end}}
+</form>
+
+{{if .Decks}}
+<h2>Выдать колоду</h2>
+<form method="post" action="/admin/users/{{.User.ID}}/decks" class="row">
+  <input type="hidden" name="csrf" value="{{.CSRF}}">
+  <div class="field">
+    <label>Колода</label>
+    <select name="deck_id">
+      {{range .Decks}}
+      <option value="{{.ID}}">{{.Slug}} — {{index .TitleI18n "ru"}}</option>
+      {{end}}
+    </select>
+  </div>
+  <button class="btn" type="submit">Выдать</button>
+</form>
+{{end}}
+
+<h2>Начислить платёж</h2>
+<p class="note">Ручная транзакция (промо, компенсация, оплата вне RuStore). Премиум будет включён.</p>
+<form method="post" action="/admin/transactions" class="row">
+  <input type="hidden" name="csrf" value="{{.CSRF}}">
+  <input type="hidden" name="email" value="{{.User.Email}}">
+  <input type="hidden" name="redirect" value="/admin/users/{{.User.ID}}">
+  <div class="field">
+    <label>Продукт</label>
+    <select name="product_id">
+      {{range .Products}}
+      <option value="{{.ID}}">{{.Title}} — {{fmtRubI .AmountKop}}</option>
+      {{end}}
+      {{range .Decks}}
+      <option value="{{.ProductID}}">Колода: {{index .TitleI18n "ru"}} ({{.Slug}})</option>
+      {{end}}
+    </select>
+  </div>
+  <div class="field">
+    <label>Источник</label>
+    <select name="provider">
+      <option value="admin">admin</option>
+      <option value="promo">promo</option>
+      <option value="rustore">rustore</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>Invoice (необязательно)</label>
+    <input name="invoice_id" placeholder="RuStore invoice id">
+  </div>
+  <div class="field">
+    <label>Заметка</label>
+    <input name="notes" placeholder="комментарий">
+  </div>
+  <button class="btn" type="submit">Создать</button>
+</form>
+
+<h2>Транзакции пользователя</h2>
+{{if .Tx}}
+<table>
+  <thead><tr><th>Когда</th><th>Продукт</th><th>Сумма</th><th>Статус</th><th></th></tr></thead>
+  <tbody>
+  {{range .Tx}}
+    <tr>
+      <td>{{fmtTime .CreatedAt}}</td>
+      <td>{{titleOf .ProductID}}</td>
+      <td>{{fmtRubI .AmountKop}}</td>
+      <td><span class="tag {{.Status}}">{{.Status}}</span></td>
+      <td><a href="/admin/transactions/{{.ID}}">открыть</a></td>
+    </tr>
+  {{end}}
+  </tbody>
+</table>
+{{else}}<p class="sub">Платежей нет.</p>{{end}}
+{{template "footer"}}
+{{end}}

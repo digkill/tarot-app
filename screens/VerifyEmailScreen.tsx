@@ -16,12 +16,14 @@ import {isApiError} from '../features/apiClient';
 import {RootStackParamList} from '../navigation/types';
 import {useAuth} from '../providers/AuthProvider';
 import {useSettings} from '../providers/SettingsProvider';
+import {useAppColors} from '../providers/DeckShopProvider';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'VerifyEmail'>;
 
 export const VerifyEmailScreen = ({navigation, route}: Props) => {
     const {t} = useTranslation();
     const {settings} = useSettings();
+    const colors = useAppColors();
     const {verifyEmail, resendVerification} = useAuth();
     const email = route.params.email;
     const [code, setCode] = useState('');
@@ -72,7 +74,7 @@ export const VerifyEmailScreen = ({navigation, route}: Props) => {
     };
 
     return (
-        <SafeAreaView style={styles.safe}>
+        <SafeAreaView style={[styles.safe, {backgroundColor: colors.bg}]}>
             <KeyboardAvoidingView
                 style={styles.flex}
                 behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -96,7 +98,7 @@ export const VerifyEmailScreen = ({navigation, route}: Props) => {
                     {info ? <Text style={styles.info}>{info}</Text> : null}
 
                     <TouchableOpacity
-                        style={[styles.button, !canSubmit && styles.buttonDisabled]}
+                        style={[styles.button, {backgroundColor: colors.accent}, !canSubmit && styles.buttonDisabled]}
                         onPress={() => {
                             submit().catch(() => {});
                         }}

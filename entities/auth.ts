@@ -4,6 +4,8 @@ export type AuthUser = {
     id: string;
     email: string;
     hasPremium: boolean;
+    premiumExpiresAt?: string | null;
+    premiumProductId?: string;
     emailVerified?: boolean;
     createdAt: string;
 };

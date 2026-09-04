@@ -1,0 +1,90 @@
+{{define "header"}}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>{{.Title}} · Tarot admin</title>
+<style>
+:root {
+  --bg:#040307; --panel:#12101c; --panel2:#1a1730; --line:#2a2540;
+  --text:#f7f4ea; --muted:#9a93b3; --accent:#6c5ce7; --danger:#ff6b6b;
+  --ok:#7bed9f; --warn:#ffeaa7;
+}
+* { box-sizing:border-box; }
+body { margin:0; font:15px/1.45 ui-sans-serif,system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--text); }
+a { color:var(--accent); text-decoration:none; }
+a:hover { text-decoration:underline; }
+.top { display:flex; align-items:center; gap:24px; padding:16px 28px; border-bottom:1px solid var(--line); background:#0b0914; position:sticky; top:0; z-index:2; }
+.brand { font-weight:700; letter-spacing:.04em; color:var(--text); text-decoration:none; }
+.nav { display:flex; gap:8px; flex:1; }
+.nav a { color:var(--muted); padding:8px 12px; border-radius:8px; text-decoration:none; }
+.nav a.on, .nav a:hover { background:var(--panel2); color:var(--text); text-decoration:none; }
+.who { color:var(--muted); font-size:13px; }
+.who button, .btn { appearance:none; border:0; background:var(--accent); color:#fff; padding:8px 14px; border-radius:8px; cursor:pointer; font-weight:600; }
+.btn.ghost { background:transparent; border:1px solid var(--line); color:var(--text); }
+.btn.danger { background:var(--danger); }
+.btn:disabled { opacity:.5; cursor:not-allowed; }
+.wrap { max-width:1180px; margin:0 auto; padding:28px 20px 64px; }
+h1 { font-size:26px; margin:0 0 8px; }
+.sub { color:var(--muted); margin:0 0 24px; }
+.flash { padding:12px 14px; border-radius:10px; margin-bottom:18px; }
+.flash.ok { background:#14301f; color:var(--ok); }
+.flash.err { background:#3a1418; color:var(--danger); }
+.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px; margin-bottom:28px; }
+.card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px 18px; }
+.card .k { color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.06em; }
+.card .v { font-size:26px; font-weight:700; margin-top:6px; }
+.card .s { color:var(--muted); font-size:13px; margin-top:4px; }
+table { width:100%; border-collapse:collapse; background:var(--panel); border-radius:14px; overflow:hidden; border:1px solid var(--line); }
+th, td { text-align:left; padding:10px 12px; border-bottom:1px solid var(--line); font-size:14px; }
+th { color:var(--muted); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.04em; }
+tr:last-child td { border-bottom:0; }
+.tag { display:inline-block; padding:2px 8px; border-radius:999px; font-size:12px; font-weight:600; }
+.tag.paid { background:#14301f; color:var(--ok); }
+.tag.refunded { background:#3a1418; color:var(--danger); }
+.tag.pending { background:#3a3214; color:var(--warn); }
+.tag.canceled { color:var(--muted); border:1px solid var(--line); }
+.tag.yes { background:#1d1638; color:#c9bfff; }
+form.inline { display:inline; }
+.row { display:flex; gap:12px; flex-wrap:wrap; align-items:end; margin-bottom:18px; }
+label { display:block; color:var(--muted); font-size:12px; margin-bottom:6px; }
+input, select, textarea { background:#0b0914; border:1px solid var(--line); color:var(--text); border-radius:8px; padding:9px 11px; font:inherit; width:100%; }
+textarea { min-height:80px; }
+.field { min-width:180px; }
+.pager { display:flex; gap:10px; align-items:center; margin-top:16px; color:var(--muted); }
+.note { background:var(--panel2); border:1px solid var(--line); border-radius:12px; padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0 20px; }
+.cols { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+@media (max-width:800px) { .cols { grid-template-columns:1fr; } .top { flex-wrap:wrap; } }
+.login-wrap { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; }
+.login { width:100%; max-width:380px; background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:28px; }
+.login h1 { margin-bottom:6px; }
+.dl { display:grid; grid-template-columns:140px 1fr; gap:8px 16px; }
+.dl div { padding:6px 0; border-bottom:1px solid var(--line); }
+.thumbs { display:flex; flex-wrap:wrap; gap:8px; }
+.thumbs img { width:72px; height:108px; object-fit:cover; border-radius:8px; border:1px solid var(--line); background:#0b0914; }
+.swatch { width:28px; height:28px; border-radius:8px; border:1px solid var(--line); display:inline-block; vertical-align:middle; }
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="/admin">TAROT ADMIN</a>
+  <nav class="nav">
+    <a href="/admin" class="{{if eq .Nav "dash"}}on{{end}}">Сводка</a>
+    <a href="/admin/users" class="{{if eq .Nav "users"}}on{{end}}">Пользователи</a>
+    <a href="/admin/transactions" class="{{if eq .Nav "tx"}}on{{end}}">Транзакции</a>
+    <a href="/admin/decks" class="{{if eq .Nav "decks"}}on{{end}}">Колоды</a>
+  </nav>
+  <div class="who">
+    {{.AdminEmail}}
+    <form class="inline" method="post" action="/admin/logout">
+      <input type="hidden" name="csrf" value="{{.CSRF}}">
+      <button class="btn ghost" type="submit">Выйти</button>
+    </form>
+  </div>
+</header>
+<main class="wrap">
+{{if .Flash}}<div class="flash ok">{{.Flash}}</div>{{end}}
+{{if .Error}}<div class="flash err">{{.Error}}</div>{{end}}
+{{end}}

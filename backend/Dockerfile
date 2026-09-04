@@ -10,15 +10,17 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags="-s -w" -o
 FROM debian:bookworm-slim
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends ca-certificates curl \
+    && apt-get install -y --no-install-recommends ca-certificates curl tzdata \
     && rm -rf /var/lib/apt/lists/* \
     && useradd --system --uid 65532 --home-dir /app --create-home nonroot
 
 WORKDIR /app
 COPY --from=build /out/server /app/server
 COPY --from=build /src/migrations /app/migrations
+RUN mkdir -p /app/data/decks && chown -R nonroot:nonroot /app/data
 
 ENV PORT=8080
+ENV DECK_STORAGE_DIR=/app/data/decks
 EXPOSE 8080
 USER nonroot
 

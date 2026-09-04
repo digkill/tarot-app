@@ -23,6 +23,7 @@ import {
     type RegisterInput,
 } from '../features/authApi';
 import {clearSession, loadSession, saveSession} from '../storage/session';
+import {syncStorePremiumWithServer} from '../features/subscriptionSync';
 
 type AuthContextValue = {
     user: AuthUser | null;
@@ -35,6 +36,7 @@ type AuthContextValue = {
     resetPassword: (email: string, code: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
     deleteAccount: () => Promise<void>;
+    refreshUser: () => Promise<AuthUser | null>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -108,6 +110,16 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
                     accessToken: accessRef.current ?? stored.accessToken,
                     refreshToken: refreshRef.current ?? stored.refreshToken,
                 });
+                await syncStorePremiumWithServer();
+                if (cancelled) {
+                    return;
+                }
+                const refreshed = await fetchMe();
+                await persist({
+                    user: refreshed,
+                    accessToken: accessRef.current ?? stored.accessToken,
+                    refreshToken: refreshRef.current ?? stored.refreshToken,
+                });
             } catch {
                 if (!cancelled) {
                     await persist(null);
@@ -132,6 +144,13 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
         async (email: string, password: string) => {
             const session = await loginRequest(email, password);
             await persist(session);
+            await syncStorePremiumWithServer();
+            const me = await fetchMe();
+            await persist({
+                user: me,
+                accessToken: accessRef.current ?? session.accessToken,
+                refreshToken: refreshRef.current ?? session.refreshToken,
+            });
         },
         [persist],
     );
@@ -144,6 +163,13 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
         async (email: string, code: string) => {
             const session = await verifyEmailRequest(email, code);
             await persist(session);
+            await syncStorePremiumWithServer();
+            const me = await fetchMe();
+            await persist({
+                user: me,
+                accessToken: accessRef.current ?? session.accessToken,
+                refreshToken: refreshRef.current ?? session.refreshToken,
+            });
         },
         [persist],
     );
@@ -181,6 +207,19 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
         await persist(null);
     }, [persist]);
 
+    const refreshUser = useCallback(async () => {
+        if (!accessRef.current || !refreshRef.current) {
+            return null;
+        }
+        const me = await fetchMe();
+        await persist({
+            user: me,
+            accessToken: accessRef.current,
+            refreshToken: refreshRef.current,
+        });
+        return me;
+    }, [persist]);
+
     const value = useMemo(
         () => ({
             user,
@@ -193,8 +232,9 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
             resetPassword,
             logout,
             deleteAccount,
+            refreshUser,
         }),
-        [deleteAccount, forgotPassword, loading, login, logout, register, resendVerification, resetPassword, user, verifyEmail],
+        [deleteAccount, forgotPassword, loading, login, logout, refreshUser, register, resendVerification, resetPassword, user, verifyEmail],
     );
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

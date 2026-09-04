@@ -5,9 +5,11 @@ import (
 	"errors"
 	"log/slog"
 	"net/http"
+	"time"
 
 	"github.com/digkill/tarot-app/backend/internal/llm"
 	"github.com/digkill/tarot-app/backend/internal/storage"
+	"github.com/digkill/tarot-app/backend/internal/usage"
 )
 
 type interpretRequest struct {
@@ -21,7 +23,6 @@ type interpretRequest struct {
 type interpretResponse struct {
 	Summary   string                `json:"summary"`
 	Positions []llm.InsightPosition `json:"positions"`
-	Model     string                `json:"model"`
 }
 
 func (h *Handler) Interpret(w http.ResponseWriter, r *http.Request) {
@@ -65,6 +66,27 @@ func (h *Handler) Interpret(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	loc := requestLocation(r)
+	day := usage.CalendarDay(time.Now(), loc)
+	if _, err = h.usage.IncrementInterpretation(
+		r.Context(),
+		user.ID,
+		day,
+		usage.PremiumInterpretations,
+		time.Now().Add(-usage.InterpretGap),
+	); err != nil {
+		if errors.Is(err, storage.ErrQuotaExceeded) {
+			writeError(w, http.StatusTooManyRequests, "quota_exceeded", "daily interpretation quota reached")
+			return
+		}
+		if errors.Is(err, storage.ErrActionCooldown) {
+			writeRateLimit(w, usage.InterpretGap, "please wait before another interpretation")
+			return
+		}
+		writeError(w, http.StatusInternalServerError, "internal_error", "failed to update usage")
+		return
+	}
+
 	insight, err := h.llmClient.Interpret(r.Context(), llm.InterpretRequest{
 		SpreadID:          req.SpreadID,
 		SpreadName:        req.SpreadName,
@@ -73,7 +95,7 @@ func (h *Handler) Interpret(w http.ResponseWriter, r *http.Request) {
 		Cards:             req.Cards,
 	})
 	if err != nil {
-		slog.Error("kie interpretation failed", "err", err)
+		slog.Error("interpretation failed", "err", err)
 		writeError(w, http.StatusBadGateway, "llm_error", "failed to get AI interpretation")
 		return
 	}
@@ -81,6 +103,5 @@ func (h *Handler) Interpret(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, interpretResponse{
 		Summary:   insight.Summary,
 		Positions: insight.Positions,
-		Model:     insight.Model,
 	})
 }

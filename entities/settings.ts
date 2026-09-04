@@ -17,4 +17,6 @@ export const DEFAULT_SETTINGS: Settings = {
     hasPremium: false,
     dailyReminder: false,
     acceptedDisclaimer: false,
+    selectedDeckId: 'rws',
+    ownedDeckIds: [],
 };

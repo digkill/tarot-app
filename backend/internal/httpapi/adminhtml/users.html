@@ -1,0 +1,28 @@
+{{define "users"}}
+{{template "header" .}}
+<h1>Пользователи</h1>
+<p class="sub">{{.Total}} записей</p>
+<form class="row" method="get" action="/admin/users">
+  <div class="field" style="flex:1">
+    <label>Поиск по email</label>
+    <input type="search" name="q" value="{{.Query}}" placeholder="name@example.com">
+  </div>
+  <button class="btn" type="submit">Найти</button>
+</form>
+<table>
+  <thead><tr><th>Email</th><th>Премиум</th><th>Роль</th><th>Почта</th><th>Создан</th></tr></thead>
+  <tbody>
+  {{range .Users}}
+    <tr>
+      <td><a href="/admin/users/{{.ID}}">{{.Email}}</a></td>
+      <td>{{if .HasPremium}}<span class="tag yes">да</span>{{else}}нет{{end}}</td>
+      <td>{{.Role}}</td>
+      <td>{{if .EmailVerifiedAt}}да{{else}}нет{{end}}</td>
+      <td>{{fmtTime .CreatedAt}}</td>
+    </tr>
+  {{end}}
+  </tbody>
+</table>
+{{template "pager" .}}
+{{template "footer"}}
+{{end}}

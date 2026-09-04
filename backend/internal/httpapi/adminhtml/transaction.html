@@ -1,0 +1,36 @@
+{{define "transaction"}}
+{{template "header" .}}
+<h1>Транзакция</h1>
+<p class="sub mono">{{.Tx.ID}}</p>
+
+<div class="card" style="margin-bottom:20px">
+  <div class="dl">
+    <div>Пользователь</div><div><a href="/admin/users/{{.Tx.UserID}}">{{.Tx.UserEmail}}</a></div>
+    <div>Продукт</div><div>{{titleOf .Tx.ProductID}} <span class="mono">({{.Tx.ProductID}})</span></div>
+    <div>Тип</div><div>{{.Tx.Kind}}</div>
+    <div>Статус</div><div><span class="tag {{.Tx.Status}}">{{.Tx.Status}}</span></div>
+    <div>Источник</div><div>{{.Tx.Provider}}{{if .Tx.Sandbox}} · sandbox{{end}}</div>
+    <div>Сумма</div><div>{{fmtRubI .Tx.AmountKop}} {{.Tx.Currency}}</div>
+    <div>Invoice</div><div class="mono">{{deref .Tx.ProviderInvoiceID}}</div>
+    <div>Purchase id</div><div class="mono">{{deref .Tx.ProviderPurchaseID}}</div>
+    <div>Оплачено</div><div>{{fmtTime .Tx.PaidAt}}</div>
+    <div>Создано</div><div>{{fmtTime .Tx.CreatedAt}}</div>
+    <div>Возврат</div><div>{{fmtTimePtr .Tx.RefundedAt}} {{deref .Tx.RefundedBy}}</div>
+    <div>Причина возврата</div><div>{{.Tx.RefundReason}}</div>
+    <div>Заметка</div><div>{{.Tx.Notes}}</div>
+  </div>
+</div>
+
+{{if eq .Tx.Status "paid"}}
+<p class="note">Возврат в админке снимает премиум в приложении (если нет других оплаченных транзакций). Деньги в RuStore нужно вернуть отдельно в консоли разработчика — серверного API возврата у нас нет.</p>
+<form method="post" action="/admin/transactions/{{.Tx.ID}}/refund" onsubmit="return confirm('Вернуть эту транзакцию и при необходимости снять премиум?');">
+  <input type="hidden" name="csrf" value="{{.CSRF}}">
+  <div class="field" style="max-width:480px;margin-bottom:12px">
+    <label>Причина возврата</label>
+    <textarea name="reason" required placeholder="запрос пользователя, дубль, тест…"></textarea>
+  </div>
+  <button class="btn danger" type="submit">Сделать возврат</button>
+</form>
+{{end}}
+{{template "footer"}}
+{{end}}
