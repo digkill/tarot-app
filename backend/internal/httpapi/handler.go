@@ -73,7 +73,7 @@ func NewHandler(
 		decks:         deckRepo,
 		usage:         usageRepo,
 		checkout:      checkoutRepo,
-		yk:            yookassa.New(cfg.YooKassaShopID, cfg.YooKassaSecretKey),
+		yk:            yookassa.New(cfg.YooKassaShopID, cfg.YooKassaSecretKey, cfg.YooKassaVatCode),
 		mail:          mail,
 		box:           box,
 		llmClient:     llmClient,

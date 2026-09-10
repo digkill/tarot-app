@@ -14,23 +14,28 @@ import (
 const apiBase = "https://api.yookassa.ru/v3"
 
 type Client struct {
-	shopID string
-	secret string
-	http   *http.Client
-	base   string
+	shopID  string
+	secret  string
+	http    *http.Client
+	base    string
+	vatCode int
 }
 
-func New(shopID, secret string) *Client {
+func New(shopID, secret string, vatCode int) *Client {
 	shopID = strings.TrimSpace(shopID)
 	secret = strings.TrimSpace(secret)
 	if shopID == "" || secret == "" {
 		return nil
 	}
+	if vatCode <= 0 {
+		vatCode = 1
+	}
 	return &Client{
-		shopID: shopID,
-		secret: secret,
-		http:   &http.Client{Timeout: 25 * time.Second},
-		base:   apiBase,
+		shopID:  shopID,
+		secret:  secret,
+		http:    &http.Client{Timeout: 25 * time.Second},
+		base:    apiBase,
+		vatCode: vatCode,
 	}
 }
 
@@ -60,12 +65,32 @@ type Payment struct {
 	Refundable   bool              `json:"refundable"`
 }
 
+type ReceiptCustomer struct {
+	Email string `json:"email,omitempty"`
+	Phone string `json:"phone,omitempty"`
+}
+
+type ReceiptItem struct {
+	Description    string `json:"description"`
+	Quantity       string `json:"quantity"`
+	Amount         Amount `json:"amount"`
+	VatCode        int    `json:"vat_code"`
+	PaymentSubject string `json:"payment_subject,omitempty"`
+	PaymentMode    string `json:"payment_mode,omitempty"`
+}
+
+type Receipt struct {
+	Customer *ReceiptCustomer `json:"customer,omitempty"`
+	Items    []ReceiptItem    `json:"items"`
+}
+
 type createPaymentRequest struct {
 	Amount       Amount            `json:"amount"`
 	Capture      bool              `json:"capture"`
 	Confirmation Confirmation      `json:"confirmation"`
 	Description  string            `json:"description"`
 	Metadata     map[string]string `json:"metadata"`
+	Receipt      *Receipt          `json:"receipt,omitempty"`
 }
 
 func FormatRUB(kop int) string {
@@ -75,12 +100,13 @@ func FormatRUB(kop int) string {
 	return fmt.Sprintf("%d.%02d", kop/100, kop%100)
 }
 
-func (c *Client) CreateRedirectPayment(idempotenceKey, returnURL, description string, kop int, metadata map[string]string) (*Payment, error) {
+func (c *Client) CreateRedirectPayment(idempotenceKey, returnURL, description string, kop int, metadata map[string]string, customerEmail string) (*Payment, error) {
 	if !c.Enabled() {
 		return nil, fmt.Errorf("yookassa is not configured")
 	}
+	amount := Amount{Value: FormatRUB(kop), Currency: "RUB"}
 	body := createPaymentRequest{
-		Amount:  Amount{Value: FormatRUB(kop), Currency: "RUB"},
+		Amount:  amount,
 		Capture: true,
 		Confirmation: Confirmation{
 			Type:      "redirect",
@@ -88,6 +114,19 @@ func (c *Client) CreateRedirectPayment(idempotenceKey, returnURL, description st
 		},
 		Description: description,
 		Metadata:    metadata,
+		Receipt: &Receipt{
+			Customer: &ReceiptCustomer{Email: customerEmail},
+			Items: []ReceiptItem{
+				{
+					Description:    description,
+					Quantity:       "1",
+					Amount:         amount,
+					VatCode:        c.vatCode,
+					PaymentSubject: "service",
+					PaymentMode:    "full_payment",
+				},
+			},
+		},
 	}
 	raw, err := json.Marshal(body)
 	if err != nil {

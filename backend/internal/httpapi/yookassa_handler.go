@@ -68,6 +68,7 @@ func (h *Handler) CreateCheckout(w http.ResponseWriter, r *http.Request) {
 			"product_id":     product.ID,
 			"transaction_id": tx.ID,
 		},
+		user.Email,
 	)
 	if err != nil {
 		_ = h.txns.SetStatus(r.Context(), tx.ID, billing.StatusCanceled)

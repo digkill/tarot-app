@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -37,6 +38,7 @@ type Config struct {
 	PublicBaseURL      string
 	YooKassaShopID     string
 	YooKassaSecretKey  string
+	YooKassaVatCode    int
 }
 
 func Load() (*Config, error) {
@@ -63,6 +65,7 @@ func Load() (*Config, error) {
 		PublicBaseURL:      strings.TrimRight(getEnv("PUBLIC_BASE_URL", "https://tarot.sorapure.fun"), "/"),
 		YooKassaShopID:     strings.TrimSpace(os.Getenv("YOOKASSA_SHOP_ID")),
 		YooKassaSecretKey:  strings.TrimSpace(os.Getenv("YOOKASSA_SECRET_KEY")),
+		YooKassaVatCode:    getEnvInt("YOOKASSA_VAT_CODE", 1),
 	}
 
 	if cfg.DatabaseURL == "" {
@@ -117,6 +120,18 @@ func getEnv(key, fallback string) string {
 		return v
 	}
 	return fallback
+}
+
+func getEnvInt(key string, fallback int) int {
+	v := strings.TrimSpace(os.Getenv(key))
+	if v == "" {
+		return fallback
+	}
+	n, err := strconv.Atoi(v)
+	if err != nil {
+		return fallback
+	}
+	return n
 }
 
 func parseDuration(key string, fallback time.Duration) (time.Duration, error) {
