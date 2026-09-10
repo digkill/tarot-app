@@ -28,6 +28,7 @@ import {fetchPremiumInterpretation} from '../features/aiInterpretation';
 import {isApiError} from '../features/apiClient';
 import {fetchUsage, type UsageSnapshot} from '../features/usageApi';
 import TarotCard from '../components/TarotCard';
+import {CardMeaningSheet} from '../components/CardMeaningSheet';
 import {PremiumModal} from '../components/PremiumModal';
 import type {Card, SpreadPosition} from '../entities';
 
@@ -48,6 +49,11 @@ export const InterpretationScreen = () => {
     const [aiError, setAiError] = useState<string | null>(null);
     const [showPremiumPrompt, setShowPremiumPrompt] = useState(false);
     const [usage, setUsage] = useState<UsageSnapshot | null>(null);
+    const [selectedEntry, setSelectedEntry] = useState<{
+        card: Card;
+        isReversed: boolean;
+        position: SpreadPosition;
+    } | null>(null);
 
     const reading = readings.find((item) => item.id === readingId);
     const spread = useMemo(
@@ -92,7 +98,7 @@ export const InterpretationScreen = () => {
 
     if (!reading || !spread) {
         return (
-            <SafeAreaView style={[styles.safe, {backgroundColor: colors.bg}]}>
+            <SafeAreaView style={styles.safe}>
                 <View style={styles.centered}>
                     <Text style={[styles.missingText, {color: colors.text}]}>{t('interpretation.missingReading')}</Text>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -202,7 +208,7 @@ export const InterpretationScreen = () => {
     };
 
     return (
-        <SafeAreaView style={[styles.safe, {backgroundColor: colors.bg}]}>
+        <SafeAreaView style={styles.safe}>
             <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
                 <ViewShot
                     ref={viewRef}
@@ -253,7 +259,12 @@ export const InterpretationScreen = () => {
                                 </Text>
                             </View>
                             <View style={styles.cardRow}>
-                                <TarotCard card={entry.card} isReversed={entry.isReversed} artDeckId={reading.deckId} />
+                                <TarotCard
+                                    card={entry.card}
+                                    isReversed={entry.isReversed}
+                                    artDeckId={reading.deckId}
+                                    onPressFace={() => setSelectedEntry(entry)}
+                                />
                                 <View style={styles.cardNarrative}>
                                     <Text style={[styles.cardName, {color: colors.gold}]}>
                                         {entry.card.name} {entry.isReversed ? t('reading.reversed') : ''}
@@ -416,6 +427,14 @@ export const InterpretationScreen = () => {
             </ScrollView>
 
             <PremiumModal visible={showPremiumPrompt} onClose={() => setShowPremiumPrompt(false)} />
+            <CardMeaningSheet
+                visible={!!selectedEntry}
+                card={selectedEntry?.card ?? null}
+                isReversed={selectedEntry?.isReversed}
+                positionTitle={selectedEntry ? t(selectedEntry.position.titleKey) : undefined}
+                artDeckId={reading.deckId}
+                onClose={() => setSelectedEntry(null)}
+            />
         </SafeAreaView>
     );
 };
@@ -423,7 +442,7 @@ export const InterpretationScreen = () => {
 const styles = StyleSheet.create({
     safe: {
         flex: 1,
-        backgroundColor: '#040307',
+        backgroundColor: 'transparent',
     },
     container: {
         padding: 20,

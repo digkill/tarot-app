@@ -18,6 +18,7 @@ import {hexAlpha} from '../theme/appColors';
 import {isApiError} from '../features/apiClient';
 import {reportPurchaseRequest} from '../features/billingApi';
 import {startYooKassaCheckout} from '../features/yookassaCheckout';
+import {premiumGate, type PremiumGate} from '../features/premiumSource';
 import {
     describePayError,
     FALLBACK_PREMIUM_PRICES,
@@ -48,12 +49,32 @@ const PLAN_COPY: Record<PremiumProductId, {name: string; period: string; hint: s
 
 export const PremiumModal = ({visible, onClose, onActivated}: PremiumModalProps) => {
     const {t} = useTranslation();
-    const {setSetting} = useSettings();
+    const {setSetting, settings} = useSettings();
     const {user, refreshUser} = useAuth();
     const colors = useAppColors();
     const [processing, setProcessing] = useState(false);
     const [selected, setSelected] = useState<PremiumProductId>('premium_monthly');
     const [catalog, setCatalog] = useState<Product[]>([]);
+    const gate = premiumGate(Boolean(user?.hasPremium || settings.hasPremium), user?.premiumSource);
+
+    const managedCopy = (current: PremiumGate): {title: string; body: string} => {
+        if (current.kind !== 'managed') {
+            return {title: t('premium.title'), body: t('premium.benefits')};
+        }
+        if (current.provider === 'support') {
+            return {title: t('premium.managedBySupportTitle'), body: t('premium.managedBySupportBody')};
+        }
+        if (current.provider === 'rustore') {
+            return {
+                title: t('premium.managedInRuStoreTitle'),
+                body: current.local ? t('premium.managedInRuStoreLocal') : t('premium.managedInRuStoreOther'),
+            };
+        }
+        return {
+            title: t('premium.managedInYooKassaTitle'),
+            body: current.local ? t('premium.managedInYooKassaLocal') : t('premium.managedInYooKassaOther'),
+        };
+    };
 
     useEffect(() => {
         if (!visible || !isPaymentsSupported()) {
@@ -105,6 +126,12 @@ export const PremiumModal = ({visible, onClose, onActivated}: PremiumModalProps)
             return;
         }
 
+        if (gate.kind === 'managed') {
+            const copy = managedCopy(gate);
+            Alert.alert(copy.title, copy.body);
+            return;
+        }
+
         if (Platform.OS !== 'android') {
             setProcessing(true);
             try {
@@ -116,6 +143,12 @@ export const PremiumModal = ({visible, onClose, onActivated}: PremiumModalProps)
                 }
                 Alert.alert(t('premium.checkoutPending'));
             } catch (error) {
+                if (isApiError(error) && error.code === 'premium_already_active') {
+                    const copy = managedCopy(premiumGate(true, user?.premiumSource));
+                    Alert.alert(copy.title, copy.body);
+                    await refreshUser();
+                    return;
+                }
                 if (__DEV__ && isApiError(error) && error.code === 'payments_unavailable') {
                     await syncPurchase({productId: selected, source: 'dev'});
                     await activatePremium();
@@ -206,6 +239,24 @@ export const PremiumModal = ({visible, onClose, onActivated}: PremiumModalProps)
             return;
         }
 
+        if (gate.kind === 'managed' && gate.provider !== 'rustore') {
+            setProcessing(true);
+            try {
+                const me = await refreshUser();
+                if (me?.hasPremium) {
+                    await setSetting('hasPremium', true);
+                    Alert.alert(t('premium.restoreSuccess'));
+                } else {
+                    Alert.alert(t('premium.restoreNone'));
+                }
+            } catch {
+                Alert.alert(t('premium.purchaseError'));
+            } finally {
+                setProcessing(false);
+            }
+            return;
+        }
+
         if (!isPaymentsSupported()) {
             Alert.alert(t('premium.paymentsUnavailable'));
             return;
@@ -253,6 +304,19 @@ export const PremiumModal = ({visible, onClose, onActivated}: PremiumModalProps)
                 >
                     <ScrollView contentContainerStyle={styles.scrollContent}>
                         <Text style={[styles.title, {color: colors.gold}]}>{t('premium.title')}</Text>
+                        {gate.kind === 'managed' ? (
+                            <>
+                                <Text style={[styles.benefitsText, {color: colors.text}]}>
+                                    {managedCopy(gate).body}
+                                </Text>
+                                <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+                                    <Text style={[styles.cancelButtonText, {color: colors.text}]}>
+                                        {t('premium.cancel')}
+                                    </Text>
+                                </TouchableOpacity>
+                            </>
+                        ) : (
+                            <>
                         <Text style={[styles.benefitsText, {color: colors.text}]}>{t('premium.benefits')}</Text>
                         <Text style={[styles.selectLabel, {color: colors.gold}]}>{t('premium.selectPlan')}</Text>
 
@@ -332,7 +396,9 @@ export const PremiumModal = ({visible, onClose, onActivated}: PremiumModalProps)
                             {processing ? (
                                 <ActivityIndicator color="#fff" />
                             ) : (
-                                <Text style={styles.subscribeButtonText}>{t('premium.subscribe')}</Text>
+                                <Text style={styles.subscribeButtonText}>
+                                    {t(Platform.OS === 'android' ? 'premium.subscribe' : 'premium.subscribeYooKassa')}
+                                </Text>
                             )}
                         </TouchableOpacity>
 
@@ -353,6 +419,8 @@ export const PremiumModal = ({visible, onClose, onActivated}: PremiumModalProps)
                         <Text style={[styles.disclaimer, {color: colors.muted}]}>
                             {t(Platform.OS === 'android' ? 'premium.disclaimer' : 'premium.disclaimerIos')}
                         </Text>
+                            </>
+                        )}
                     </ScrollView>
                 </View>
             </View>

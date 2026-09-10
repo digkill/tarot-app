@@ -3,10 +3,10 @@ import {
     ActivityIndicator,
     Alert,
     FlatList,
-    Image,
     ScrollView,
     StyleSheet,
     Text,
+    TextInput,
     TouchableOpacity,
     View,
     type ImageSourcePropType,
@@ -23,6 +23,8 @@ import {localizeShopText} from '../features/shopApi';
 import {formatRub, PurchaseCancelledError, RuStoreMissingError} from '../features/payments';
 import {hexAlpha} from '../theme/appColors';
 import {cardImages} from '../utils/cardImages';
+import {CardMeaningSheet} from '../components/CardMeaningSheet';
+import {cardMatchesQuery} from '../features/premiumSource';
 
 const ARCANA_FILTERS: (Arcana | 'all')[] = ['all', 'major', 'minor'];
 const SUIT_FILTERS: (Suit | 'all')[] = ['all', 'wands', 'cups', 'swords', 'pentacles'];
@@ -38,7 +40,7 @@ const FaceArt = ({
     if (!source) {
         return <View style={{width: '100%', height: '100%'}} />;
     }
-    return <ExpoImage source={source} style={style} contentFit="contain" />;
+    return <ExpoImage source={source} style={style} contentFit="contain" allowDownscaling={false} cachePolicy="memory-disk" />;
 };
 
 export const DeckGalleryScreen = () => {
@@ -59,6 +61,8 @@ export const DeckGalleryScreen = () => {
     const [suitFilter, setSuitFilter] = useState<(Suit | 'all')>('all');
     const [buying, setBuying] = useState<string | null>(null);
     const [listWidth, setListWidth] = useState(0);
+    const [search, setSearch] = useState('');
+    const [selectedCard, setSelectedCard] = useState<Card | null>(null);
     const gridImageHeight =
         listWidth > 0 ? Math.round((((listWidth - 16) / 2) - 20) * (1 / CARD_ASPECT)) : 210;
 
@@ -67,9 +71,9 @@ export const DeckGalleryScreen = () => {
         return meanings.filter((card) => {
             const arcanaMatch = arcanaFilter === 'all' || card.arcana === arcanaFilter;
             const suitMatch = suitFilter === 'all' || card.suit === suitFilter;
-            return arcanaMatch && suitMatch;
+            return arcanaMatch && suitMatch && cardMatchesQuery(card, search);
         });
-    }, [arcanaFilter, suitFilter, meanings]);
+    }, [arcanaFilter, suitFilter, meanings, search]);
 
     const onBuy = async (deck: ShopDeck) => {
         if (buying) {
@@ -161,7 +165,11 @@ export const DeckGalleryScreen = () => {
     const renderCard = ({item}: {item: Card}) => {
         const source = faceSource(item.image, selectedSlug);
         return (
-            <View style={[styles.card, {backgroundColor: colors.panel, borderColor: hexAlpha(colors.gold, 0.45)}]}>
+            <TouchableOpacity
+                style={[styles.card, {backgroundColor: colors.panel, borderColor: hexAlpha(colors.gold, 0.45)}]}
+                onPress={() => setSelectedCard(item)}
+                activeOpacity={0.85}
+            >
                 <View
                     style={[
                         styles.cardImageWrapper,
@@ -178,17 +186,12 @@ export const DeckGalleryScreen = () => {
                 <Text style={[styles.cardDescription, {color: colors.text}]} numberOfLines={3}>
                     {item.upright.general}
                 </Text>
-            </View>
+            </TouchableOpacity>
         );
     };
 
     return (
-        <View style={[styles.root, {backgroundColor: colors.bg}]}>
-            <Image
-                source={require('../assets/pattern-print.png')}
-                style={styles.backdrop}
-                resizeMode="repeat"
-            />
+        <View style={styles.root}>
             <SafeAreaView style={styles.safe}>
                 <FlatList
                     data={filtered}
@@ -198,7 +201,7 @@ export const DeckGalleryScreen = () => {
                     columnWrapperStyle={{gap: 16}}
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={styles.list}
-                    extraData={gridImageHeight}
+                    extraData={`${gridImageHeight}:${search}`}
                     onLayout={(event) => {
                         const next = Math.round(event.nativeEvent.layout.width);
                         if (next > 0 && next !== listWidth) {
@@ -262,24 +265,56 @@ export const DeckGalleryScreen = () => {
                                         </TouchableOpacity>
                                     ))}
                                 </View>
+                                <TextInput
+                                    value={search}
+                                    onChangeText={setSearch}
+                                    placeholder={t('deck.searchPlaceholder')}
+                                    placeholderTextColor={hexAlpha(colors.muted, 0.8)}
+                                    style={[
+                                        styles.search,
+                                        {
+                                            color: colors.text,
+                                            borderColor: hexAlpha(colors.gold, 0.35),
+                                            backgroundColor: hexAlpha(colors.panel, 0.72),
+                                        },
+                                    ]}
+                                    autoCorrect={false}
+                                    autoCapitalize="none"
+                                />
                             </View>
                         </View>
                     }
+                    ListEmptyComponent={
+                        <Text style={[styles.empty, {color: colors.muted}]}>{t('deck.searchEmpty')}</Text>
+                    }
                 />
             </SafeAreaView>
+            <CardMeaningSheet
+                visible={!!selectedCard}
+                card={selectedCard}
+                artDeckId={selectedSlug}
+                onClose={() => setSelectedCard(null)}
+            />
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    root: {flex: 1},
-    backdrop: {
-        ...StyleSheet.absoluteFill,
-        width: '100%',
-        height: '100%',
-        opacity: 0.25,
-    },
+    root: {flex: 1, backgroundColor: 'transparent'},
     safe: {flex: 1, paddingHorizontal: 16, backgroundColor: 'transparent'},
+    search: {
+        marginTop: 14,
+        borderWidth: 1,
+        borderRadius: 14,
+        paddingHorizontal: 14,
+        paddingVertical: 10,
+        fontSize: 15,
+    },
+    empty: {
+        textAlign: 'center',
+        marginTop: 24,
+        fontSize: 14,
+    },
     pageTitle: {fontSize: 22, fontWeight: '700', marginTop: 8},
     pageHint: {fontSize: 14, marginTop: 6, marginBottom: 12, lineHeight: 20},
     loader: {marginBottom: 8},

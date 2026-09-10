@@ -1,0 +1,10 @@
+slug: tarot
+name: Tarot
+kind: ios-app
+status: shipped
+website: https://tarot.sorapure.fun
+repo: ""
+stack: [Expo, React Native, Go, chi, PostgreSQL, JWT]
+related:
+  - path: ../../../Android/tarot
+    relation: signed-aab-archive

@@ -1,0 +1,37 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 6.3.1 effective-5.10 (swiftlang-6.3.1.1.2 clang-2100.0.123.102)
+// swift-module-flags: -target arm64-apple-ios16.0 -enable-objc-interop -enable-library-evolution -swift-version 5 -O -enable-upcoming-feature LibraryEvolution -enable-experimental-feature DebugDescriptionMacro -module-name ExpoFileSystem -package-name expofilesystem
+// swift-module-flags-ignorable:  -formal-cxx-interoperability-mode=off -interface-compiler-version 6.3.1
+import CoreServices
+import CryptoKit
+import Darwin
+@_exported import ExpoFileSystem
+import ExpoModulesCore
+@_exported import Foundation
+import MobileCoreServices
+import Photos
+import Swift
+@_exported import UIKit
+import UniformTypeIdentifiers
+import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+@_inheritsConvenienceInitializers @available(iOS 14, tvOS 14, *)
+final public class FileSystemModule : ExpoModulesCore.Module {
+  final public func definition() -> ExpoModulesCore.ModuleDefinition
+  required public init(appContext: ExpoModulesCore.AppContext)
+  @objc deinit
+}
+@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency final public class FileSystemBackgroundSessionHandler : ExpoModulesCore.ExpoAppDelegateSubscriber, ExpoFileSystem.EXSessionHandlerProtocol {
+  public typealias BackgroundSessionCompletionHandler = () -> Swift.Void
+  @_Concurrency.MainActor @preconcurrency @objc final public func invokeCompletionHandler(forSessionIdentifier identifier: Swift.String)
+  @_Concurrency.MainActor @preconcurrency @objc final public func application(_ application: UIKit.UIApplication, handleEventsForBackgroundURLSession identifier: Swift.String, completionHandler: @escaping () -> Swift.Void)
+  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init()
+  @objc deinit
+}
+@_inheritsConvenienceInitializers final public class FileSystemLegacyModule : ExpoModulesCore.Module {
+  final public func definition() -> ExpoModulesCore.ModuleDefinition
+  required public init(appContext: ExpoModulesCore.AppContext)
+  @objc deinit
+}
+extension ExpoFileSystem.FileSystemBackgroundSessionHandler : Swift.Sendable {}

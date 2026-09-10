@@ -1,0 +1,38 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 6.3.1 effective-5.10 (swiftlang-6.3.1.1.2 clang-2100.0.123.102)
+// swift-module-flags: -target arm64-apple-ios16.0 -enable-objc-interop -enable-library-evolution -swift-version 5 -O -enable-upcoming-feature LibraryEvolution -enable-experimental-feature DebugDescriptionMacro -module-name ExpoImage -package-name expoimage
+// swift-module-flags-ignorable:  -formal-cxx-interoperability-mode=off -interface-compiler-version 6.3.1
+import Dispatch
+import ExpoModulesCore
+@_exported import Foundation
+import Photos
+import Swift
+import Symbols
+@_exported import UIKit
+import VisionKit
+import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+@_inheritsConvenienceInitializers final public class ImageModule : ExpoModulesCore.Module {
+  final public func definition() -> ExpoModulesCore.ModuleDefinition
+  required public init(appContext: ExpoModulesCore.AppContext)
+  @objc deinit
+}
+@objc @_Concurrency.MainActor @preconcurrency final public class ImageView : ExpoModulesCore.ExpoView {
+  @_Concurrency.MainActor @preconcurrency @objc override final public var bounds: CoreFoundation.CGRect {
+    @objc get
+    @objc set
+  }
+  @_Concurrency.MainActor @preconcurrency required public init(appContext: ExpoModulesCore.AppContext? = nil)
+  @objc deinit
+  @_Concurrency.MainActor @preconcurrency @objc override final public func traitCollectionDidChange(_ previousTraitCollection: UIKit.UITraitCollection?)
+}
+@_inheritsConvenienceInitializers final public class BlurhashGenerationException : ExpoModulesCore.Exception {
+  override final public var reason: Swift.String {
+    get
+  }
+  override public init(file: Swift.String = #fileID, line: Swift.UInt = #line, function: Swift.String = #function)
+  override public init(name: Swift.String, description: Swift.String, code: Swift.String? = nil, file: Swift.String = #fileID, line: Swift.UInt = #line, function: Swift.String = #function)
+  @objc deinit
+}
+extension ExpoImage.ImageView : Swift.Sendable {}

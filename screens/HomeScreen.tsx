@@ -78,7 +78,7 @@ export const HomeScreen = () => {
     };
 
     return (
-        <SafeAreaView style={[styles.safe, {backgroundColor: colors.bg}]}>
+        <SafeAreaView style={styles.safe}>
             <ScrollView contentContainerStyle={styles.container}>
                 <View style={styles.hero}>
                     <Image source={require('../assets/home-hero.jpg')} style={styles.heroImage} />
@@ -217,7 +217,7 @@ export const HomeScreen = () => {
 const styles = StyleSheet.create({
     safe: {
         flex: 1,
-        backgroundColor: '#040307',
+        backgroundColor: 'transparent',
     },
     container: {
         paddingBottom: 40,

@@ -151,7 +151,12 @@ export const ZoomableView = ({enabled, resetKey, children, style, hint, resetLab
     return (
         <View style={[styles.clip, style]} onLayout={handleLayout}>
             <GestureDetector gesture={composed}>
-                <Animated.View style={[styles.content, animatedStyle]} collapsable={false}>
+                <Animated.View
+                    style={[styles.content, animatedStyle]}
+                    collapsable={false}
+                    shouldRasterizeIOS={false}
+                    renderToHardwareTextureAndroid={false}
+                >
                     {children}
                 </Animated.View>
             </GestureDetector>

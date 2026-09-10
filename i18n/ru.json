@@ -69,7 +69,21 @@
     "benefits": "Премиум открывает все расклады, до 20 карт дня, 50 толкований ИИ в сутки и приоритетные обновления.",
     "selectPlan": "Выберите тариф",
     "subscribe": "Оформить",
-    "manage": "Управлять в RuStore",
+    "subscribeYooKassa": "Оплатить через ЮKassa",
+    "manage": "Управление подпиской",
+    "manageRuStore": "Управлять в RuStore",
+    "manageYooKassa": "Оплата ЮKassa",
+    "managedInRuStoreCta": "Управляется в RuStore",
+    "managedInYooKassaCta": "Управляется в ЮKassa",
+    "managedBySupportCta": "Выдан поддержкой",
+    "managedInRuStoreTitle": "Подписка RuStore",
+    "managedInRuStoreLocal": "Этот аккаунт оплачивается через RuStore. Менять или отменять план нужно в подписках RuStore.",
+    "managedInRuStoreOther": "Премиум этого аккаунта оформлен в RuStore на Android. На iOS нельзя открыть вторую оплату ЮKassa, пока действует этот план.",
+    "managedInYooKassaTitle": "Оплата ЮKassa",
+    "managedInYooKassaLocal": "Премиум оплачен через веб-шлюз ЮKassa и привязан к аккаунту Tarot. Списаний в RuStore нет.",
+    "managedInYooKassaOther": "Премиум этого аккаунта оплачен через ЮKassa (iOS). В RuStore на Android этот план нельзя изменить или отменить.",
+    "managedBySupportTitle": "Доступ от поддержки",
+    "managedBySupportBody": "Премиум выдан поддержкой или промокодом. Он не списывается ни в RuStore, ни в ЮKassa.",
     "cancel": "Отмена",
     "purchaseSuccess": "Подписка активирована",
     "purchaseError": "Не удалось активировать подписку",
@@ -80,9 +94,9 @@
     "rustoreMissingTitle": "Нужен RuStore",
     "rustoreMissing": "Установите приложение RuStore и войдите по VK ID тестировщика, чтобы оплатить подписку.",
     "installRuStore": "Установить RuStore",
-    "disclaimer": "Оплата через RuStore. Месяц и год продлеваются автоматически; «навсегда» — подписка на 99 лет. Отменить автопродление можно в подписках RuStore. Для теста на шторке должна быть метка «Тестовая покупка».",
+    "disclaimer": "Оплата через RuStore. Месяц и год продлеваются автоматически; «навсегда» — подписка на 99 лет. Отменить автопродление можно в подписках RuStore. Если аккаунт уже оплачен через ЮKassa на iOS, управляйте там — RuStore не откроет второй план. Для теста на шторке должна быть метка «Тестовая покупка».",
     "checkoutPending": "Оплата ещё обрабатывается. Откройте премиум через минуту.",
-    "disclaimerIos": "На iOS оплата идёт через наш шлюз ЮKassa. Премиум привязан к аккаунту Tarot, не к Apple In-App Purchase. Если сначала купили в RuStore, действует RuStore, пока не продлите здесь.",
+    "disclaimerIos": "На iOS оплата только через веб-шлюз ЮKassa. RuStore здесь не используется. Премиум привязан к аккаунту Tarot, не к Apple In-App Purchase. Если план уже оформлен в RuStore, управляйте им на Android — вторая оплата ЮKassa заблокирована.",
     "source": {
       "rustore": "Оплата через RuStore",
       "yookassa": "Оплата через ЮKassa (iOS)",
@@ -313,8 +327,10 @@
     "saving": "Сохранение...",
     "missingSpread": "Расклад не найден",
     "reversed": "(Перевёрнутая)",
-    "zoomHint": "Сведите пальцы, чтобы увеличить стол",
-    "resetZoom": "Сбросить масштаб"
+    "zoomHint": "Сведите пальцы для зума. Нажмите карту, чтобы увидеть значение",
+    "resetZoom": "Сбросить масштаб",
+    "searchPlaceholder": "Поиск карт на столе",
+    "searchEmpty": "На столе нет карт по этому запросу"
   },
   "interpretation": {
     "summaryIntro": "Ваш расклад «{{spread}}» раскрывает подсказки на {{count}} позициях.",
@@ -386,7 +402,19 @@
       "cups": "Кубки",
       "swords": "Мечи",
       "pentacles": "Пентакли"
-    }
+    },
+    "searchPlaceholder": "Поиск карт по названию или значению",
+    "searchEmpty": "Карты не найдены"
+  },
+  "cardMeaning": {
+    "close": "Закрыть",
+    "upright": "Прямое",
+    "reversed": "Перевёрнутое",
+    "general": "Значение",
+    "love": "Любовь",
+    "work": "Работа",
+    "health": "Здоровье",
+    "advice": "Совет"
   },
   "aiInterpretation": {
     "title": "Расширенное толкование ИИ",

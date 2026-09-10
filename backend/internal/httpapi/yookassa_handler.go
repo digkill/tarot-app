@@ -40,6 +40,16 @@ func (h *Handler) CreateCheckout(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusUnauthorized, "unauthorized", "user not found")
 		return
 	}
+	if source, blocked := billing.ActivePremiumSource(user.HasPremium, user.PremiumSource); blocked {
+		writeJSON(w, http.StatusConflict, map[string]any{
+			"error": map[string]any{
+				"code":           "premium_already_active",
+				"message":        "premium is already active for this account",
+				"premiumSource": source,
+			},
+		})
+		return
+	}
 
 	tx, err := h.txns.Create(r.Context(), storage.CreateTransactionParams{
 		UserID:    user.ID,

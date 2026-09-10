@@ -105,7 +105,7 @@ export const AuthScreen = ({navigation}: Props) => {
     };
 
     return (
-        <SafeAreaView style={[styles.safe, {backgroundColor: colors.bg}]}>
+        <SafeAreaView style={styles.safe}>
             <KeyboardAvoidingView
                 style={styles.flex}
                 behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -247,7 +247,7 @@ export const AuthScreen = ({navigation}: Props) => {
 const styles = StyleSheet.create({
     safe: {
         flex: 1,
-        backgroundColor: '#040307',
+        backgroundColor: 'transparent',
     },
     flex: {
         flex: 1,

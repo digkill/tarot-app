@@ -67,7 +67,21 @@
     "benefits": "Premium unlocks every spread, up to 20 cards of the day, 50 AI interpretations per day, and priority updates.",
     "selectPlan": "Choose a plan",
     "subscribe": "Subscribe",
-    "manage": "Manage in RuStore",
+    "subscribeYooKassa": "Pay with YooKassa",
+    "manage": "Manage subscription",
+    "manageRuStore": "Manage in RuStore",
+    "manageYooKassa": "YooKassa billing",
+    "managedInRuStoreCta": "Managed in RuStore",
+    "managedInYooKassaCta": "Managed in YooKassa",
+    "managedBySupportCta": "Granted by support",
+    "managedInRuStoreTitle": "RuStore subscription",
+    "managedInRuStoreLocal": "This account is billed through RuStore. Change or cancel the plan in RuStore subscriptions.",
+    "managedInRuStoreOther": "Premium on this account is billed through RuStore on Android. iOS cannot start a second YooKassa payment while that plan is active.",
+    "managedInYooKassaTitle": "YooKassa billing",
+    "managedInYooKassaLocal": "Premium was paid through the YooKassa web checkout and is tied to this Tarot account. There is no RuStore charge for it.",
+    "managedInYooKassaOther": "Premium on this account is billed through YooKassa (iOS web checkout). Android RuStore cannot change or cancel that plan.",
+    "managedBySupportTitle": "Support access",
+    "managedBySupportBody": "Premium was granted by support or a promo. It is not billed through RuStore or YooKassa.",
     "cancel": "Maybe later",
     "purchaseSuccess": "Subscription activated",
     "purchaseError": "We couldn't complete the purchase.",
@@ -78,9 +92,9 @@
     "rustoreMissingTitle": "RuStore required",
     "rustoreMissing": "Install RuStore and sign in with the tester VK ID to complete the purchase.",
     "installRuStore": "Install RuStore",
-    "disclaimer": "Billed through RuStore. Monthly and yearly plans renew automatically; lifetime is a 99-year subscription. Cancel renewal in RuStore subscription settings. Sandbox payments show a “Test purchase” badge.",
+    "disclaimer": "Billed through RuStore. Monthly and yearly plans renew automatically; lifetime is a 99-year subscription. Cancel renewal in RuStore subscription settings. If this account already paid via YooKassa on iOS, manage it there — RuStore will not start a second plan. Sandbox payments show a “Test purchase” badge.",
     "checkoutPending": "Payment is still processing. Open Premium again in a moment.",
-    "disclaimerIos": "On iOS you pay through our YooKassa gateway. Premium is tied to your Tarot account, not Apple In-App Purchase. If you first subscribed on RuStore, that store remains in charge until you renew here.",
+    "disclaimerIos": "On iOS you pay only through our YooKassa web checkout. RuStore is not used here. Premium is tied to your Tarot account, not Apple In-App Purchase. If the account already has a RuStore plan, manage it on Android — a second YooKassa charge is blocked.",
     "source": {
       "rustore": "Billed via RuStore",
       "yookassa": "Billed via YooKassa (iOS)",
@@ -307,8 +321,10 @@
     "saving": "Saving...",
     "missingSpread": "Spread not found",
     "reversed": "(Reversed)",
-    "zoomHint": "Pinch to zoom the table",
-    "resetZoom": "Reset zoom"
+    "zoomHint": "Pinch to zoom. Tap a card for its meaning",
+    "resetZoom": "Reset zoom",
+    "searchPlaceholder": "Search cards on the table",
+    "searchEmpty": "No cards match this search"
   },
   "interpretation": {
     "summaryIntro": "Your {{spread}} reading reveals guidance across {{count}} positions.",
@@ -380,7 +396,19 @@
       "cups": "Cups",
       "swords": "Swords",
       "pentacles": "Pentacles"
-    }
+    },
+    "searchPlaceholder": "Search cards by name or meaning",
+    "searchEmpty": "No cards match this search"
+  },
+  "cardMeaning": {
+    "close": "Close",
+    "upright": "Upright",
+    "reversed": "Reversed",
+    "general": "Meaning",
+    "love": "Love",
+    "work": "Work",
+    "health": "Health",
+    "advice": "Advice"
   },
   "aiInterpretation": {
     "title": "AI Deep Interpretation",

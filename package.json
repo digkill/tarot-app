@@ -1,6 +1,6 @@
 {
   "name": "tarot-app",
-  "version": "1.1.6",
+  "version": "1.1.8",
   "engines": {
     "node": ">=20.19.4"
   },
@@ -19,7 +19,7 @@
     "@react-navigation/elements": "^2.9.27",
     "@react-navigation/native": "^7.3.5",
     "@react-navigation/native-stack": "^7.17.7",
-    "expo": "~57.0.18",
+    "expo": "~57.0.20",
     "expo-asset": "~57.0.15",
     "expo-constants": "~57.0.16",
     "expo-file-system": "~57.0.6",

@@ -1,0 +1,97 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 6.3.1 effective-5.10 (swiftlang-6.3.1.1.2 clang-2100.0.123.102)
+// swift-module-flags: -target arm64-apple-ios16.0 -enable-objc-interop -enable-library-evolution -swift-version 5 -O -enable-upcoming-feature LibraryEvolution -enable-experimental-feature DebugDescriptionMacro -module-name ExpoVideo -package-name expovideo
+// swift-module-flags-ignorable:  -formal-cxx-interoperability-mode=off -interface-compiler-version 6.3.1
+@_exported import AVFoundation
+@_exported import AVKit
+import CoreGraphics
+import CoreImage
+import CoreMedia
+import CoreServices
+import CryptoKit
+import ExpoModulesCore
+@_exported import Foundation
+@_exported import MediaPlayer
+import MobileCoreServices
+import Photos
+import Swift
+import SwiftUI
+@_exported import UIKit
+import _AVKit_SwiftUI
+import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+public enum ContentType : Swift.String, ExpoModulesCore.Enumerable {
+  case auto
+  case progressive
+  case hls
+  case dash
+  case smoothStreaming
+  public init?(rawValue: Swift.String)
+  public typealias AllCases = [ExpoVideo.ContentType]
+  public typealias RawValue = Swift.String
+  nonisolated public static var allCases: [ExpoVideo.ContentType] {
+    get
+  }
+  public var rawValue: Swift.String {
+    get
+  }
+}
+@objc @_Concurrency.MainActor @preconcurrency final public class VideoAirPlayButtonView : ExpoModulesCore.ExpoView {
+  @_Concurrency.MainActor @preconcurrency required public init(appContext: ExpoModulesCore.AppContext? = nil)
+  @objc deinit
+}
+public struct VideoAssetLoadPlan {
+  public let assetURL: Foundation.URL
+  public let assetOptions: [Swift.String : Any]?
+  public let reportedContentTypeHint: ExpoVideo.ContentType?
+  public let resourceLoaderDelegate: (any AVFoundation.AVAssetResourceLoaderDelegate)?
+  public let resourceLoaderQueue: Dispatch.DispatchQueue?
+  public let prepareAsset: ((AVFoundation.AVURLAsset) async throws -> Swift.Void)?
+  public let retainedObjects: [Swift.AnyObject]
+  public let attachErrorHandler: ((@escaping (any Swift.Error) -> Swift.Void) -> Swift.Void)?
+  public let onAssetDeinit: (() -> Swift.Void)?
+  public init(assetURL: Foundation.URL, assetOptions: [Swift.String : Any]? = nil, reportedContentTypeHint: ExpoVideo.ContentType? = nil, resourceLoaderDelegate: (any AVFoundation.AVAssetResourceLoaderDelegate)? = nil, resourceLoaderQueue: Dispatch.DispatchQueue? = nil, prepareAsset: ((AVFoundation.AVURLAsset) async throws -> Swift.Void)? = nil, retainedObjects: [Swift.AnyObject] = [], attachErrorHandler: ((@escaping (any Swift.Error) -> Swift.Void) -> Swift.Void)? = nil, onAssetDeinit: (() -> Swift.Void)? = nil)
+}
+public struct VideoAssetSourceDescriptor {
+  public let url: Foundation.URL
+  public let headers: [Swift.String : Swift.String]?
+  public let usesCaching: Swift.Bool
+  public let hasDRM: Swift.Bool
+  public let contentTypeHint: ExpoVideo.ContentType
+}
+public protocol VideoAssetTransportProvider : AnyObject {
+  var identifier: Swift.String { get }
+  var priority: Swift.Int { get }
+  func makeLoadPlan(for source: ExpoVideo.VideoAssetSourceDescriptor) -> ExpoVideo.VideoAssetLoadPlan?
+}
+@_hasMissingDesignatedInitializers final public class VideoAssetTransportRegistry {
+  public static let shared: ExpoVideo.VideoAssetTransportRegistry
+  public static func registerProvider(_ provider: any ExpoVideo.VideoAssetTransportProvider)
+  public static func unregisterProvider(withId identifier: Swift.String)
+  final public func registerProvider(_ provider: any ExpoVideo.VideoAssetTransportProvider)
+  final public func unregisterProvider(withId identifier: Swift.String)
+  @objc deinit
+}
+@_inheritsConvenienceInitializers final public class VideoModule : ExpoModulesCore.Module {
+  final public func definition() -> ExpoModulesCore.ModuleDefinition
+  required public init(appContext: ExpoModulesCore.AppContext)
+  @objc deinit
+}
+@objc @_Concurrency.MainActor @preconcurrency final public class VideoView : ExpoModulesCore.ExpoView, AVKit.AVPlayerViewControllerDelegate {
+  @_Concurrency.MainActor @preconcurrency @objc override final public var bounds: CoreFoundation.CGRect {
+    @objc get
+    @objc set
+  }
+  @_Concurrency.MainActor @preconcurrency required public init(appContext: ExpoModulesCore.AppContext? = nil)
+  @objc deinit
+  @_Concurrency.MainActor @preconcurrency @objc final public func playerViewController(_ playerViewController: AVKit.AVPlayerViewController, willBeginFullScreenPresentationWithAnimationCoordinator coordinator: any UIKit.UIViewControllerTransitionCoordinator)
+  @_Concurrency.MainActor @preconcurrency @objc final public func playerViewController(_ playerViewController: AVKit.AVPlayerViewController, willEndFullScreenPresentationWithAnimationCoordinator coordinator: any UIKit.UIViewControllerTransitionCoordinator)
+  @_Concurrency.MainActor @preconcurrency @objc final public func playerViewControllerDidStartPictureInPicture(_ playerViewController: AVKit.AVPlayerViewController)
+  @_Concurrency.MainActor @preconcurrency @objc final public func playerViewControllerDidStopPictureInPicture(_ playerViewController: AVKit.AVPlayerViewController)
+  @_Concurrency.MainActor @preconcurrency @objc override final public func didMoveToWindow()
+  @_Concurrency.MainActor @preconcurrency @objc override final public func safeAreaInsetsDidChange()
+}
+extension ExpoVideo.ContentType : Swift.Equatable {}
+extension ExpoVideo.ContentType : Swift.Hashable {}
+extension ExpoVideo.ContentType : Swift.RawRepresentable {}

@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {
     Alert,
-    Platform,
     ScrollView,
     StyleSheet,
     Switch,
@@ -23,6 +22,7 @@ import {PremiumModal} from '../components/PremiumModal';
 import {useAppColors} from '../providers/DeckShopProvider';
 import {hexAlpha} from '../theme/appColors';
 import {openRuStoreSubscriptions, RuStoreMissingError} from '../features/payments';
+import {premiumGate} from '../features/premiumSource';
 import type {AppTabsParamList, RootStackParamList} from '../navigation/types';
 
 type SettingsNav = CompositeNavigationProp<
@@ -39,6 +39,50 @@ export const SettingsScreen = () => {
     const {t} = useTranslation();
     const colors = useAppColors();
     const [showPremiumModal, setShowPremiumModal] = useState(false);
+    const gate = premiumGate(settings.hasPremium, user?.premiumSource);
+
+    const manageLabel = () => {
+        if (gate.kind !== 'managed') {
+            return t('premium.subscribe');
+        }
+        if (gate.provider === 'support') {
+            return t('premium.managedBySupportCta');
+        }
+        if (gate.provider === 'rustore') {
+            return gate.local ? t('premium.manageRuStore') : t('premium.managedInRuStoreCta');
+        }
+        return gate.local ? t('premium.manageYooKassa') : t('premium.managedInYooKassaCta');
+    };
+
+    const onManagePremium = () => {
+        if (gate.kind !== 'managed') {
+            setShowPremiumModal(true);
+            return;
+        }
+        if (gate.provider === 'rustore' && gate.local) {
+            openRuStoreSubscriptions().catch((error) => {
+                if (error instanceof RuStoreMissingError) {
+                    Alert.alert(t('premium.rustoreMissingTitle'), t('premium.rustoreMissing'));
+                    return;
+                }
+                Alert.alert(t('premium.purchaseError'));
+            });
+            return;
+        }
+        if (gate.provider === 'rustore') {
+            Alert.alert(t('premium.managedInRuStoreTitle'), t('premium.managedInRuStoreOther'));
+            return;
+        }
+        if (gate.provider === 'yookassa' && gate.local) {
+            Alert.alert(t('premium.managedInYooKassaTitle'), t('premium.managedInYooKassaLocal'));
+            return;
+        }
+        if (gate.provider === 'yookassa') {
+            Alert.alert(t('premium.managedInYooKassaTitle'), t('premium.managedInYooKassaOther'));
+            return;
+        }
+        Alert.alert(t('premium.managedBySupportTitle'), t('premium.managedBySupportBody'));
+    };
 
     const toggle = (key: 'disableAnimations' | 'disableSounds' | 'showMysticMode') => {
         setSetting(key, !settings[key]).catch(() => {});
@@ -77,7 +121,7 @@ export const SettingsScreen = () => {
     };
 
     return (
-        <SafeAreaView style={[styles.safe, {backgroundColor: colors.bg}]}>
+        <SafeAreaView style={styles.safe}>
             <ScrollView contentContainerStyle={styles.container}>
                 <Text style={[styles.sectionTitle, {color: colors.gold}]}>{t('settings.accountSection')}</Text>
                 <View
@@ -169,21 +213,9 @@ export const SettingsScreen = () => {
                     ) : (
                         <TouchableOpacity
                             style={[styles.manageButton, {borderColor: hexAlpha(colors.gold, 0.4)}]}
-                            onPress={() => {
-                                if (Platform.OS !== 'android' || user?.premiumSource === 'yookassa') {
-                                    setShowPremiumModal(true);
-                                    return;
-                                }
-                                openRuStoreSubscriptions().catch((error) => {
-                                    if (error instanceof RuStoreMissingError) {
-                                        Alert.alert(t('premium.rustoreMissingTitle'), t('premium.rustoreMissing'));
-                                        return;
-                                    }
-                                    Alert.alert(t('premium.purchaseError'));
-                                });
-                            }}
+                            onPress={onManagePremium}
                         >
-                            <Text style={[styles.manageButtonText, {color: colors.gold}]}>{t('premium.manage')}</Text>
+                            <Text style={[styles.manageButtonText, {color: colors.gold}]}>{manageLabel()}</Text>
                         </TouchableOpacity>
                     )}
                 </View>
@@ -314,7 +346,7 @@ export const SettingsScreen = () => {
 const styles = StyleSheet.create({
     safe: {
         flex: 1,
-        backgroundColor: '#040307',
+        backgroundColor: 'transparent',
     },
     container: {
         padding: 20,

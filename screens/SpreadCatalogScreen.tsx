@@ -109,7 +109,7 @@ export const SpreadCatalogScreen = () => {
     );
 
     return (
-        <SafeAreaView style={[styles.safe, {backgroundColor: colors.bg}]}>
+        <SafeAreaView style={styles.safe}>
             <SectionList
                 sections={sections}
                 keyExtractor={(item) => item.id}
@@ -138,7 +138,7 @@ export const SpreadCatalogScreen = () => {
 const styles = StyleSheet.create({
     safe: {
         flex: 1,
-        backgroundColor: '#040307',
+        backgroundColor: 'transparent',
     },
     listContent: {
         padding: 20,

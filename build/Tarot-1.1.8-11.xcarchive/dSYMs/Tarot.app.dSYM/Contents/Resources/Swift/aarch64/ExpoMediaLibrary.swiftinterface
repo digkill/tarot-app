@@ -1,0 +1,49 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 6.3.1 effective-5.10 (swiftlang-6.3.1.1.2 clang-2100.0.123.102)
+// swift-module-flags: -target arm64-apple-ios16.0 -enable-objc-interop -enable-library-evolution -swift-version 5 -O -enable-upcoming-feature LibraryEvolution -enable-experimental-feature DebugDescriptionMacro -module-name ExpoMediaLibrary -package-name expomedialibrary
+// swift-module-flags-ignorable:  -formal-cxx-interoperability-mode=off -interface-compiler-version 6.3.1
+import AVFoundation
+import CoreServices
+@_exported import ExpoMediaLibrary
+import ExpoModulesCore
+@_exported import Foundation
+import Foundation/*.Bundle*/
+import Foundation/*.ProcessInfo*/
+import Foundation/*.URL*/
+@_exported import Photos
+@_exported import PhotosUI
+import Swift
+@_exported import UIKit
+import UniformTypeIdentifiers
+import _Concurrency
+import _PhotosUI_SwiftUI
+import _StringProcessing
+import _SwiftConcurrencyShims
+@_inheritsConvenienceInitializers public class MediaLibraryModule : ExpoModulesCore.Module {
+  public func definition() -> ExpoModulesCore.ModuleDefinition
+  required public init(appContext: ExpoModulesCore.AppContext)
+  @objc deinit
+}
+@objc @_inheritsConvenienceInitializers public class MediaLibraryPermissionRequester : ExpoMediaLibrary.DefaultMediaLibraryPermissionRequester, ExpoModulesCore.EXPermissionsRequester {
+  @objc public static func permissionType() -> Swift.String
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc @_inheritsConvenienceInitializers public class MediaLibraryWriteOnlyPermissionRequester : ExpoMediaLibrary.DefaultMediaLibraryPermissionRequester, ExpoModulesCore.EXPermissionsRequester {
+  @objc public static func permissionType() -> Swift.String
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc @_inheritsConvenienceInitializers public class DefaultMediaLibraryPermissionRequester : ObjectiveC.NSObject {
+  @objc override dynamic public init()
+  @objc deinit
+}
+extension ExpoMediaLibrary.DefaultMediaLibraryPermissionRequester {
+  @objc dynamic public func requestPermissions(resolver resolve: @escaping (Any?) -> Swift.Void, rejecter reject: (Swift.String?, Swift.String?, (any Swift.Error)?) -> Swift.Void)
+  @objc dynamic public func getPermissions() -> [Swift.AnyHashable : Any]
+}
+@_inheritsConvenienceInitializers final public class MediaLibraryNextModule : ExpoModulesCore.Module {
+  final public func definition() -> ExpoModulesCore.ModuleDefinition
+  required public init(appContext: ExpoModulesCore.AppContext)
+  @objc deinit
+}

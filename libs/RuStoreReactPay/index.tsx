@@ -90,16 +90,14 @@ interface RuStoreReactPayInterface {
 }
 
 class RuStoreReactPayModule implements RuStoreReactPayInterface {
-  private eventEmitter: NativeEventEmitter;
-
-  constructor() {
-    this.eventEmitter = new NativeEventEmitter();
-  }
+  private eventEmitter: NativeEventEmitter | null = null;
 
   private registerPurchaseEvents (purchaseEventListener: PurchaseEventListener | null): PurchaseEventListenerCallbackMap {
     const purchaseEventListenerIds: PurchaseEventListenerCallbackMap = {};
 
     if (purchaseEventListener) {
+      const eventEmitter = this.eventEmitter ??=
+        new NativeEventEmitter(NativeModules.RuStoreReactPaySDKModule);
       Object.keys(purchaseEventListener).forEach((key) => {
         const eventName = key as keyof PurchaseEventListener;
         const callbackFn = purchaseEventListener[eventName];
@@ -107,7 +105,7 @@ class RuStoreReactPayModule implements RuStoreReactPayInterface {
         if (callbackFn) {
           purchaseEventListenerIds[eventName] = `purchase_${eventName}_${Date.now()}`;
 
-          const subscription = this.eventEmitter.addListener(purchaseEventListenerIds[eventName], (params: PurchaseEventListenerParams) => {
+          const subscription = eventEmitter.addListener(purchaseEventListenerIds[eventName], (params: PurchaseEventListenerParams) => {
             callbackFn(params);
             subscription.remove();
           });

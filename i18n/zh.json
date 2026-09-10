@@ -67,7 +67,21 @@
     "benefits": "订阅后可解锁全部牌阵、每日最多 20 张日签、每天 50 次 AI 解读，以及优先更新。",
     "selectPlan": "选择套餐",
     "subscribe": "订阅",
-    "manage": "在 RuStore 中管理",
+    "subscribeYooKassa": "通过 YooKassa 支付",
+    "manage": "管理订阅",
+    "manageRuStore": "在 RuStore 中管理",
+    "manageYooKassa": "YooKassa 结算",
+    "managedInRuStoreCta": "由 RuStore 管理",
+    "managedInYooKassaCta": "由 YooKassa 管理",
+    "managedBySupportCta": "由客服开通",
+    "managedInRuStoreTitle": "RuStore 订阅",
+    "managedInRuStoreLocal": "此账号通过 RuStore 计费。请在 RuStore 订阅设置中更改或取消。",
+    "managedInRuStoreOther": "此账号的会员在 Android 的 RuStore 计费。该套餐有效期间，iOS 不能再发起 YooKassa 付款。",
+    "managedInYooKassaTitle": "YooKassa 结算",
+    "managedInYooKassaLocal": "会员已通过 YooKassa 网页结账支付，并绑定此 Tarot 账号。RuStore 不会另行扣款。",
+    "managedInYooKassaOther": "此账号的会员通过 YooKassa（iOS）结算。Android 上的 RuStore 无法更改或取消该套餐。",
+    "managedBySupportTitle": "客服开通",
+    "managedBySupportBody": "会员由客服或促销开通，不通过 RuStore 或 YooKassa 扣款。",
     "cancel": "取消",
     "purchaseSuccess": "订阅已激活",
     "purchaseError": "订阅未能完成",
@@ -78,9 +92,9 @@
     "rustoreMissingTitle": "需要 RuStore",
     "rustoreMissing": "请安装 RuStore 并用测试员 VK ID 登录后再付款。",
     "installRuStore": "安装 RuStore",
-    "disclaimer": "通过 RuStore 结算。包月和包年会自动续订；终身为 99 年订阅。可在 RuStore 订阅设置中取消续订。沙盒付款会显示「Тестовая покупка」。",
+    "disclaimer": "通过 RuStore 结算。包月和包年会自动续订；终身为 99 年订阅。可在 RuStore 订阅设置中取消续订。若此账号已在 iOS 通过 YooKassa 付款，请在那里管理——RuStore 不会再开通第二份套餐。沙盒付款会显示「Тестовая покупка」。",
     "checkoutPending": "付款仍在处理中，请稍后再次打开会员页。",
-    "disclaimerIos": "iOS 通过我们的 YooKassa 网关付款。会员绑定 Tarot 账号，不是 Apple 内购。若先在 RuStore 订阅，则以 RuStore 为准，直到在此续费。",
+    "disclaimerIos": "iOS 仅通过我们的 YooKassa 网页结账付款，这里不使用 RuStore。会员绑定 Tarot 账号，不是 Apple 内购。若账号已有 RuStore 套餐，请在 Android 上管理——第二笔 YooKassa 付款会被拦截。",
     "source": {
       "rustore": "通过 RuStore 付款",
       "yookassa": "通过 YooKassa 付款（iOS）",
@@ -307,8 +321,10 @@
     "saving": "保存中...",
     "missingSpread": "未找到牌阵",
     "reversed": "（逆位）",
-    "zoomHint": "双指捏合可放大牌桌",
-    "resetZoom": "重置缩放"
+    "zoomHint": "双指捏合可放大。点按卡牌查看含义",
+    "resetZoom": "重置缩放",
+    "searchPlaceholder": "在牌桌上搜索卡牌",
+    "searchEmpty": "没有符合搜索的卡牌"
   },
   "interpretation": {
     "summaryIntro": "你的 {{spread}} 牌阵在 {{count}} 个位置揭示指引。",
@@ -380,7 +396,19 @@
       "cups": "圣杯",
       "swords": "宝剑",
       "pentacles": "钱币"
-    }
+    },
+    "searchPlaceholder": "按名称或含义搜索卡牌",
+    "searchEmpty": "没有符合搜索的卡牌"
+  },
+  "cardMeaning": {
+    "close": "关闭",
+    "upright": "正位",
+    "reversed": "逆位",
+    "general": "含义",
+    "love": "感情",
+    "work": "事业",
+    "health": "健康",
+    "advice": "建议"
   },
   "aiInterpretation": {
     "title": "AI 深度解读",

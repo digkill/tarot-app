@@ -102,7 +102,7 @@ export const HistoryListScreen = () => {
     };
 
     return (
-        <SafeAreaView style={[styles.safe, {backgroundColor: colors.bg}]}>
+        <SafeAreaView style={styles.safe}>
             <View style={styles.filterRow}>
                 {FILTERS.map((item) => (
                     <TouchableOpacity
@@ -149,7 +149,7 @@ export const HistoryListScreen = () => {
 const styles = StyleSheet.create({
     safe: {
         flex: 1,
-        backgroundColor: '#040307',
+        backgroundColor: 'transparent',
     },
     filterRow: {
         flexDirection: 'row',

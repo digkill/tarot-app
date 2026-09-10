@@ -17,7 +17,7 @@ export const LegalDocumentScreen = ({route}: Props) => {
     const items = Array.isArray(paragraphs) ? paragraphs.filter((item) => typeof item === 'string') : [];
 
     return (
-        <SafeAreaView style={[styles.safe, {backgroundColor: colors.bg}]} edges={['bottom']}>
+        <SafeAreaView style={styles.safe} edges={['bottom']}>
             <ScrollView contentContainerStyle={styles.content}>
                 <Text style={[styles.version, {color: colors.muted}]}>{t('legal.version', {version: CURRENT_CONSENT_VERSION})}</Text>
                 {items.map((paragraph, index) => (
@@ -33,7 +33,7 @@ export const LegalDocumentScreen = ({route}: Props) => {
 const styles = StyleSheet.create({
     safe: {
         flex: 1,
-        backgroundColor: '#040307',
+        backgroundColor: 'transparent',
     },
     content: {
         padding: 24,

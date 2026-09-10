@@ -1,0 +1,108 @@
+{
+  "fill-specializations": [
+    {
+      "value": {
+        "linear-gradient": [
+          "extended-srgb:0.060,0.105,0.180,1",
+          "extended-srgb:0.018,0.027,0.059,1"
+        ]
+      }
+    },
+    {
+      "appearance": "dark",
+      "value": {
+        "linear-gradient": [
+          "extended-srgb:0.035,0.060,0.115,1",
+          "extended-srgb:0.010,0.015,0.035,1"
+        ]
+      }
+    }
+  ],
+  "groups": [
+    {
+      "name": "04 · Sapphire heart",
+      "layers": [
+        {
+          "image-name": "05-starlight.svg",
+          "name": "Starlight"
+        },
+        {
+          "image-name": "04-sapphire.svg",
+          "name": "Sapphire glass"
+        },
+        {
+          "image-name": "04-crystal.svg",
+          "name": "Golden bezel"
+        }
+      ],
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.26
+      },
+      "specular": true,
+      "translucency": {
+        "enabled": true,
+        "value": 0.24
+      }
+    },
+    {
+      "name": "03 · Compass star",
+      "layers": [
+        {
+          "image-name": "03-compass.svg",
+          "name": "Eight-point star"
+        }
+      ],
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.32
+      },
+      "specular": true,
+      "translucency": {
+        "enabled": true,
+        "value": 0.16
+      }
+    },
+    {
+      "name": "02 · Golden crescent",
+      "layers": [
+        {
+          "image-name": "02-crescent.svg",
+          "name": "Crescent"
+        }
+      ],
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.35
+      },
+      "specular": true,
+      "translucency": {
+        "enabled": true,
+        "value": 0.2
+      }
+    },
+    {
+      "name": "01 · Celestial orbit",
+      "layers": [
+        {
+          "image-name": "01-orbit.svg",
+          "name": "Orbit and cardinal points"
+        }
+      ],
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.12
+      },
+      "specular": true,
+      "translucency": {
+        "enabled": true,
+        "value": 0.12
+      }
+    }
+  ],
+  "supported-platforms": {
+    "squares": [
+      "iOS"
+    ]
+  }
+}

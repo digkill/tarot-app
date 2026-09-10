@@ -41,3 +41,4 @@ yarn-error.*
 # CNG: нативные папки генерируются prebuild-ом
 /android
 /ios
+/ios-native

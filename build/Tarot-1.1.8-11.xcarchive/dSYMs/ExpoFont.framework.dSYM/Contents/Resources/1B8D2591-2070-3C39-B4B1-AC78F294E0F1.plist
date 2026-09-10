@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>DBGVersion</key>
+  <string>3</string>
+  <key>DBGBuildSourcePath</key>
+  <string>/expo-src/packages/expo-font</string>
+  <key>DBGSourcePath</key>
+  <string>/Users/digkill/Projects/js/tarot-app/node_modules/expo-font</string>
+  <key>DBGSourcePathRemapping</key>
+  <dict>
+      <key>/expo-src/packages/expo-font</key>
+      <string>/Users/digkill/Projects/js/tarot-app/node_modules/expo-font</string>
+      <key>/expo-src/node_modules/expo-font</key>
+      <string>/Users/digkill/Projects/js/tarot-app/node_modules/expo-font</string>
+  </dict>
+</dict>
+</plist>

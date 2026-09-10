@@ -1,0 +1,1858 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 6.3.1 (swiftlang-6.3.1.1.2 clang-2100.0.123.102)
+// swift-module-flags: -target arm64-apple-ios16.0 -enable-objc-interop -enable-library-evolution -swift-version 6 -O -enable-upcoming-feature LibraryEvolution -enable-experimental-feature DebugDescriptionMacro -module-name ExpoModulesCore -package-name expomodulescore
+// swift-module-flags-ignorable:  -formal-cxx-interoperability-mode=off -interface-compiler-version 6.3.1
+@_exported import Combine
+import CommonCrypto
+@_exported import CoreGraphics
+@_exported import CoreMedia
+import CryptoKit
+import Dispatch
+@_exported import ExpoModulesCore
+@_exported import ExpoModulesCore
+@_exported import ExpoModulesJSI
+@_exported import Foundation
+import ObjectiveC
+import RegexBuilder
+import Swift
+@_exported import SwiftUI
+import UIKit.UIGestureRecognizerSubclass
+@_exported import UIKit
+import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+import os.log
+import os
+@_functionBuilder public struct ClassDefinitionBuilder<OwnerType> where OwnerType : ~Copyable {
+  public static func buildBlock(_ elements: any ExpoModulesCore.AnyClassDefinitionElement...) -> [any ExpoModulesCore.AnyClassDefinitionElement]
+  public static func buildExpression<ElementType>(_ element: ElementType) -> any ExpoModulesCore.AnyClassDefinitionElement where ElementType : ExpoModulesCore.AnyClassDefinitionElement
+  public static func buildExpression<ElementType>(_ element: ElementType) -> any ExpoModulesCore.AnyClassDefinitionElement where OwnerType == ElementType.OwnerType, ElementType : ExpoModulesCore.ClassDefinitionElement
+}
+public protocol AnyObjectDefinitionElement : ExpoModulesCore.AnyDefinition {
+}
+@_functionBuilder public struct ObjectDefinitionBuilder {
+  public static func buildBlock(_ elements: any ExpoModulesCore.AnyObjectDefinitionElement...) -> [any ExpoModulesCore.AnyObjectDefinitionElement]
+  public static func buildExpression<ElementType>(_ element: ElementType) -> any ExpoModulesCore.AnyObjectDefinitionElement where ElementType : ExpoModulesCore.AnyObjectDefinitionElement
+}
+extension ExpoModulesCore.SyncFunctionDefinition : ExpoModulesCore.AnyObjectDefinitionElement {
+}
+extension ExpoModulesCore.AsyncFunctionDefinition : ExpoModulesCore.AnyObjectDefinitionElement {
+}
+extension ExpoModulesCore.PropertyDefinition : ExpoModulesCore.AnyObjectDefinitionElement {
+}
+extension ExpoModulesCore.ConstantDefinition : ExpoModulesCore.AnyObjectDefinitionElement {
+}
+@_functionBuilder public struct ViewDefinitionBuilder<ViewType> where ViewType : UIKit.UIView {
+  public static func buildBlock(_ elements: any ExpoModulesCore.AnyViewDefinitionElement...) -> [any ExpoModulesCore.AnyViewDefinitionElement]
+  public static func buildExpression(_ element: ExpoModulesCore.EventsDefinition) -> any ExpoModulesCore.AnyViewDefinitionElement
+  public static func buildExpression(_ element: ExpoModulesCore.ViewNameDefinition) -> any ExpoModulesCore.AnyViewDefinitionElement
+  public static func buildExpression<PropType>(_ element: ExpoModulesCore.ConcreteViewProp<ViewType, PropType>) -> any ExpoModulesCore.AnyViewDefinitionElement where PropType : ExpoModulesCore.AnyArgument
+  public static func buildExpression(_ element: ExpoModulesCore.ViewLifecycleMethod<ViewType>) -> any ExpoModulesCore.AnyViewDefinitionElement
+  public static func buildExpression<ElementType>(_ element: ElementType) -> any ExpoModulesCore.AnyViewDefinitionElement where ElementType : ExpoModulesCore.ViewDefinitionFunctionElement
+  public static func buildExpression<ElementType>(_ element: ElementType) -> any ExpoModulesCore.AnyViewDefinitionElement where ViewType == ElementType.ViewType, ElementType : ExpoModulesCore.ViewDefinitionFunctionElement
+}
+public func AsyncFunction(_ name: Swift.String, _ descriptor: ExpoModulesCore.OptimizedFunctionDescriptor) -> ExpoModulesCore.OptimizedAsyncFunctionDefinition
+public func AsyncFunction<R>(_ name: Swift.String, @_implicitSelfCapture _ closure: @escaping () throws -> R) -> ExpoModulesCore.AsyncFunctionDefinition<(), Swift.Void, R>
+public func AsyncFunction<R, A0, each A>(_ name: Swift.String, @_implicitSelfCapture _ closure: @escaping (A0, repeat each A) throws -> R) -> ExpoModulesCore.AsyncFunctionDefinition<(A0, repeat each A), A0, R> where A0 : ExpoModulesCore.AnyArgument, repeat each A : ExpoModulesCore.AnyArgument
+public func Constructor<R>(@_implicitSelfCapture _ body: @escaping () throws -> R) -> ExpoModulesCore.SyncFunctionDefinition<(), Swift.Void, R>
+public func Constructor<R, A0, each A>(@_implicitSelfCapture _ body: @escaping (A0, repeat each A) throws -> R) -> ExpoModulesCore.SyncFunctionDefinition<(A0, repeat each A), A0, R> where A0 : ExpoModulesCore.AnyArgument, repeat each A : ExpoModulesCore.AnyArgument
+public func Class(_ name: Swift.String, @ExpoModulesCore.ClassDefinitionBuilder<ExpoModulesJSI.JavaScriptObject> @_implicitSelfCapture _ elements: () -> [any ExpoModulesCore.AnyClassDefinitionElement]) -> ExpoModulesCore.ClassDefinition
+public func Class<SharedObjectType>(_ name: Swift.String = String(describing: SharedObjectType.self), _ sharedObjectType: SharedObjectType.Type, @ExpoModulesCore.ClassDefinitionBuilder<SharedObjectType> @_implicitSelfCapture _ elements: () -> [any ExpoModulesCore.AnyClassDefinitionElement]) -> ExpoModulesCore.ClassDefinition where SharedObjectType : ExpoModulesCore.SharedObject
+public func Class<SharedObjectType>(_ sharedObjectType: SharedObjectType.Type, @ExpoModulesCore.ClassDefinitionBuilder<SharedObjectType> @_implicitSelfCapture _ elements: () -> [any ExpoModulesCore.AnyClassDefinitionElement]) -> ExpoModulesCore.ClassDefinition where SharedObjectType : ExpoModulesCore.SharedObject
+public func AsyncFunction<R>(_ name: Swift.String, @_inheritActorContext @_implicitSelfCapture _ closure: sending @escaping @Sendable () async throws -> sending R) -> ExpoModulesCore.ConcurrentFunctionDefinition<(), Swift.Void, R>
+public func AsyncFunction<R, A0, each A>(_ name: Swift.String, @_inheritActorContext @_implicitSelfCapture _ closure: sending @escaping @Sendable (A0, repeat each A) async throws -> sending R) -> ExpoModulesCore.ConcurrentFunctionDefinition<(A0, repeat each A), A0, R> where A0 : ExpoModulesCore.AnyArgument, repeat each A : ExpoModulesCore.AnyArgument
+public func Constant<Value>(_ name: Swift.String) -> ExpoModulesCore.ConstantDefinition<Value> where Value : ExpoModulesCore.AnyArgument
+public func Constant<Value>(_ name: Swift.String, @_implicitSelfCapture get: @escaping () -> Value) -> ExpoModulesCore.ConstantDefinition<Value> where Value : ExpoModulesCore.AnyArgument
+public func OnCreate(@_implicitSelfCapture _ closure: @escaping () -> Swift.Void) -> any ExpoModulesCore.AnyDefinition
+public func OnDestroy(@_implicitSelfCapture _ closure: @escaping () -> Swift.Void) -> any ExpoModulesCore.AnyDefinition
+public func OnAppContextDestroys(@_implicitSelfCapture _ closure: @escaping () -> Swift.Void) -> any ExpoModulesCore.AnyDefinition
+public func OnAppEntersForeground(@_implicitSelfCapture _ closure: @escaping () -> Swift.Void) -> any ExpoModulesCore.AnyDefinition
+public func OnAppBecomesActive(@_implicitSelfCapture _ closure: @escaping () -> Swift.Void) -> any ExpoModulesCore.AnyDefinition
+public func OnAppEntersBackground(@_implicitSelfCapture _ closure: @escaping () -> Swift.Void) -> any ExpoModulesCore.AnyDefinition
+public func Name(_ name: Swift.String) -> any ExpoModulesCore.AnyDefinition
+public func Object(@ExpoModulesCore.ObjectDefinitionBuilder @_implicitSelfCapture _ body: () -> [any ExpoModulesCore.AnyDefinition]) -> ExpoModulesCore.ObjectDefinition
+@available(*, deprecated, message: "Use `Constant` or `Property` instead")
+public func Constants(@_implicitSelfCapture _ body: @escaping () -> [Swift.String : Any?]) -> any ExpoModulesCore.AnyDefinition
+@available(*, deprecated, message: "Use `Constant` or `Property` instead")
+public func Constants(@_implicitSelfCapture _ body: @autoclosure @escaping () -> [Swift.String : Any?]) -> any ExpoModulesCore.AnyDefinition
+public func Events(_ names: Swift.String...) -> ExpoModulesCore.EventsDefinition
+public func Events(_ names: [Swift.String]) -> ExpoModulesCore.EventsDefinition
+public func OnStartObserving(_ event: Swift.String? = nil, @_implicitSelfCapture _ closure: @escaping () -> Swift.Void) -> ExpoModulesCore.EventObservingDefinition
+public func OnStopObserving(_ event: Swift.String? = nil, @_implicitSelfCapture _ closure: @escaping () -> Swift.Void) -> ExpoModulesCore.EventObservingDefinition
+public func Property(_ name: Swift.String) -> ExpoModulesCore.PropertyDefinition<Swift.Void>
+public func Property<Value>(_ name: Swift.String, @_implicitSelfCapture get: @escaping () -> Value) -> ExpoModulesCore.PropertyDefinition<Swift.Void> where Value : ExpoModulesCore.AnyArgument
+public func Property<Value, OwnerType>(_ name: Swift.String, @_implicitSelfCapture get: @escaping (_ this: OwnerType) -> Value) -> ExpoModulesCore.PropertyDefinition<OwnerType> where Value : ExpoModulesCore.AnyArgument
+public func Property<Value, OwnerType>(_ name: Swift.String, _ keyPath: Swift.KeyPath<OwnerType, Value>) -> ExpoModulesCore.PropertyDefinition<OwnerType> where Value : ExpoModulesCore.AnyArgument
+public func Property<Value, OwnerType>(_ name: Swift.String, _ keyPath: Swift.ReferenceWritableKeyPath<OwnerType, Value>) -> ExpoModulesCore.PropertyDefinition<OwnerType> where Value : ExpoModulesCore.AnyArgument
+public func StaticFunction<R>(_ name: Swift.String, @_implicitSelfCapture _ closure: @escaping () throws -> R) -> ExpoModulesCore.StaticSyncFunctionDefinition<(), Swift.Void, R>
+public func StaticFunction<R, A0, each A>(_ name: Swift.String, @_implicitSelfCapture _ closure: @escaping (A0, repeat each A) throws -> R) -> ExpoModulesCore.StaticSyncFunctionDefinition<(A0, repeat each A), A0, R> where A0 : ExpoModulesCore.AnyArgument, repeat each A : ExpoModulesCore.AnyArgument
+public func StaticAsyncFunction<R>(_ name: Swift.String, @_implicitSelfCapture _ closure: @escaping () throws -> R) -> ExpoModulesCore.StaticAsyncFunctionDefinition<(), Swift.Void, R>
+public func StaticAsyncFunction<R, A0, each A>(_ name: Swift.String, @_implicitSelfCapture _ closure: @escaping (A0, repeat each A) throws -> R) -> ExpoModulesCore.StaticAsyncFunctionDefinition<(A0, repeat each A), A0, R> where A0 : ExpoModulesCore.AnyArgument, repeat each A : ExpoModulesCore.AnyArgument
+public func StaticAsyncFunction<R>(_ name: Swift.String, @_inheritActorContext @_implicitSelfCapture _ closure: sending @escaping @Sendable () async throws -> sending R) -> ExpoModulesCore.StaticConcurrentFunctionDefinition<(), Swift.Void, R>
+public func StaticAsyncFunction<R, A0, each A>(_ name: Swift.String, @_inheritActorContext @_implicitSelfCapture _ closure: sending @escaping @Sendable (A0, repeat each A) async throws -> sending R) -> ExpoModulesCore.StaticConcurrentFunctionDefinition<(A0, repeat each A), A0, R> where A0 : ExpoModulesCore.AnyArgument, repeat each A : ExpoModulesCore.AnyArgument
+public func Function(_ name: Swift.String, _ descriptor: ExpoModulesCore.OptimizedFunctionDescriptor) -> ExpoModulesCore.OptimizedSyncFunctionDefinition
+public func Function<R>(_ name: Swift.String, @_implicitSelfCapture _ closure: @escaping () throws -> R) -> ExpoModulesCore.SyncFunctionDefinition<(), Swift.Void, R>
+public func Function<R, A0, each A>(_ name: Swift.String, @_implicitSelfCapture _ closure: @escaping (A0, repeat each A) throws -> R) -> ExpoModulesCore.SyncFunctionDefinition<(A0, repeat each A), A0, R> where A0 : ExpoModulesCore.AnyArgument, repeat each A : ExpoModulesCore.AnyArgument
+public func View<ViewType>(_ viewType: ViewType.Type, @ExpoModulesCore.ViewDefinitionBuilder<ViewType> _ elements: @escaping () -> [any ExpoModulesCore.AnyViewDefinitionElement]) -> ExpoModulesCore.ViewDefinition<ViewType> where ViewType : UIKit.UIView
+public func View<Props, ViewType>(_ viewType: ViewType.Type) -> ExpoModulesCore.SwiftUIViewDefinition<Props, ViewType> where Props == ViewType.Props, ViewType : ExpoModulesCore.ExpoSwiftUIView
+public func View<Props, ViewType>(_ viewType: ViewType.Type, @ExpoModulesCore.ExpoSwiftUI.ViewDefinitionBuilder<ViewType> _ elements: @escaping () -> [any ExpoModulesCore.AnyViewDefinitionElement]) -> ExpoModulesCore.SwiftUIViewDefinition<Props, ViewType> where Props == ViewType.Props, ViewType : ExpoModulesCore.ExpoSwiftUIView
+public func Prop<ViewType, PropType>(_ name: Swift.String, @_implicitSelfCapture _ setter: @escaping @_Concurrency.MainActor @Sendable (ViewType, PropType) -> Swift.Void) -> ExpoModulesCore.ConcreteViewProp<ViewType, PropType> where ViewType : UIKit.UIView, PropType : ExpoModulesCore.AnyArgument
+public func Prop<ViewType, PropType>(_ name: Swift.String, _ defaultValue: PropType, @_implicitSelfCapture _ setter: @escaping @_Concurrency.MainActor @Sendable (ViewType, PropType) -> Swift.Void) -> ExpoModulesCore.ConcreteViewProp<ViewType, PropType> where ViewType : UIKit.UIView, PropType : ExpoModulesCore.AnyArgument
+public func OnViewDidUpdateProps<ViewType>(@_implicitSelfCapture _ closure: @escaping @_Concurrency.MainActor @Sendable (_ view: ViewType) -> Swift.Void) -> ExpoModulesCore.ViewLifecycleMethod<ViewType> where ViewType : UIKit.UIView
+public func ViewName(_ name: Swift.String) -> ExpoModulesCore.ViewNameDefinition
+@_inheritsConvenienceInitializers @objc(EXBaseAppDelegateSubscriber) @_Concurrency.MainActor @preconcurrency open class BaseExpoAppDelegateSubscriber : UIKit.UIResponder {
+  @_Concurrency.MainActor @preconcurrency @objc override required dynamic public init()
+  @objc deinit
+}
+@objc(EXAppDelegateSubscriberProtocol) @_Concurrency.MainActor @preconcurrency public protocol ExpoAppDelegateSubscriberProtocol : UIKit.UIApplicationDelegate {
+  @objc @_Concurrency.MainActor @preconcurrency optional func customizeRootView(_ rootView: UIKit.UIView)
+  @objc @_Concurrency.MainActor optional func subscriberDidRegister()
+  @objc @_Concurrency.MainActor optional func appDelegateWillBeginInitialization()
+}
+public typealias ExpoAppDelegateSubscriber = ExpoModulesCore.BaseExpoAppDelegateSubscriber & ExpoModulesCore.ExpoAppDelegateSubscriberProtocol
+@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency public class ExpoAppDelegateSubscriberManager : ObjectiveC.NSObject {
+  @objc @_Concurrency.MainActor @preconcurrency public static func application(_ application: UIKit.UIApplication, willFinishLaunchingWithOptions launchOptions: [UIKit.UIApplication.LaunchOptionsKey : Any]? = nil) -> Swift.Bool
+  @objc @_Concurrency.MainActor @preconcurrency public static func application(_ application: UIKit.UIApplication, didFinishLaunchingWithOptions launchOptions: [UIKit.UIApplication.LaunchOptionsKey : Any]? = nil) -> Swift.Bool
+  @objc @_Concurrency.MainActor @preconcurrency public static func applicationDidBecomeActive(_ application: UIKit.UIApplication)
+  @objc @_Concurrency.MainActor @preconcurrency public static func applicationWillResignActive(_ application: UIKit.UIApplication)
+  @objc @_Concurrency.MainActor @preconcurrency public static func applicationDidEnterBackground(_ application: UIKit.UIApplication)
+  @objc @_Concurrency.MainActor @preconcurrency public static func applicationWillEnterForeground(_ application: UIKit.UIApplication)
+  @objc @_Concurrency.MainActor @preconcurrency public static func applicationWillTerminate(_ application: UIKit.UIApplication)
+  @objc @_Concurrency.MainActor @preconcurrency public static func applicationDidReceiveMemoryWarning(_ application: UIKit.UIApplication)
+  @objc @_Concurrency.MainActor @preconcurrency public static func application(_ application: UIKit.UIApplication, handleEventsForBackgroundURLSession identifier: Swift.String, completionHandler: @escaping () -> Swift.Void)
+  @objc @_Concurrency.MainActor @preconcurrency public static func application(_ application: UIKit.UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Foundation.Data)
+  @objc @_Concurrency.MainActor @preconcurrency public static func application(_ application: UIKit.UIApplication, didFailToRegisterForRemoteNotificationsWithError error: any Swift.Error)
+  @objc @_Concurrency.MainActor @preconcurrency public static func application(_ application: UIKit.UIApplication, didReceiveRemoteNotification userInfo: [Swift.AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIKit.UIBackgroundFetchResult) -> Swift.Void)
+  @objc @_Concurrency.MainActor @preconcurrency public static func application(_ application: UIKit.UIApplication, willContinueUserActivityWithType userActivityType: Swift.String) -> Swift.Bool
+  @objc @_Concurrency.MainActor @preconcurrency public static func application(_ application: UIKit.UIApplication, continue userActivity: Foundation.NSUserActivity, restorationHandler: @escaping ([any UIKit.UIUserActivityRestoring]?) -> Swift.Void) -> Swift.Bool
+  @objc @_Concurrency.MainActor @preconcurrency public static func application(_ application: UIKit.UIApplication, didUpdate userActivity: Foundation.NSUserActivity)
+  @objc @_Concurrency.MainActor @preconcurrency public static func application(_ application: UIKit.UIApplication, didFailToContinueUserActivityWithType userActivityType: Swift.String, error: any Swift.Error)
+  @objc @_Concurrency.MainActor @preconcurrency public static func application(_ application: UIKit.UIApplication, performActionFor shortcutItem: UIKit.UIApplicationShortcutItem, completionHandler: @escaping (Swift.Bool) -> Swift.Void)
+  @objc @_Concurrency.MainActor @preconcurrency public static func application(_ application: UIKit.UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIKit.UIBackgroundFetchResult) -> Swift.Void)
+  @objc @_Concurrency.MainActor @preconcurrency public static func application(_ app: UIKit.UIApplication, open url: Foundation.URL, options: [UIKit.UIApplication.OpenURLOptionsKey : Any] = [:]) -> Swift.Bool
+  @objc @_Concurrency.MainActor @preconcurrency public static func application(_ application: UIKit.UIApplication, supportedInterfaceOrientationsFor window: UIKit.UIWindow?) -> UIKit.UIInterfaceOrientationMask
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init()
+  @objc deinit
+}
+@_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency @objc(EXExpoAppDelegateSubscriberRepository) public class ExpoAppDelegateSubscriberRepository : ObjectiveC.NSObject {
+  @objc @_Concurrency.MainActor @preconcurrency public static var subscribers: [any ExpoModulesCore.ExpoAppDelegateSubscriberProtocol] {
+    @objc get
+  }
+  @objc @_Concurrency.MainActor @preconcurrency public static var reactDelegateHandlers: [ExpoModulesCore.ExpoReactDelegateHandler] {
+    @objc get
+  }
+  @objc @_Concurrency.MainActor @preconcurrency public static func registerSubscribersFrom(modulesProvider: ExpoModulesCore.ModulesProvider)
+  @objc @_Concurrency.MainActor @preconcurrency public static func registerSubscriber(_ subscriber: any ExpoModulesCore.ExpoAppDelegateSubscriberProtocol)
+  @objc @_Concurrency.MainActor @preconcurrency public static func getSubscriber(_ name: Swift.String) -> (any ExpoModulesCore.ExpoAppDelegateSubscriberProtocol)?
+  @_Concurrency.MainActor @preconcurrency public static func getSubscriberOfType<Subscriber>(_ type: Subscriber.Type) -> Subscriber?
+  @objc @_Concurrency.MainActor @preconcurrency public static func registerReactDelegateHandlersFrom(modulesProvider: ExpoModulesCore.ModulesProvider)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init()
+  @objc deinit
+}
+public protocol ExpoReactNativeFactoryProtocol : AnyObject {
+  func recreateRootView(withBundleURL: Foundation.URL?, moduleName: Swift.String?, initialProps: [Swift.AnyHashable : Any]?, launchOptions: [Swift.AnyHashable : Any]?) -> UIKit.UIView
+}
+public struct AppCodeSignEntitlements : Swift.Codable {
+  public var appGroups: [Swift.String]?
+  public static func from(json: Swift.String) -> ExpoModulesCore.AppCodeSignEntitlements
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+@_inheritsConvenienceInitializers @objc(EXAppContext) final public class AppContext : ObjectiveC.NSObject, ExpoModulesCore.EXAppContextProtocol, @unchecked Swift.Sendable {
+  final public let config: ExpoModulesCore.AppContextConfig
+  final public var jsLogger: ExpoModulesCore.Logger {
+    get
+    set
+  }
+  final public var moduleRegistry: ExpoModulesCore.ModuleRegistry {
+    get
+  }
+  @objc weak final public var legacyModuleRegistry: ExpoModulesCore.EXModuleRegistry?
+  final public var runtime: ExpoModulesCore.ExpoRuntime {
+    get throws
+  }
+  public typealias UIRuntimeFactory = (_ appContext: ExpoModulesCore.AppContext, _ pointerValue: ExpoModulesJSI.JavaScriptValue, _ runtime: ExpoModulesJSI.JavaScriptRuntime) throws -> ExpoModulesJSI.JavaScriptRuntime
+  nonisolated(unsafe) public static var uiRuntimeFactory: ExpoModulesCore.AppContext.UIRuntimeFactory?
+  final public var _uiRuntime: ExpoModulesJSI.JavaScriptRuntime? {
+    get
+    set
+  }
+  final public var uiRuntime: ExpoModulesJSI.JavaScriptRuntime {
+    get throws
+  }
+  @objc final public var appIdentifier: Swift.String? {
+    @objc get
+  }
+  final public let appCodeSignEntitlements: ExpoModulesCore.AppCodeSignEntitlements
+  public init(config: ExpoModulesCore.AppContextConfig? = nil)
+  convenience public init(legacyModuleRegistry: Any, config: ExpoModulesCore.AppContextConfig? = nil)
+  @objc convenience override dynamic public init()
+  @discardableResult
+  @objc final public func useModulesProvider(_ providerName: Swift.String) -> Self
+  @discardableResult
+  final public func useModulesProvider(_ provider: ExpoModulesCore.ModulesProvider) -> Self
+  final public func findView<ViewType>(withTag viewTag: Swift.Int, ofType type: ViewType.Type) -> ViewType?
+  @available(*, deprecated, renamed: "runtime.schedule")
+  final public func executeOnJavaScriptThread(_ closure: @escaping @ExpoModulesJSI.JavaScriptActor @Sendable () -> Swift.Void)
+  final public func legacyModule<ModuleProtocol>(implementing moduleProtocol: ObjectiveC.`Protocol`) -> ModuleProtocol?
+  final public var constants: (any ExpoModulesCore.EXConstantsInterface)? {
+    get
+    set
+  }
+  final public var fileSystem: ExpoModulesCore.FileSystemManager? {
+    get
+    set
+  }
+  final public var permissions: ExpoModulesCore.EXPermissionsService? {
+    get
+    set
+  }
+  final public var imageLoader: (any ExpoModulesCore.EXImageLoaderInterface)? {
+    get
+  }
+  final public func nativeModule<T>(named name: Swift.String) -> T?
+  final public var bundleURL: Foundation.URL? {
+    get
+  }
+  final public var utilities: ExpoModulesCore.Utilities?
+  @available(*, deprecated, message: "Use `sendEvent` directly on the module instance instead")
+  final public var eventEmitter: ExpoModulesCore.LegacyEventEmitterCompat? {
+    get
+  }
+  @objc final public func hasModule(_ moduleName: Swift.String) -> Swift.Bool
+  @objc final public func getModuleNames() -> [Swift.String]
+  @ExpoModulesJSI.JavaScriptActor final public func getNativeModuleObject(_ moduleName: Swift.String) -> ExpoModulesJSI.JavaScriptValue?
+  @objc final public func registerNativeModules()
+  @objc final public func registerNativeModules(provider: ExpoModulesCore.ModulesProvider)
+  @objc final public func setRuntime(_ runtimePointer: Swift.UnsafeMutableRawPointer, scheduler: Swift.UnsafeMutableRawPointer?, dispatch: Swift.UnsafeRawPointer?)
+  @ExpoModulesJSI.JavaScriptActor public static func from(runtime: borrowing ExpoModulesJSI.JavaScriptRuntime) -> ExpoModulesCore.AppContext?
+  @objc final public func destroy()
+  @objc deinit
+  @objc final public func setHostWrapper(_ wrapper: ExpoModulesCore.ExpoHostWrapper)
+  @objc public static func modulesProvider(withName providerName: Swift.String = "ExpoModulesProvider") -> ExpoModulesCore.ModulesProvider
+  final public func reloadAppAsync(_ reason: Swift.String = "Reload from appContext")
+}
+@_inheritsConvenienceInitializers public class JavaScriptClassNotFoundException : ExpoModulesCore.Exception, @unchecked Swift.Sendable {
+  override public var reason: Swift.String {
+    get
+  }
+  override public init(file: Swift.String = #fileID, line: Swift.UInt = #line, function: Swift.String = #function)
+  override public init(name: Swift.String, description: Swift.String, code: Swift.String? = nil, file: Swift.String = #fileID, line: Swift.UInt = #line, function: Swift.String = #function)
+  @objc deinit
+}
+@available(*, deprecated, renamed: "Exceptions.AppContextLost")
+public typealias AppContextLostException = ExpoModulesCore.Exceptions.AppContextLost
+@available(*, deprecated, renamed: "Exceptions.RuntimeLost")
+public typealias RuntimeLostException = ExpoModulesCore.Exceptions.RuntimeLost
+public struct AppContextConfig {
+  public let documentDirectory: Foundation.URL?
+  public let cacheDirectory: Foundation.URL?
+  public let appGroupSharedDirectories: [Foundation.URL]
+  public let scoped: Swift.Bool
+  public init(documentDirectory: Foundation.URL?, cacheDirectory: Foundation.URL?, appGroups: [Swift.String]?)
+}
+public protocol AnyArgument : ~Copyable {
+  nonisolated static func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+}
+extension ExpoModulesCore.AnyArgument {
+  public static func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+}
+extension Swift.Bool : ExpoModulesCore.AnyArgument {
+  nonisolated public static func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+}
+extension Swift.Int : ExpoModulesCore.AnyArgument {
+  nonisolated public static func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+}
+extension Swift.Int8 : ExpoModulesCore.AnyArgument {
+  nonisolated public static func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+}
+extension Swift.Int16 : ExpoModulesCore.AnyArgument {
+  nonisolated public static func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+}
+extension Swift.Int32 : ExpoModulesCore.AnyArgument {
+  nonisolated public static func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+}
+extension Swift.Int64 : ExpoModulesCore.AnyArgument {
+  nonisolated public static func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+}
+extension Swift.UInt : ExpoModulesCore.AnyArgument {
+  nonisolated public static func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+}
+extension Swift.UInt8 : ExpoModulesCore.AnyArgument {
+  nonisolated public static func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+}
+extension Swift.UInt16 : ExpoModulesCore.AnyArgument {
+  nonisolated public static func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+}
+extension Swift.UInt32 : ExpoModulesCore.AnyArgument {
+  nonisolated public static func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+}
+extension Swift.UInt64 : ExpoModulesCore.AnyArgument {
+  nonisolated public static func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+}
+extension Swift.Float : ExpoModulesCore.AnyArgument {
+  nonisolated public static func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+}
+extension Swift.Double : ExpoModulesCore.AnyArgument {
+  nonisolated public static func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+}
+extension CoreFoundation.CGFloat : ExpoModulesCore.AnyArgument {
+  nonisolated public static func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+}
+extension Swift.String : ExpoModulesCore.AnyArgument {
+  nonisolated public static func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+}
+extension Swift.Optional : ExpoModulesCore.AnyArgument where Wrapped : ExpoModulesCore.AnyArgument {
+  nonisolated public static func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+}
+extension Swift.Dictionary : ExpoModulesCore.AnyArgument {
+  nonisolated public static func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+}
+extension Swift.Array : ExpoModulesCore.AnyArgument {
+  nonisolated public static func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+}
+extension Foundation.Data : ExpoModulesCore.AnyArgument {
+  nonisolated public static func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+}
+extension ExpoModulesJSI.JavaScriptValue : ExpoModulesCore.AnyArgument {
+  nonisolated public static func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+}
+public protocol Convertible : ExpoModulesCore.AnyArgument {
+  static func convert(from value: Any?, appContext: ExpoModulesCore.AppContext) throws -> Self
+  static func convertResult(_ result: Any, appContext: ExpoModulesCore.AppContext) throws -> Any
+}
+extension ExpoModulesCore.Convertible {
+  public static func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+  public static func convertResult(_ result: Any, appContext: ExpoModulesCore.AppContext) throws -> Any
+}
+@available(*, deprecated, renamed: "Convertible")
+public typealias ConvertibleArgument = ExpoModulesCore.Convertible
+extension Foundation.URL : ExpoModulesCore.Convertible {
+  public static func convert(from value: Any?, appContext: ExpoModulesCore.AppContext) throws -> Foundation.URL
+  public static func convertResult(_ result: Any, appContext: ExpoModulesCore.AppContext) throws -> Any
+}
+extension CoreFoundation.CGPoint : ExpoModulesCore.Convertible {
+  public static func convert(from value: Any?, appContext: ExpoModulesCore.AppContext) throws -> CoreFoundation.CGPoint
+  public static func convertResult(_ result: Any, appContext: ExpoModulesCore.AppContext) throws -> Any
+}
+extension CoreFoundation.CGSize : ExpoModulesCore.Convertible {
+  public static func convert(from value: Any?, appContext: ExpoModulesCore.AppContext) throws -> CoreFoundation.CGSize
+  public static func convertResult(_ result: Any, appContext: ExpoModulesCore.AppContext) throws -> Any
+}
+extension CoreFoundation.CGVector : ExpoModulesCore.Convertible {
+  public static func convert(from value: Any?, appContext: ExpoModulesCore.AppContext) throws -> CoreFoundation.CGVector
+  public static func convertResult(_ result: Any, appContext: ExpoModulesCore.AppContext) throws -> Any
+}
+extension CoreFoundation.CGRect : ExpoModulesCore.Convertible {
+  public static func convert(from value: Any?, appContext: ExpoModulesCore.AppContext) throws -> CoreFoundation.CGRect
+  public static func convertResult(_ result: Any, appContext: ExpoModulesCore.AppContext) throws -> Any
+}
+extension Foundation.Date : ExpoModulesCore.Convertible {
+  public static func convert(from value: Any?, appContext: ExpoModulesCore.AppContext) throws -> Foundation.Date
+  public static func convertResult(_ result: Any, appContext: ExpoModulesCore.AppContext) throws -> Any
+}
+open class Either<FirstType, SecondType> : ExpoModulesCore.AnyArgument {
+  nonisolated public class func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+  required public init(_ value: Any?)
+  public func `is`(_ type: FirstType.Type) -> Swift.Bool
+  public func `is`(_ type: SecondType.Type) -> Swift.Bool
+  public func get() -> FirstType?
+  public func get() -> SecondType?
+  public func `as`<ReturnType>(_ type: ReturnType.Type) throws -> ReturnType
+  @objc deinit
+}
+@_inheritsConvenienceInitializers open class EitherOfThree<FirstType, SecondType, ThirdType> : ExpoModulesCore.Either<FirstType, SecondType> {
+  override public class func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+  public func `is`(_ type: ThirdType.Type) -> Swift.Bool
+  public func get() -> ThirdType?
+  required public init(_ value: Any?)
+  @objc deinit
+}
+@_inheritsConvenienceInitializers open class EitherOfFour<FirstType, SecondType, ThirdType, FourthType> : ExpoModulesCore.EitherOfThree<FirstType, SecondType, ThirdType> {
+  override public class func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+  public func `is`(_ type: FourthType.Type) -> Swift.Bool
+  public func get() -> FourthType?
+  required public init(_ value: Any?)
+  @objc deinit
+}
+extension ExpoModulesCore.Either : Swift.Equatable {
+  public static func == (lhs: ExpoModulesCore.Either<FirstType, SecondType>, rhs: ExpoModulesCore.Either<FirstType, SecondType>) -> Swift.Bool
+}
+public protocol Enumerable : ExpoModulesCore.AnyArgument, ExpoModulesJSI.JavaScriptDecodable, ExpoModulesJSI.JavaScriptEncodable, Swift.CaseIterable {
+  static func create<RawValueType>(fromRawValue rawValue: RawValueType) throws -> Self
+  static var allRawValues: [Any] { get }
+  static func getRawValueDynamicType() -> any ExpoModulesCore.AnyDynamicType
+  var anyRawValue: Any { get }
+}
+@available(*, deprecated, renamed: "Enumerable")
+public typealias EnumArgument = ExpoModulesCore.Enumerable
+extension ExpoModulesCore.Enumerable {
+  public static func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+}
+extension ExpoModulesCore.Enumerable where Self : Swift.Hashable, Self : Swift.RawRepresentable {
+  public static func create<ArgType>(fromRawValue rawValue: ArgType) throws -> Self
+  public var anyRawValue: Any {
+    get
+  }
+  public static var allRawValues: [Any] {
+    get
+  }
+  public static func getRawValueDynamicType() -> any ExpoModulesCore.AnyDynamicType
+}
+public enum ValueOrUndefined<InnerType> where InnerType : ExpoModulesCore.AnyArgument {
+  nonisolated public static func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+  case undefined
+  case value(unwrapped: InnerType)
+}
+extension ExpoModulesCore.ValueOrUndefined : Swift.Equatable where InnerType : Swift.Equatable {
+  public static func == (lhs: ExpoModulesCore.ValueOrUndefined<InnerType>, rhs: ExpoModulesCore.ValueOrUndefined<InnerType>) -> Swift.Bool
+}
+extension ExpoModulesCore.ValueOrUndefined : Swift.Comparable where InnerType : Swift.Comparable {
+  public static func < (lhs: ExpoModulesCore.ValueOrUndefined<InnerType>, rhs: ExpoModulesCore.ValueOrUndefined<InnerType>) -> Swift.Bool
+}
+extension ExpoModulesCore.ValueOrUndefined {
+  public static func ?? <T>(valueOrUndefined: consuming ExpoModulesCore.ValueOrUndefined<T>, defaultValue: @autoclosure () -> T) -> T where T : ExpoModulesCore.AnyArgument
+}
+public protocol AnyArrayBuffer : ExpoModulesCore.AnyArgument, Foundation.ContiguousBytes {
+  var byteLength: Swift.Int { get }
+  func copy() -> ExpoModulesCore.NativeArrayBuffer
+  var data: Foundation.Data { get }
+}
+extension ExpoModulesCore.AnyArrayBuffer {
+  public static func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+}
+@_hasMissingDesignatedInitializers final public class ArrayBuffer : ExpoModulesCore.AnyArrayBuffer, @unchecked Swift.Sendable {
+  final public var byteLength: Swift.Int {
+    get
+    set
+  }
+  final public func copy() -> ExpoModulesCore.NativeArrayBuffer
+  final public var data: Foundation.Data {
+    get
+  }
+  final public func withUnsafeBytes<R>(_ body: (Swift.UnsafeRawBufferPointer) throws -> R) rethrows -> R
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers final public class NativeArrayBuffer : ExpoModulesCore.AnyArrayBuffer, @unchecked Swift.Sendable {
+  final public let byteLength: Swift.Int
+  @objc deinit
+  final public func copy() -> ExpoModulesCore.NativeArrayBuffer
+  final public var data: Foundation.Data {
+    get
+  }
+  final public func withUnsafeBytes<R>(_ body: (Swift.UnsafeRawBufferPointer) throws -> R) rethrows -> R
+  public static func allocate(size: Swift.Int, initializeToZero: Swift.Bool = true) -> ExpoModulesCore.NativeArrayBuffer
+  public static func copy(of other: Swift.UnsafeRawPointer, count: Swift.Int) -> ExpoModulesCore.NativeArrayBuffer
+  public static func copy(data: Foundation.Data) throws -> ExpoModulesCore.NativeArrayBuffer
+  public static func wrap(dataWithoutCopy data: Swift.UnsafeMutableRawBufferPointer, cleanup: @escaping () -> Swift.Void) throws -> ExpoModulesCore.NativeArrayBuffer
+  public static func wrap(dataWithoutCopy data: Foundation.Data) -> ExpoModulesCore.NativeArrayBuffer
+}
+extension ExpoModulesCore.NativeArrayBuffer : ExpoModulesJSI.JavaScriptRepresentable {
+  public static func fromJavaScriptValue(_ value: ExpoModulesJSI.JavaScriptValue) -> ExpoModulesCore.NativeArrayBuffer
+  final public func toJavaScriptValue(in runtime: ExpoModulesJSI.JavaScriptRuntime) -> ExpoModulesJSI.JavaScriptValue
+}
+@_inheritsConvenienceInitializers final public class MissingBaseAddressError : ExpoModulesCore.Exception, @unchecked Swift.Sendable {
+  override final public var reason: Swift.String {
+    get
+  }
+  override public init(file: Swift.String = #fileID, line: Swift.UInt = #line, function: Swift.String = #function)
+  override public init(name: Swift.String, description: Swift.String, code: Swift.String? = nil, file: Swift.String = #fileID, line: Swift.UInt = #line, function: Swift.String = #function)
+  @objc deinit
+}
+public protocol AnyClassDefinitionElement : ExpoModulesCore.AnyDefinition {
+}
+public protocol ClassDefinitionElement : ExpoModulesCore.AnyClassDefinitionElement {
+  associatedtype OwnerType
+}
+extension ExpoModulesCore.SyncFunctionDefinition : ExpoModulesCore.ClassDefinitionElement {
+  public typealias OwnerType = FirstArgType
+}
+extension ExpoModulesCore.AsyncFunctionDefinition : ExpoModulesCore.ClassDefinitionElement {
+  public typealias OwnerType = FirstArgType
+}
+extension ExpoModulesCore.ConcurrentFunctionDefinition : ExpoModulesCore.ClassDefinitionElement {
+  public typealias OwnerType = FirstArgType
+}
+extension ExpoModulesCore.PropertyDefinition : ExpoModulesCore.ClassDefinitionElement {
+}
+@_hasMissingDesignatedInitializers final public class ClassDefinition : ExpoModulesCore.ObjectDefinition {
+  @ExpoModulesJSI.JavaScriptActor override final public func build(appContext: ExpoModulesCore.AppContext) throws -> ExpoModulesJSI.JavaScriptObject
+  @ExpoModulesJSI.JavaScriptActor override final public func decorate(object: borrowing ExpoModulesJSI.JavaScriptObject, appContext: ExpoModulesCore.AppContext) throws
+  @objc deinit
+}
+extension ExpoModulesJSI.JavaScriptObject : ExpoModulesCore.AnyArgument {
+  nonisolated public static func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+  public static func convert(from value: ExpoModulesJSI.JavaScriptValue, appContext: ExpoModulesCore.AppContext) throws -> ExpoModulesJSI.JavaScriptObject
+}
+extension ExpoModulesCore.Enumerable where Self : Swift.RawRepresentable, Self.RawValue : ExpoModulesJSI.JavaScriptDecodable, Self.RawValue : ExpoModulesJSI.JavaScriptEncodable {
+  @ExpoModulesJSI.JavaScriptActor @inlinable public static func decode(_ value: borrowing ExpoModulesJSI.JavaScriptValue, in runtime: borrowing ExpoModulesJSI.JavaScriptRuntime) throws -> Self {
+    let rawValue = try RawValue.decode(value, in: runtime)
+    return try create(fromRawValue: rawValue)
+  }
+  @ExpoModulesJSI.JavaScriptActor @inlinable public static func encode(_ value: Self, in runtime: borrowing ExpoModulesJSI.JavaScriptRuntime) throws -> ExpoModulesJSI.JavaScriptValue {
+    return try RawValue.encode(value.rawValue, in: runtime)
+  }
+}
+extension ExpoModulesCore.Record {
+  @ExpoModulesJSI.JavaScriptActor @inlinable public static func decode(_ value: borrowing ExpoModulesJSI.JavaScriptValue, in runtime: borrowing ExpoModulesJSI.JavaScriptRuntime) throws -> Self {
+    guard let appContext = AppContext.from(runtime: runtime) else {
+      throw Exceptions.AppContextNotFound()
+    }
+    return try from(object: value.asObject(), appContext: appContext)
+  }
+  @ExpoModulesJSI.JavaScriptActor @inlinable public static func encode(_ value: Self, in runtime: borrowing ExpoModulesJSI.JavaScriptRuntime) throws -> ExpoModulesJSI.JavaScriptValue {
+    guard let appContext = AppContext.from(runtime: runtime) else {
+      throw Exceptions.AppContextNotFound()
+    }
+    return try value.toObject(appContext: appContext).asValue()
+  }
+}
+extension ExpoModulesCore.SharedObject : ExpoModulesJSI.JavaScriptDecodable, ExpoModulesJSI.JavaScriptEncodable {
+  @ExpoModulesJSI.JavaScriptActor @inlinable public static func decode(_ value: borrowing ExpoModulesJSI.JavaScriptValue, in runtime: borrowing ExpoModulesJSI.JavaScriptRuntime) throws -> Self {
+     
+     
+     
+    return try native(from: value.asObject(), as: Self.self)
+  }
+  @ExpoModulesJSI.JavaScriptActor @inlinable public static func decode(_ value: borrowing ExpoModulesJSI.JavaScriptUnownedValue, in runtime: borrowing ExpoModulesJSI.JavaScriptRuntime) throws -> Self {
+     
+     
+     
+    return try native(from: value.asObject(in: runtime), as: Self.self)
+  }
+  @ExpoModulesJSI.JavaScriptActor public static func encode(_ value: ExpoModulesCore.SharedObject, in runtime: borrowing ExpoModulesJSI.JavaScriptRuntime) throws -> ExpoModulesJSI.JavaScriptValue
+}
+extension ExpoModulesCore.TypedArray : ExpoModulesJSI.JavaScriptDecodable, ExpoModulesJSI.JavaScriptEncodable {
+  @ExpoModulesJSI.JavaScriptActor @inlinable public static func encode(_ value: ExpoModulesCore.TypedArray, in runtime: borrowing ExpoModulesJSI.JavaScriptRuntime) throws -> ExpoModulesJSI.JavaScriptValue {
+     
+    return value.jsTypedArray.asValue()
+  }
+}
+public struct Conversions {
+  public static func pickValues<ValueType>(from dict: [Swift.String : Any], byKeys keys: [Swift.String], as type: ValueType.Type) throws -> [ValueType]
+  @_inheritsConvenienceInitializers public class ConvertingException<TargetType> : ExpoModulesCore.GenericException<Any?> {
+    override public var code: Swift.String {
+      get
+    }
+    override public var reason: Swift.String {
+      get
+    }
+    override public init(_ param: consuming Any?, file: Swift.String = #fileID, line: Swift.UInt = #line, function: Swift.String = #function)
+    @objc deinit
+  }
+}
+extension CoreMedia.CMTime : ExpoModulesCore.Convertible {
+  public static func convert(from value: Any?, appContext: ExpoModulesCore.AppContext) throws -> CoreMedia.CMTime
+}
+extension UIKit.UIColor : ExpoModulesCore.Convertible {
+  public static func convert(from value: Any?, appContext: ExpoModulesCore.AppContext) throws -> Self
+  public static func convert(from value: Any?) throws -> Self
+  public static func convertResult(_ result: Any, appContext: ExpoModulesCore.AppContext) throws -> Any
+}
+extension UIKit.UIColor {
+  public var string: Swift.String {
+    get
+  }
+}
+extension CoreGraphics.CGColor : ExpoModulesCore.Convertible {
+  public static func convert(from value: Any?, appContext: ExpoModulesCore.AppContext) throws -> Self
+  public static func convertResult(_ result: Any, appContext: ExpoModulesCore.AppContext) throws -> Any
+}
+public protocol AnyDynamicType : Swift.CustomStringConvertible, Swift.Sendable {
+  func wraps<InnerType>(_ type: InnerType.Type) -> Swift.Bool
+  func equals(_ type: any ExpoModulesCore.AnyDynamicType) -> Swift.Bool
+  @ExpoModulesJSI.JavaScriptActor func cast(jsValue: ExpoModulesJSI.JavaScriptValue, appContext: ExpoModulesCore.AppContext) throws -> Any
+  func cast<ValueType>(_ value: ValueType, appContext: ExpoModulesCore.AppContext) throws -> Any
+  func castToJS<ValueType>(_ value: ValueType, appContext: ExpoModulesCore.AppContext) throws -> ExpoModulesJSI.JavaScriptValue
+  func castToJS<ValueType>(_ value: ValueType, appContext: ExpoModulesCore.AppContext, in runtime: ExpoModulesJSI.JavaScriptRuntime) throws -> ExpoModulesJSI.JavaScriptValue
+  func convertToJS<ValueType>(_ value: ValueType, appContext: ExpoModulesCore.AppContext) throws -> ExpoModulesJSI.JavaScriptValue
+  func convertToJS<ValueType>(_ value: ValueType, appContext: ExpoModulesCore.AppContext, in runtime: ExpoModulesJSI.JavaScriptRuntime) throws -> ExpoModulesJSI.JavaScriptValue
+  func convertResult<ResultType>(_ result: ResultType, appContext: ExpoModulesCore.AppContext) throws -> Any
+}
+extension ExpoModulesCore.AnyDynamicType {
+  public func castToJS<ValueType>(_ value: ValueType, appContext: ExpoModulesCore.AppContext, in runtime: ExpoModulesJSI.JavaScriptRuntime) throws -> ExpoModulesJSI.JavaScriptValue
+  public func convertToJS<ValueType>(_ value: ValueType, appContext: ExpoModulesCore.AppContext) throws -> ExpoModulesJSI.JavaScriptValue
+  public func convertToJS<ValueType>(_ value: ValueType, appContext: ExpoModulesCore.AppContext, in runtime: ExpoModulesJSI.JavaScriptRuntime) throws -> ExpoModulesJSI.JavaScriptValue
+}
+infix operator ~> : DefaultPrecedence
+public func ~> <T>(lhs: any ExpoModulesCore.AnyDynamicType, rhs: T.Type) -> Swift.Bool
+infix operator !~> : DefaultPrecedence
+public func !~> <T>(lhs: any ExpoModulesCore.AnyDynamicType, rhs: T.Type) -> Swift.Bool
+public func == (lhs: any ExpoModulesCore.AnyDynamicType, rhs: any ExpoModulesCore.AnyDynamicType) -> Swift.Bool
+public func != (lhs: any ExpoModulesCore.AnyDynamicType, rhs: any ExpoModulesCore.AnyDynamicType) -> Swift.Bool
+prefix operator ~
+public enum EventName : Swift.Equatable, Swift.Sendable {
+  case custom(_: Swift.String)
+  case moduleCreate
+  case moduleDestroy
+  case appContextDestroys
+  case appEntersForeground
+  case appBecomesActive
+  case appEntersBackground
+  public static func == (a: ExpoModulesCore.EventName, b: ExpoModulesCore.EventName) -> Swift.Bool
+}
+public protocol AnyCallback {
+  init()
+}
+public class Callback<ArgType> : ExpoModulesCore.AnyCallback {
+  required public init()
+  public func callAsFunction(_ arg: [Swift.String : Any])
+  @objc deinit
+}
+final public class EventDispatcher {
+  final public var onEventSent: (([Swift.String : Any]) -> Swift.Void)?
+  public init(_ customName: Swift.String? = nil)
+  final public func callAsFunction(_ payload: [Swift.String : Any])
+  final public func callAsFunction(_ payload: any ExpoModulesCore.Record)
+  final public func callAsFunction()
+  @objc deinit
+}
+public protocol EventEmitter : AnyObject {
+  var appContext: ExpoModulesCore.AppContext? { get }
+  @ExpoModulesJSI.JavaScriptActor func withEventTarget<R>(_ body: (borrowing ExpoModulesJSI.JavaScriptObject) throws -> R) rethrows -> R?
+}
+extension ExpoModulesCore.EventEmitter {
+  public func emit(event: Swift.String)
+  public func emit(event: Swift.String, payload: ExpoModulesJSI.JavaScriptValue)
+  public func emit<P>(event: Swift.String, payload: sending P) where P : ExpoModulesCore.AnyArgument
+}
+@_hasMissingDesignatedInitializers final public class EventObservingDefinition : @unchecked Swift.Sendable {
+  public typealias ClosureType = () -> Swift.Void
+  @objc deinit
+}
+public struct EventObservingDecorator {
+}
+@_hasMissingDesignatedInitializers @available(*, deprecated, message: "Use `sendEvent` directly on the module instance instead")
+final public class LegacyEventEmitterCompat {
+  final public func sendEvent(withName name: Swift.String!, body: Any!)
+  @objc deinit
+}
+public protocol ChainableException : AnyObject, Swift.Error {
+  var cause: (any Swift.Error)? { get set }
+  var rootCause: (any Swift.Error)? { get }
+  func causedBy(_ error: (any Swift.Error)?) -> Self
+  func isCausedBy<ErrorType>(_ errorType: ErrorType.Type) -> Swift.Bool where ErrorType : Swift.Error
+}
+extension ExpoModulesCore.ChainableException {
+  public var rootCause: (any Swift.Error)? {
+    get
+  }
+  @discardableResult
+  public func causedBy(_ error: (any Swift.Error)?) -> Self
+  public func isCausedBy<ErrorType>(_ errorType: ErrorType.Type) -> Swift.Bool where ErrorType : Swift.Error
+}
+public protocol CodedError : Swift.CustomStringConvertible, Swift.Error {
+  var code: Swift.String { get }
+  var description: Swift.String { get }
+}
+extension ExpoModulesCore.CodedError {
+  public var code: Swift.String {
+    get
+  }
+  public var description: Swift.String {
+    get
+  }
+}
+public struct SimpleCodedError : ExpoModulesCore.CodedError {
+  public var code: Swift.String
+  public var description: Swift.String
+}
+public struct Exceptions {
+  @_inheritsConvenienceInitializers final public class AppContextLost : ExpoModulesCore.Exception {
+    override final public var reason: Swift.String {
+      get
+    }
+    override public init(file: Swift.String = #fileID, line: Swift.UInt = #line, function: Swift.String = #function)
+    override public init(name: Swift.String, description: Swift.String, code: Swift.String? = nil, file: Swift.String = #fileID, line: Swift.UInt = #line, function: Swift.String = #function)
+    @objc deinit
+  }
+  @_inheritsConvenienceInitializers final public class RuntimeLost : ExpoModulesCore.Exception {
+    override final public var reason: Swift.String {
+      get
+    }
+    override public init(file: Swift.String = #fileID, line: Swift.UInt = #line, function: Swift.String = #function)
+    override public init(name: Swift.String, description: Swift.String, code: Swift.String? = nil, file: Swift.String = #fileID, line: Swift.UInt = #line, function: Swift.String = #function)
+    @objc deinit
+  }
+  @_inheritsConvenienceInitializers final public class UIRuntimeLost : ExpoModulesCore.Exception {
+    override final public var reason: Swift.String {
+      get
+    }
+    override public init(file: Swift.String = #fileID, line: Swift.UInt = #line, function: Swift.String = #function)
+    override public init(name: Swift.String, description: Swift.String, code: Swift.String? = nil, file: Swift.String = #fileID, line: Swift.UInt = #line, function: Swift.String = #function)
+    @objc deinit
+  }
+  @_inheritsConvenienceInitializers final public class AppContextNotFound : ExpoModulesCore.Exception {
+    override final public var reason: Swift.String {
+      get
+    }
+    override public init(file: Swift.String = #fileID, line: Swift.UInt = #line, function: Swift.String = #function)
+    override public init(name: Swift.String, description: Swift.String, code: Swift.String? = nil, file: Swift.String = #fileID, line: Swift.UInt = #line, function: Swift.String = #function)
+    @objc deinit
+  }
+  @_inheritsConvenienceInitializers final public class SimulatorNotSupported : ExpoModulesCore.Exception {
+    override final public var reason: Swift.String {
+      get
+    }
+    override public init(file: Swift.String = #fileID, line: Swift.UInt = #line, function: Swift.String = #function)
+    override public init(name: Swift.String, description: Swift.String, code: Swift.String? = nil, file: Swift.String = #fileID, line: Swift.UInt = #line, function: Swift.String = #function)
+    @objc deinit
+  }
+  @_inheritsConvenienceInitializers final public class ViewNotFound<ViewType> : ExpoModulesCore.GenericException<(tag: Swift.Int, type: ViewType.Type)> where ViewType : UIKit.UIView {
+    override final public var reason: Swift.String {
+      get
+    }
+    override public init(_ param: consuming (tag: Swift.Int, type: ViewType.Type), file: Swift.String = #fileID, line: Swift.UInt = #line, function: Swift.String = #function)
+    @objc deinit
+  }
+  @_inheritsConvenienceInitializers final public class SwiftUIViewNotFound<ViewType> : ExpoModulesCore.GenericException<(tag: Swift.Int, type: ViewType.Type)> where ViewType : ExpoModulesCore.ExpoSwiftUIView {
+    override final public var reason: Swift.String {
+      get
+    }
+    override public init(_ param: consuming (tag: Swift.Int, type: ViewType.Type), file: Swift.String = #fileID, line: Swift.UInt = #line, function: Swift.String = #function)
+    @objc deinit
+  }
+  @_inheritsConvenienceInitializers final public class ArgumentsRangeMismatch : ExpoModulesCore.GenericException<(functionName: Swift.String, received: Swift.Int, required: Swift.Int, maximum: Swift.Int)> {
+    override final public var reason: Swift.String {
+      get
+    }
+    override public init(_ param: consuming (functionName: Swift.String, received: Swift.Int, required: Swift.Int, maximum: Swift.Int), file: Swift.String = #fileID, line: Swift.UInt = #line, function: Swift.String = #function)
+    @objc deinit
+  }
+  @_inheritsConvenienceInitializers final public class FileSystemModuleNotFound : ExpoModulesCore.Exception {
+    override final public var reason: Swift.String {
+      get
+    }
+    override public init(file: Swift.String = #fileID, line: Swift.UInt = #line, function: Swift.String = #function)
+    override public init(name: Swift.String, description: Swift.String, code: Swift.String? = nil, file: Swift.String = #fileID, line: Swift.UInt = #line, function: Swift.String = #function)
+    @objc deinit
+  }
+  @_inheritsConvenienceInitializers final public class PermissionsModuleNotFound : ExpoModulesCore.Exception {
+    override final public var reason: Swift.String {
+      get
+    }
+    override public init(file: Swift.String = #fileID, line: Swift.UInt = #line, function: Swift.String = #function)
+    override public init(name: Swift.String, description: Swift.String, code: Swift.String? = nil, file: Swift.String = #fileID, line: Swift.UInt = #line, function: Swift.String = #function)
+    @objc deinit
+  }
+}
+open class Exception : ExpoModulesCore.CodedError, ExpoModulesCore.ChainableException, Swift.CustomStringConvertible, Swift.CustomDebugStringConvertible, ExpoModulesJSI.JavaScriptThrowable, @unchecked Swift.Sendable {
+  open var name: Swift.String {
+    get
+    set
+  }
+  open var reason: Swift.String {
+    get
+  }
+  open var origin: ExpoModulesCore.ExceptionOrigin
+  public init(file: Swift.String = #fileID, line: Swift.UInt = #line, function: Swift.String = #function)
+  public init(name: Swift.String, description: Swift.String, code: Swift.String? = nil, file: Swift.String = #fileID, line: Swift.UInt = #line, function: Swift.String = #function)
+  open var code: Swift.String {
+    get
+  }
+  open var cause: (any Swift.Error)?
+  open var description: Swift.String {
+    get
+    set
+  }
+  open var debugDescription: Swift.String {
+    get
+  }
+  @objc deinit
+}
+public struct ExceptionOrigin : Swift.CustomStringConvertible, Swift.Sendable {
+  public var description: Swift.String {
+    get
+  }
+}
+open class GenericException<ParamType> : ExpoModulesCore.Exception, @unchecked Swift.Sendable where ParamType : ~Copyable {
+  final public let param: ParamType
+  public init(_ param: consuming ParamType, file: Swift.String = #fileID, line: Swift.UInt = #line, function: Swift.String = #function)
+  @objc deinit
+}
+public class UnexpectedException : ExpoModulesCore.Exception {
+  public init(_ error: any Swift.Error, file: Swift.String = #fileID, line: Swift.UInt = #line, function: Swift.String = #function)
+  override public var reason: Swift.String {
+    get
+  }
+  @objc deinit
+}
+@attached(peer, names: arbitrary) public macro OptimizedFunction() = #externalMacro(module: "ExpoModulesMacros", type: "OptimizedFunctionAttachedMacro")
+@attached(peer, names: arbitrary) public macro JS(_ jsName: Swift.String? = nil) = #externalMacro(module: "ExpoModulesMacros", type: "JSMacro")
+@attached(accessor) @attached(peer, names: arbitrary) public macro Event(_ name: Swift.String? = nil, sync: Swift.Bool = false) = #externalMacro(module: "ExpoModulesMacros", type: "EventMacro")
+@attached(member, names: named(_jsName), named(_synthesizedDefinition), named(appContext), named(init), named(_decorateModule)) @attached(memberAttribute) @attached(extension, conformances: ExpoModulesCore.AnyModule) public macro ExpoModule(_ name: Swift.String? = nil, classes: [any Any.Type] = []) = #externalMacro(module: "ExpoModulesMacros", type: "ExpoModuleMacro")
+@attached(member, names: named(_synthesizedClassDefinition), named(_decorateSharedObject), named(_constructSharedObject)) @attached(memberAttribute) public macro SharedObject(_ name: Swift.String? = nil) = #externalMacro(module: "ExpoModulesMacros", type: "SharedObjectMacro")
+@attached(member, names: named(init), named(from), named(toDictionary), named(toObject), named(_assertTypesConformance)) @attached(extension, conformances: ExpoModulesCore.Record) public macro Record() = #externalMacro(module: "ExpoModulesMacros", type: "RecordMacro")
+public class ExpoRuntime : ExpoModulesJSI.JavaScriptRuntime, @unchecked Swift.Sendable {
+  override public init()
+  override public init(unsafePointer: Swift.UnsafeMutableRawPointer)
+  override public init(unsafePointer: Swift.UnsafeMutableRawPointer, scheduler: Swift.UnsafeMutableRawPointer, dispatch: Swift.UnsafeRawPointer)
+  @objc deinit
+}
+public typealias FunctionCallResult = Swift.Result<ExpoModulesJSI.JavaScriptValue, ExpoModulesCore.Exception>
+@_hasMissingDesignatedInitializers public class AsyncFunctionDefinition<Args, FirstArgType, ReturnType> : @unchecked Swift.Sendable {
+  public func runOnQueue(_ queue: Dispatch.DispatchQueue?) -> Self
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class ConcurrentFunctionDefinition<Args, FirstArgType, ReturnType> : @unchecked Swift.Sendable {
+  @objc deinit
+}
+public struct OptimizedAsyncFunctionDefinition : @unchecked Swift.Sendable {
+  public let name: Swift.String
+  public let typeEncoding: Swift.String
+  public let argsCount: Swift.Int
+  public let block: Swift.AnyObject
+  public init(name: Swift.String, typeEncoding: Swift.String, argsCount: Swift.Int, block: Swift.AnyObject)
+  public var dynamicArgumentTypes: [any ExpoModulesCore.AnyDynamicType] {
+    get
+  }
+  public var returnType: any ExpoModulesCore.AnyDynamicType {
+    get
+  }
+  public var argumentsCount: Swift.Int {
+    get
+  }
+  public var requiredArgumentsCount: Swift.Int {
+    get
+  }
+  public var takesOwner: Swift.Bool
+  public func call(by owner: Swift.AnyObject?, withArguments args: [Any], appContext: ExpoModulesCore.AppContext, callback: @escaping (ExpoModulesCore.FunctionCallResult) -> ())
+  @ExpoModulesJSI.JavaScriptActor public func build(appContext: ExpoModulesCore.AppContext) throws -> ExpoModulesJSI.JavaScriptObject
+  @discardableResult
+  public func runOnQueue(_ queue: Dispatch.DispatchQueue?) -> ExpoModulesCore.OptimizedAsyncFunctionDefinition
+}
+public struct OptimizedSyncFunctionDefinition : @unchecked Swift.Sendable {
+  public let name: Swift.String
+  public let typeEncoding: Swift.String
+  public let argsCount: Swift.Int
+  public let block: Swift.AnyObject
+  public init(name: Swift.String, typeEncoding: Swift.String, argsCount: Swift.Int, block: Swift.AnyObject)
+  public var dynamicArgumentTypes: [any ExpoModulesCore.AnyDynamicType] {
+    get
+  }
+  public var returnType: any ExpoModulesCore.AnyDynamicType {
+    get
+  }
+  public var argumentsCount: Swift.Int {
+    get
+  }
+  public var requiredArgumentsCount: Swift.Int {
+    get
+  }
+  public var takesOwner: Swift.Bool
+  public func call(by owner: Swift.AnyObject?, withArguments args: [Any], appContext: ExpoModulesCore.AppContext, callback: @escaping (ExpoModulesCore.FunctionCallResult) -> ())
+  @ExpoModulesJSI.JavaScriptActor public func call(_ appContext: ExpoModulesCore.AppContext, in runtime: ExpoModulesJSI.JavaScriptRuntime, this: ExpoModulesJSI.JavaScriptValue, arguments: consuming ExpoModulesJSI.JavaScriptValuesBuffer) throws(ExpoModulesCore.Exception) -> ExpoModulesJSI.JavaScriptValue
+  @ExpoModulesJSI.JavaScriptActor public func runBody(_ appContext: ExpoModulesCore.AppContext, in runtime: ExpoModulesJSI.JavaScriptRuntime, this: ExpoModulesJSI.JavaScriptValue, arguments: consuming ExpoModulesJSI.JavaScriptValuesBuffer) throws(ExpoModulesCore.Exception) -> Any
+  @ExpoModulesJSI.JavaScriptActor public func build(appContext: ExpoModulesCore.AppContext) throws -> ExpoModulesJSI.JavaScriptObject
+  @ExpoModulesJSI.JavaScriptActor public func build(appContext: ExpoModulesCore.AppContext, in runtime: ExpoModulesJSI.JavaScriptRuntime) throws -> ExpoModulesJSI.JavaScriptObject
+  @inline(__always) public static func createDescriptor(typeEncoding: Swift.String, argsCount: Swift.Int, block: Swift.AnyObject) -> ExpoModulesCore.OptimizedFunctionDescriptor
+}
+public struct OptimizedFunctionDescriptor {
+  public let typeEncoding: Swift.String
+  public let argsCount: Swift.Int
+  public let block: Swift.AnyObject
+  public init(typeEncoding: Swift.String, argsCount: Swift.Int, block: Swift.AnyObject)
+}
+@inline(__always) public func _createOptimizedFunctionDescriptor(typeEncoding: Swift.String, argsCount: Swift.Int, block: Swift.AnyObject) -> ExpoModulesCore.OptimizedFunctionDescriptor
+@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers final public class StaticSyncFunctionDefinition<Args, FirstArgType, ReturnType> : ExpoModulesCore.SyncFunctionDefinition<Args, FirstArgType, ReturnType>, @unchecked Swift.Sendable {
+  @objc deinit
+}
+@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers final public class StaticAsyncFunctionDefinition<Args, FirstArgType, ReturnType> : ExpoModulesCore.AsyncFunctionDefinition<Args, FirstArgType, ReturnType>, @unchecked Swift.Sendable {
+  @objc deinit
+}
+@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers final public class StaticConcurrentFunctionDefinition<Args, FirstArgType, ReturnType> : ExpoModulesCore.ConcurrentFunctionDefinition<Args, FirstArgType, ReturnType>, @unchecked Swift.Sendable {
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class SyncFunctionDefinition<Args, FirstArgType, ReturnType> : @unchecked Swift.Sendable {
+  @objc deinit
+}
+public func createOSLogHandler(category: Swift.String) -> any ExpoModulesCore.LogHandler
+public func createPersistentFileLogHandler(category: Swift.String) -> any ExpoModulesCore.LogHandler
+public protocol LogHandler {
+  func log(type: ExpoModulesCore.LogType, _ message: Swift.String)
+}
+public enum LogType : Swift.Int {
+  case trace
+  case timer
+  case stacktrace
+  case debug
+  case info
+  case warn
+  case error
+  case fatal
+  @available(iOS 14.0, watchOS 7.0, tvOS 14.0, *)
+  public func toOSLogType() -> os.OSLogType
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+public let log: ExpoModulesCore.Logger
+public typealias LoggerTimerFormatterBlock = (_ duration: Swift.Double) -> Swift.String
+public class Logger : @unchecked Swift.Sendable {
+  public static let EXPO_MODULES_LOG_SUBSYSTEM: Swift.String
+  public static let EXPO_LOG_CATEGORY: Swift.String
+  required public init(logHandlers: [any ExpoModulesCore.LogHandler])
+  public func trace(_ items: Any...)
+  public func debug(_ items: Any...)
+  public func info(_ items: Any...)
+  public func warn(_ items: Any...)
+  public func error(_ items: Any...)
+  public func fatal(_ items: Any...)
+  public func stacktrace(type: ExpoModulesCore.LogType = .stacktrace, file: Swift.String = #fileID, line: Swift.UInt = #line)
+  public func callAsFunction(_ items: Any...)
+  public func startTimer(_ formatterBlock: @escaping ExpoModulesCore.LoggerTimerFormatterBlock) -> ExpoModulesCore.LoggerTimer
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class LoggerTimer {
+  public func stop() -> Swift.Double
+  @objc deinit
+}
+public typealias PersistentFileLogFilter = (Swift.String) -> Swift.Bool
+public typealias PersistentFileLogCompletionHandler = ((any Swift.Error)?) -> Swift.Void
+@preconcurrency public class PersistentFileLog {
+  public init(category: Swift.String)
+  public func readEntries() -> [Swift.String]
+  public func appendEntry(entry: Swift.String, _ completionHandler: ExpoModulesCore.PersistentFileLogCompletionHandler? = nil)
+  public func purgeEntriesNotMatchingFilter(filter: @escaping ExpoModulesCore.PersistentFileLogFilter, _ completionHandler: @escaping ExpoModulesCore.PersistentFileLogCompletionHandler)
+  public func clearEntries(_ completionHandler: @escaping ExpoModulesCore.PersistentFileLogCompletionHandler)
+  @objc deinit
+}
+public struct MainValueConverter : ~Swift.Copyable {
+  @ExpoModulesJSI.JavaScriptActor public func toNative(_ value: ExpoModulesJSI.JavaScriptValue, _ type: any ExpoModulesCore.AnyDynamicType) throws -> Any
+  @ExpoModulesJSI.JavaScriptActor public func toNative(_ values: borrowing ExpoModulesJSI.JavaScriptValuesBuffer, _ types: [any ExpoModulesCore.AnyDynamicType]) throws -> [Any]
+  @ExpoModulesJSI.JavaScriptActor public func toJS(_ value: Any, _ type: any ExpoModulesCore.AnyDynamicType) throws -> ExpoModulesJSI.JavaScriptValue
+  @ExpoModulesJSI.JavaScriptActor public func toJS(_ value: Any, _ type: any ExpoModulesCore.AnyDynamicType, in runtime: ExpoModulesJSI.JavaScriptRuntime) throws -> ExpoModulesJSI.JavaScriptValue
+}
+@_hasMissingDesignatedInitializers final public class ModuleHolder {
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers final public class ModuleRegistry : Swift.Sequence {
+  public typealias Element = ExpoModulesCore.ModuleHolder
+  final public func register(module: any ExpoModulesCore.AnyModule, name: Swift.String?, preventModuleOverriding: Swift.Bool = false)
+  final public func register(moduleType: any ExpoModulesCore.AnyModule.Type, name: Swift.String?, preventModuleOverriding: Swift.Bool = false)
+  final public func register(fromProvider provider: any ExpoModulesCore.ModulesProviderProtocol)
+  final public func unregister(module: any ExpoModulesCore.AnyModule)
+  final public func unregister(moduleName: Swift.String)
+  final public func has(moduleWithName moduleName: Swift.String) -> Swift.Bool
+  final public func get(moduleHolderForName moduleName: Swift.String) -> ExpoModulesCore.ModuleHolder?
+  final public func get(moduleWithName moduleName: Swift.String) -> (any ExpoModulesCore.AnyModule)?
+  final public func getModule<ModuleProtocol>(implementing protocol: ModuleProtocol.Type) -> ModuleProtocol?
+  final public func getModuleNames() -> [Swift.String]
+  final public func makeIterator() -> Swift.IndexingIterator<[ExpoModulesCore.ModuleHolder]>
+  public typealias Iterator = Swift.IndexingIterator<[ExpoModulesCore.ModuleHolder]>
+  @objc deinit
+}
+@_inheritsConvenienceInitializers final public class JSLoggerModule : ExpoModulesCore.Module {
+  public static let name: Swift.String
+  final public var logger: ExpoModulesCore.Logger?
+  final public func definition() -> ExpoModulesCore.ModuleDefinition
+  required public init(appContext: ExpoModulesCore.AppContext)
+  @objc deinit
+}
+open class BaseModule {
+  weak public var appContext: ExpoModulesCore.AppContext? {
+    get
+  }
+  @available(*, unavailable, message: "Module's initializer cannot be overridden, override the \"didCreate\" lifecycle hook instead.")
+  public init()
+  required public init(appContext: ExpoModulesCore.AppContext)
+  public func sendEvent(_ eventName: Swift.String, _ body: [Swift.String : Any?] = [:])
+  open func didCreate()
+  open func willDestroy()
+  open func didStartListening(event: Swift.String)
+  open func didStopListening(event: Swift.String)
+  @objc deinit
+}
+extension ExpoModulesCore.BaseModule : ExpoModulesCore.EventEmitter {
+  @ExpoModulesJSI.JavaScriptActor public func withEventTarget<R>(_ body: (borrowing ExpoModulesJSI.JavaScriptObject) throws -> R) rethrows -> R?
+}
+public typealias Module = ExpoModulesCore.BaseModule & ExpoModulesCore.AnyModule
+@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers final public class ModuleDefinition : ExpoModulesCore.ObjectDefinition {
+  @ExpoModulesJSI.JavaScriptActor override final public func build(appContext: ExpoModulesCore.AppContext) throws -> ExpoModulesJSI.JavaScriptObject
+  @objc deinit
+}
+public struct EventsDefinition : ExpoModulesCore.AnyDefinition {
+}
+@_functionBuilder public struct ModuleDefinitionBuilder {
+  public static func buildBlock(_ definitions: any ExpoModulesCore.AnyDefinition...) -> ExpoModulesCore.ModuleDefinition
+}
+public protocol ModulesProviderProtocol {
+  typealias ExpoModuleTupleType = (module: any ExpoModulesCore.AnyModule.Type, name: Swift.String?)
+  func getModuleClasses() -> [Self.ExpoModuleTupleType]
+  func getAppDelegateSubscribers() -> [any ExpoModulesCore.ExpoAppDelegateSubscriber.Type]
+  typealias ExpoReactDelegateHandlerTupleType = (packageName: Swift.String, handler: ExpoModulesCore.ExpoReactDelegateHandler.Type)
+  func getReactDelegateHandlers() -> [Self.ExpoReactDelegateHandlerTupleType]
+  func getAppCodeSignEntitlements() -> ExpoModulesCore.AppCodeSignEntitlements
+}
+@_inheritsConvenienceInitializers @objc open class ModulesProvider : ObjectiveC.NSObject, ExpoModulesCore.ModulesProviderProtocol {
+  @objc override required dynamic public init()
+  open func getModuleClasses() -> [ExpoModulesCore.ModulesProvider.ExpoModuleTupleType]
+  open func getAppDelegateSubscribers() -> [any ExpoModulesCore.ExpoAppDelegateSubscriber.Type]
+  open func getReactDelegateHandlers() -> [ExpoModulesCore.ModulesProvider.ExpoReactDelegateHandlerTupleType]
+  open func getAppCodeSignEntitlements() -> ExpoModulesCore.AppCodeSignEntitlements
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers final public class ConstantDefinition<ReturnType> : ExpoModulesCore.AnyDefinition where ReturnType : ExpoModulesCore.AnyArgument {
+  @discardableResult
+  final public func get(_ getter: @escaping () -> ReturnType) -> Self
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class ObjectDefinition : ExpoModulesCore.AnyDefinition {
+  @ExpoModulesJSI.JavaScriptActor public func build(appContext: ExpoModulesCore.AppContext) throws -> ExpoModulesJSI.JavaScriptObject
+  @ExpoModulesJSI.JavaScriptActor public func decorate(object: borrowing ExpoModulesJSI.JavaScriptObject, appContext: ExpoModulesCore.AppContext) throws
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers final public class PropertyDefinition<OwnerType> : ExpoModulesCore.AnyDefinition, @unchecked Swift.Sendable {
+  @discardableResult
+  final public func get<ReturnType>(_ getter: @escaping () -> ReturnType) -> Self
+  @discardableResult
+  final public func get<ReturnType>(_ getter: @escaping (_ this: OwnerType) -> ReturnType) -> Self
+  @discardableResult
+  final public func set<ValueType>(_ setter: @escaping (_ newValue: ValueType) -> Swift.Void) -> Self
+  @discardableResult
+  final public func set<ValueType>(_ setter: @escaping (_ this: OwnerType, _ newValue: ValueType) -> Swift.Void) -> Self
+  @objc deinit
+}
+public struct Promise : ExpoModulesCore.AnyArgument, Swift.Sendable {
+  public typealias ResolveClosure = @Sendable (_ value: ExpoModulesJSI.JavaScriptValue) -> Swift.Void
+  public typealias RejectClosure = @Sendable (ExpoModulesCore.Exception) -> Swift.Void
+  public var resolver: ExpoModulesCore.Promise.ResolveClosure
+  public var rejecter: ExpoModulesCore.Promise.RejectClosure
+  public var legacyResolver: ExpoModulesCore.EXPromiseResolveBlock {
+    get
+  }
+  public var legacyRejecter: ExpoModulesCore.EXPromiseRejectBlock {
+    get
+  }
+  public func resolve(_ value: Any? = nil)
+  public func resolve<T>(_ value: sending T) where T : ExpoModulesCore.AnyArgument
+  public func resolve(_ value: Any, dynamicType: any ExpoModulesCore.AnyDynamicType)
+  public func reject(_ error: any Swift.Error)
+  public func reject(_ error: ExpoModulesCore.Exception)
+  public func reject(_ code: Swift.String, _ description: Swift.String)
+  public func settle<ValueType, ExceptionType>(with result: Swift.Result<ValueType, ExceptionType>) where ExceptionType : ExpoModulesCore.Exception
+}
+public protocol AnyDefinition : ~Copyable {
+}
+@_Concurrency.MainActor @preconcurrency public protocol AnyExpoView : UIKit.UIView {
+  @_Concurrency.MainActor @preconcurrency var appContext: ExpoModulesCore.AppContext? { get }
+  @_Concurrency.MainActor @preconcurrency init(appContext: ExpoModulesCore.AppContext?)
+  @_Concurrency.MainActor @preconcurrency func updateProps(_ rawProps: [Swift.String : Any])
+  @_Concurrency.MainActor @preconcurrency func supportsProp(withName name: Swift.String) -> Swift.Bool
+}
+public protocol AnyModule : AnyObject, ExpoModulesCore.AnyArgument {
+  init(appContext: ExpoModulesCore.AppContext)
+  @ExpoModulesCore.ModuleDefinitionBuilder func definition() -> ExpoModulesCore.ModuleDefinition
+  static var _jsName: Swift.String { get }
+  func _synthesizedDefinition() -> [any ExpoModulesCore.AnyDefinition]
+  @ExpoModulesJSI.JavaScriptActor func _decorateModule(object: borrowing ExpoModulesJSI.JavaScriptObject, in runtime: ExpoModulesJSI.JavaScriptRuntime) throws
+  func didCreate()
+  func willDestroy()
+  func didStartListening(event: Swift.String)
+  func didStopListening(event: Swift.String)
+}
+extension ExpoModulesCore.AnyModule {
+  public static var _jsName: Swift.String {
+    get
+  }
+  public func definition() -> ExpoModulesCore.ModuleDefinition
+  public func _synthesizedDefinition() -> [any ExpoModulesCore.AnyDefinition]
+  @ExpoModulesJSI.JavaScriptActor public func _decorateModule(object: borrowing ExpoModulesJSI.JavaScriptObject, in runtime: ExpoModulesJSI.JavaScriptRuntime) throws
+  public func didCreate()
+  public func willDestroy()
+  public func didStartListening(event: Swift.String)
+  public func didStopListening(event: Swift.String)
+}
+public protocol AnyViewDefinition : Swift.Sendable {
+  var props: [any ExpoModulesCore.AnyViewProp] { get }
+  var name: Swift.String { get }
+  var eventNames: [Swift.String] { get }
+  func createView(appContext: ExpoModulesCore.AppContext) -> ExpoModulesCore.AppleView?
+  func propsDict() -> [Swift.String : any ExpoModulesCore.AnyViewProp]
+  func getSupportedPropNames() -> [Swift.String]
+  func getSupportedEventNames() -> [Swift.String]
+  @_Concurrency.MainActor func callLifecycleMethods(withType type: ExpoModulesCore.ViewLifecycleMethodType, forView view: ExpoModulesCore.AppleView)
+  @ExpoModulesJSI.JavaScriptActor func createReactComponentPrototype(appContext: ExpoModulesCore.AppContext) throws -> ExpoModulesJSI.JavaScriptObject
+}
+public protocol AnyField {
+  func get() -> Any
+}
+@propertyWrapper final public class Field<Type> : @unchecked Swift.Sendable where Type : ExpoModulesCore.AnyArgument {
+  final public var wrappedValue: Type
+  public init(wrappedValue: Type, _ options: ExpoModulesCore.FieldOption...)
+  public init(wrappedValue: Type, _ options: [ExpoModulesCore.FieldOption])
+  public init(wrappedValue: Type = nil) where Type : Swift.ExpressibleByNilLiteral
+  public init(wrappedValue: Type = nil, _ options: ExpoModulesCore.FieldOption...) where Type : Swift.ExpressibleByNilLiteral
+  final public func get() -> Any
+  @objc deinit
+}
+extension ExpoModulesCore.Field where Type == Swift.Int {
+  convenience public init(wrappedValue: Type = 0)
+  convenience public init(wrappedValue: Type = 0, _ options: ExpoModulesCore.FieldOption...)
+}
+extension ExpoModulesCore.Field where Type == Swift.Double {
+  convenience public init(wrappedValue: Type = 0.0)
+  convenience public init(wrappedValue: Type = 0.0, _ options: ExpoModulesCore.FieldOption...)
+}
+extension ExpoModulesCore.Field where Type == Swift.Bool {
+  convenience public init(wrappedValue: Type = false)
+  convenience public init(wrappedValue: Type = false, _ options: ExpoModulesCore.FieldOption...)
+}
+extension ExpoModulesCore.Field where Type == Swift.String {
+  convenience public init(wrappedValue: Type = "")
+  convenience public init(wrappedValue: Type = "", _ options: ExpoModulesCore.FieldOption...)
+}
+extension ExpoModulesCore.Field where Type : Swift.ExpressibleByArrayLiteral {
+  convenience public init(wrappedValue: Type = [])
+  convenience public init(wrappedValue: Type = [], _ options: ExpoModulesCore.FieldOption...)
+}
+extension ExpoModulesCore.Field where Type : Swift.ExpressibleByDictionaryLiteral {
+  convenience public init(wrappedValue: Type = [:])
+  convenience public init(wrappedValue: Type = [:], _ options: ExpoModulesCore.FieldOption...)
+}
+extension ExpoModulesCore.Field where Type : ExpoModulesCore.Record {
+  convenience public init(wrappedValue: Type = Type.init())
+  convenience public init(wrappedValue: Type = Type.init(), _ options: ExpoModulesCore.FieldOption...)
+}
+public struct FieldOption : Swift.Equatable, Swift.Hashable, Swift.ExpressibleByIntegerLiteral, Swift.ExpressibleByStringLiteral, Swift.Sendable {
+  public let rawValue: Swift.Int
+  public let key: Swift.String?
+  public init(_ rawValue: Swift.Int, key: Swift.String? = nil)
+  public static func == (lhs: ExpoModulesCore.FieldOption, rhs: ExpoModulesCore.FieldOption) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public init(integerLiteral value: Swift.Int)
+  public init(stringLiteral value: Swift.String)
+  public typealias ExtendedGraphemeClusterLiteralType = Swift.String
+  public typealias IntegerLiteralType = Swift.Int
+  public typealias StringLiteralType = Swift.String
+  public typealias UnicodeScalarLiteralType = Swift.String
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension ExpoModulesCore.FieldOption {
+  public static func keyed(_ key: Swift.String) -> ExpoModulesCore.FieldOption
+  public static let required: ExpoModulesCore.FieldOption
+}
+public struct FormattedRecord<RecordType> : ExpoModulesCore.Convertible where RecordType : ExpoModulesCore.Record {
+  public static func convertResult(_ result: Any, appContext: ExpoModulesCore.AppContext) throws -> Any
+  public static func convert(from value: Any?, appContext: ExpoModulesCore.AppContext) throws -> ExpoModulesCore.FormattedRecord<RecordType>
+}
+@_hasMissingDesignatedInitializers public class PropertySelector<RecordType> where RecordType : ExpoModulesCore.Record {
+  @_hasMissingDesignatedInitializers public class ActionBuilder<InputType> {
+    public typealias NextBuilder<T> = ExpoModulesCore.PropertySelector<RecordType>.ActionBuilder<T>
+    @discardableResult
+    public func map<ResultType>(_ mapper: @escaping (RecordType, InputType) -> ResultType) -> ExpoModulesCore.PropertySelector<RecordType>.ActionBuilder<InputType>.NextBuilder<ResultType>
+    @discardableResult
+    public func map<ResultType>(_ mapper: @escaping (InputType) -> ResultType) -> ExpoModulesCore.PropertySelector<RecordType>.ActionBuilder<InputType>.NextBuilder<ResultType>
+    @discardableResult
+    public func skip() -> ExpoModulesCore.PropertySelector<RecordType>.ActionBuilder<InputType>.NextBuilder<InputType>
+    @discardableResult
+    public func skip(_ valueSelector: @escaping (RecordType, InputType) -> Swift.Bool) -> ExpoModulesCore.PropertySelector<RecordType>.ActionBuilder<InputType>.NextBuilder<InputType>
+    @discardableResult
+    public func skip(_ valueSelector: @escaping (InputType) -> Swift.Bool) -> ExpoModulesCore.PropertySelector<RecordType>.ActionBuilder<InputType>.NextBuilder<InputType>
+    @objc deinit
+  }
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class Formatter<RecordType> where RecordType : ExpoModulesCore.Record {
+  public func property<PropertyType>(_ name: Swift.String, keyPath: Swift.KeyPath<RecordType, PropertyType>) -> ExpoModulesCore.PropertySelector<RecordType>.ActionBuilder<PropertyType>
+  @objc deinit
+}
+extension ExpoModulesCore.Record {
+  public func format(_ body: (ExpoModulesCore.Formatter<Self>) -> Swift.Void) -> ExpoModulesCore.FormattedRecord<Self>
+  public func format(formatter: ExpoModulesCore.Formatter<Self>) -> ExpoModulesCore.FormattedRecord<Self>
+}
+public protocol Record : ExpoModulesCore.Convertible, ExpoModulesJSI.JavaScriptDecodable, ExpoModulesJSI.JavaScriptEncodable {
+  typealias Dict = [Swift.String : Any]
+  nonisolated init()
+  init(from: Self.Dict, appContext: ExpoModulesCore.AppContext) throws
+  @ExpoModulesJSI.JavaScriptActor static func from(object: borrowing ExpoModulesJSI.JavaScriptObject, appContext: ExpoModulesCore.AppContext) throws -> Self
+  static func from(dictionary: Self.Dict, appContext: ExpoModulesCore.AppContext) throws -> Self
+  func toDictionary(appContext: ExpoModulesCore.AppContext?) -> Self.Dict
+  @ExpoModulesJSI.JavaScriptActor func toObject(appContext: ExpoModulesCore.AppContext) throws -> ExpoModulesJSI.JavaScriptObject
+}
+@_inheritsConvenienceInitializers final public class RecordPropertyRequiredException : ExpoModulesCore.GenericException<Swift.String>, @unchecked Swift.Sendable {
+  override final public var reason: Swift.String {
+    get
+  }
+  override public init(_ param: consuming Swift.String, file: Swift.String = #fileID, line: Swift.UInt = #line, function: Swift.String = #function)
+  @objc deinit
+}
+extension ExpoModulesCore.Record {
+  public static func convert(from value: Any?, appContext: ExpoModulesCore.AppContext) throws -> Self
+  public init(from dict: Self.Dict, appContext: ExpoModulesCore.AppContext) throws
+  @ExpoModulesJSI.JavaScriptActor public static func from(object: borrowing ExpoModulesJSI.JavaScriptObject, appContext: ExpoModulesCore.AppContext) throws -> Self
+  public static func from(dictionary: Self.Dict, appContext: ExpoModulesCore.AppContext) throws -> Self
+  public func update(withDict dict: Self.Dict, appContext: ExpoModulesCore.AppContext) throws
+  @ExpoModulesJSI.JavaScriptActor public func update(withObject object: borrowing ExpoModulesJSI.JavaScriptObject, appContext: ExpoModulesCore.AppContext) throws
+  public func toDictionary(appContext: ExpoModulesCore.AppContext? = nil) -> Self.Dict
+  public static func convertResult(_ result: Any, appContext: ExpoModulesCore.AppContext) throws -> Any
+  @ExpoModulesJSI.JavaScriptActor public func toObject(appContext: ExpoModulesCore.AppContext) throws -> ExpoModulesJSI.JavaScriptObject
+}
+public protocol AnySharedObject : AnyObject, ExpoModulesCore.AnyArgument {
+  var sharedObjectId: ExpoModulesCore.SharedObjectId { get }
+}
+extension ExpoModulesCore.AnySharedObject {
+  public static func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+}
+open class SharedObject : ExpoModulesCore.AnySharedObject {
+  public var sharedObjectId: Swift.Int {
+    get
+  }
+  weak public var appContext: ExpoModulesCore.AppContext? {
+    get
+  }
+  public init()
+  open func sharedObjectWillRelease()
+  open func sharedObjectDidRelease()
+  open func getAdditionalMemoryPressure() -> Swift.Int
+  public func getJavaScriptValue() -> ExpoModulesJSI.JavaScriptValue?
+  public func getJavaScriptObject() -> ExpoModulesJSI.JavaScriptObject?
+  @available(*, deprecated, renamed: "emit(event:payload:)", message: "Use `emit(event:payload:)` and pass a single value (typically a dictionary). Multi-argument event emission is no longer supported.")
+  public func emit<P>(event: Swift.String, arguments: sending P) where P : ExpoModulesCore.AnyArgument
+  @ExpoModulesJSI.JavaScriptActor open class func _decorateSharedObject(prototype: borrowing ExpoModulesJSI.JavaScriptObject, in runtime: ExpoModulesJSI.JavaScriptRuntime) throws
+  @ExpoModulesJSI.JavaScriptActor open class func _constructSharedObject(this: ExpoModulesJSI.JavaScriptValue, arguments: borrowing ExpoModulesJSI.JavaScriptValuesBuffer, in runtime: ExpoModulesJSI.JavaScriptRuntime) throws -> ExpoModulesCore.SharedObject?
+  @objc deinit
+}
+extension ExpoModulesCore.SharedObject : ExpoModulesCore.EventEmitter {
+  @ExpoModulesJSI.JavaScriptActor public func withEventTarget<R>(_ body: (borrowing ExpoModulesJSI.JavaScriptObject) throws -> R) rethrows -> R?
+}
+extension ExpoModulesCore.SharedObject {
+  @ExpoModulesJSI.JavaScriptActor public static func native(from jsObject: borrowing ExpoModulesJSI.JavaScriptObject) throws -> ExpoModulesCore.SharedObject
+  @ExpoModulesJSI.JavaScriptActor @inlinable public static func native<SharedObjectType>(from jsObject: borrowing ExpoModulesJSI.JavaScriptObject, as type: SharedObjectType.Type) throws -> SharedObjectType where SharedObjectType : ExpoModulesCore.SharedObject {
+    let native = try native(from: jsObject)
+    guard let typed = native as? SharedObjectType else {
+      throw TypeMismatchException((expected: SharedObjectType.self, actual: Swift.type(of: native)))
+    }
+    return typed
+  }
+  @_inheritsConvenienceInitializers @usableFromInline
+  final internal class TypeMismatchException : ExpoModulesCore.GenericException<(expected: any Any.Type, actual: any Any.Type)>, @unchecked Swift.Sendable {
+    @usableFromInline
+    override internal init(_ param: consuming (expected: any Any.Type, actual: any Any.Type), file: Swift.String = #fileID, line: Swift.UInt = #line, function: Swift.String = #function)
+    @objc @usableFromInline
+    deinit
+  }
+}
+public typealias SharedObjectId = Swift.Int
+@_hasMissingDesignatedInitializers final public class SharedObjectRegistry : Swift.Sendable {
+  @objc deinit
+}
+public protocol AnySharedRef {
+  var nativeRefType: Swift.String { get }
+}
+open class SharedRef<RefType> : ExpoModulesCore.SharedObject, ExpoModulesCore.AnySharedRef {
+  public var ref: RefType
+  open var nativeRefType: Swift.String {
+    get
+  }
+  @available(*, deprecated, renamed: "ref", message: "it has been renamed to 'ref' in Expo SDK 52")
+  public var pointer: RefType {
+    get
+  }
+  public init(_ ref: RefType)
+  @objc deinit
+}
+@_inheritsConvenienceInitializers final public class Int8Array : ExpoModulesCore.GenericTypedArray<Swift.Int8> {
+  @ExpoModulesJSI.JavaScriptActor @inlinable override final public class func decode(_ value: borrowing ExpoModulesJSI.JavaScriptValue, in runtime: borrowing ExpoModulesJSI.JavaScriptRuntime) throws -> ExpoModulesCore.Int8Array {
+    return try decode(value, expectingKind: .Int8Array)
+  }
+  @usableFromInline
+  required internal init(_ jsTypedArray: consuming ExpoModulesJSI.JavaScriptTypedArray)
+  @objc deinit
+}
+@_inheritsConvenienceInitializers final public class Int16Array : ExpoModulesCore.GenericTypedArray<Swift.Int16> {
+  @ExpoModulesJSI.JavaScriptActor @inlinable override final public class func decode(_ value: borrowing ExpoModulesJSI.JavaScriptValue, in runtime: borrowing ExpoModulesJSI.JavaScriptRuntime) throws -> ExpoModulesCore.Int16Array {
+    return try decode(value, expectingKind: .Int16Array)
+  }
+  @usableFromInline
+  required internal init(_ jsTypedArray: consuming ExpoModulesJSI.JavaScriptTypedArray)
+  @objc deinit
+}
+@_inheritsConvenienceInitializers final public class Int32Array : ExpoModulesCore.GenericTypedArray<Swift.Int32> {
+  @ExpoModulesJSI.JavaScriptActor @inlinable override final public class func decode(_ value: borrowing ExpoModulesJSI.JavaScriptValue, in runtime: borrowing ExpoModulesJSI.JavaScriptRuntime) throws -> ExpoModulesCore.Int32Array {
+    return try decode(value, expectingKind: .Int32Array)
+  }
+  @usableFromInline
+  required internal init(_ jsTypedArray: consuming ExpoModulesJSI.JavaScriptTypedArray)
+  @objc deinit
+}
+@_inheritsConvenienceInitializers final public class Uint8Array : ExpoModulesCore.GenericTypedArray<Swift.UInt8> {
+  @ExpoModulesJSI.JavaScriptActor @inlinable override final public class func decode(_ value: borrowing ExpoModulesJSI.JavaScriptValue, in runtime: borrowing ExpoModulesJSI.JavaScriptRuntime) throws -> ExpoModulesCore.Uint8Array {
+    return try decode(value, expectingKind: .Uint8Array)
+  }
+  @usableFromInline
+  required internal init(_ jsTypedArray: consuming ExpoModulesJSI.JavaScriptTypedArray)
+  @objc deinit
+}
+@_inheritsConvenienceInitializers final public class Uint8ClampedArray : ExpoModulesCore.GenericTypedArray<Swift.UInt8> {
+  @ExpoModulesJSI.JavaScriptActor @inlinable override final public class func decode(_ value: borrowing ExpoModulesJSI.JavaScriptValue, in runtime: borrowing ExpoModulesJSI.JavaScriptRuntime) throws -> ExpoModulesCore.Uint8ClampedArray {
+    return try decode(value, expectingKind: .Uint8ClampedArray)
+  }
+  @usableFromInline
+  required internal init(_ jsTypedArray: consuming ExpoModulesJSI.JavaScriptTypedArray)
+  @objc deinit
+}
+@_inheritsConvenienceInitializers final public class Uint16Array : ExpoModulesCore.GenericTypedArray<Swift.UInt16> {
+  @ExpoModulesJSI.JavaScriptActor @inlinable override final public class func decode(_ value: borrowing ExpoModulesJSI.JavaScriptValue, in runtime: borrowing ExpoModulesJSI.JavaScriptRuntime) throws -> ExpoModulesCore.Uint16Array {
+    return try decode(value, expectingKind: .Uint16Array)
+  }
+  @usableFromInline
+  required internal init(_ jsTypedArray: consuming ExpoModulesJSI.JavaScriptTypedArray)
+  @objc deinit
+}
+@_inheritsConvenienceInitializers final public class Uint32Array : ExpoModulesCore.GenericTypedArray<Swift.UInt32> {
+  @ExpoModulesJSI.JavaScriptActor @inlinable override final public class func decode(_ value: borrowing ExpoModulesJSI.JavaScriptValue, in runtime: borrowing ExpoModulesJSI.JavaScriptRuntime) throws -> ExpoModulesCore.Uint32Array {
+    return try decode(value, expectingKind: .Uint32Array)
+  }
+  @usableFromInline
+  required internal init(_ jsTypedArray: consuming ExpoModulesJSI.JavaScriptTypedArray)
+  @objc deinit
+}
+@_inheritsConvenienceInitializers final public class Float32Array : ExpoModulesCore.GenericTypedArray<Swift.Float32> {
+  @ExpoModulesJSI.JavaScriptActor @inlinable override final public class func decode(_ value: borrowing ExpoModulesJSI.JavaScriptValue, in runtime: borrowing ExpoModulesJSI.JavaScriptRuntime) throws -> ExpoModulesCore.Float32Array {
+    return try decode(value, expectingKind: .Float32Array)
+  }
+  @usableFromInline
+  required internal init(_ jsTypedArray: consuming ExpoModulesJSI.JavaScriptTypedArray)
+  @objc deinit
+}
+@_inheritsConvenienceInitializers final public class Float64Array : ExpoModulesCore.GenericTypedArray<Swift.Float64> {
+  @ExpoModulesJSI.JavaScriptActor @inlinable override final public class func decode(_ value: borrowing ExpoModulesJSI.JavaScriptValue, in runtime: borrowing ExpoModulesJSI.JavaScriptRuntime) throws -> ExpoModulesCore.Float64Array {
+    return try decode(value, expectingKind: .Float64Array)
+  }
+  @usableFromInline
+  required internal init(_ jsTypedArray: consuming ExpoModulesJSI.JavaScriptTypedArray)
+  @objc deinit
+}
+@_inheritsConvenienceInitializers final public class BigInt64Array : ExpoModulesCore.GenericTypedArray<Swift.Int64> {
+  @ExpoModulesJSI.JavaScriptActor @inlinable override final public class func decode(_ value: borrowing ExpoModulesJSI.JavaScriptValue, in runtime: borrowing ExpoModulesJSI.JavaScriptRuntime) throws -> ExpoModulesCore.BigInt64Array {
+    return try decode(value, expectingKind: .BigInt64Array)
+  }
+  @usableFromInline
+  required internal init(_ jsTypedArray: consuming ExpoModulesJSI.JavaScriptTypedArray)
+  @objc deinit
+}
+@_inheritsConvenienceInitializers final public class BigUint64Array : ExpoModulesCore.GenericTypedArray<Swift.UInt64> {
+  @ExpoModulesJSI.JavaScriptActor @inlinable override final public class func decode(_ value: borrowing ExpoModulesJSI.JavaScriptValue, in runtime: borrowing ExpoModulesJSI.JavaScriptRuntime) throws -> ExpoModulesCore.BigUint64Array {
+    return try decode(value, expectingKind: .BigUint64Array)
+  }
+  @usableFromInline
+  required internal init(_ jsTypedArray: consuming ExpoModulesJSI.JavaScriptTypedArray)
+  @objc deinit
+}
+@_inheritsConvenienceInitializers public class GenericTypedArray<ContentType> : ExpoModulesCore.TypedArray where ContentType : Swift.Numeric {
+  public subscript(index: Swift.Int) -> ContentType {
+    get
+    set
+  }
+  @usableFromInline
+  required internal init(_ jsTypedArray: consuming ExpoModulesJSI.JavaScriptTypedArray)
+  @objc deinit
+}
+public class TypedArray {
+  @usableFromInline
+  internal static func create(from jsTypedArray: consuming ExpoModulesJSI.JavaScriptTypedArray) -> ExpoModulesCore.TypedArray
+  @usableFromInline
+  final internal let jsTypedArray: ExpoModulesJSI.JavaScriptTypedArray
+  public var byteLength: Swift.Int {
+    get
+  }
+  public var byteOffset: Swift.Int {
+    get
+  }
+  public var length: Swift.Int {
+    get
+    set
+  }
+  public var rawPointer: Swift.UnsafeMutableRawPointer {
+    get
+  }
+  public var kind: ExpoModulesJSI.JavaScriptTypedArray.Kind {
+    get
+  }
+  @usableFromInline
+  required internal init(_ jsTypedArray: consuming ExpoModulesJSI.JavaScriptTypedArray)
+  @ExpoModulesJSI.JavaScriptActor @inlinable public class func decode(_ value: borrowing ExpoModulesJSI.JavaScriptValue, in runtime: borrowing ExpoModulesJSI.JavaScriptRuntime) throws -> Self {
+    guard value.isTypedArray() else {
+      throw NotATypedArrayException()
+    }
+     
+     
+     
+     
+    let typedArray = create(from: value.getTypedArray())
+    guard let typed = typedArray as? Self else {
+      throw KindMismatchException(expected: nil, received: typedArray.kind)
+    }
+    return typed
+  }
+  @ExpoModulesJSI.JavaScriptActor @inlinable internal static func decode(_ value: borrowing ExpoModulesJSI.JavaScriptValue, expectingKind kind: ExpoModulesJSI.JavaScriptTypedArray.Kind) throws -> Self {
+    guard value.isTypedArray() else {
+      throw NotATypedArrayException()
+    }
+    let jsTypedArray = value.getTypedArray()
+    guard jsTypedArray.kind == kind else {
+      throw KindMismatchException(expected: kind, received: jsTypedArray.kind)
+    }
+    return Self(jsTypedArray)
+  }
+  @objc deinit
+}
+extension ExpoModulesCore.TypedArray {
+  public struct NotATypedArrayException : ExpoModulesJSI.JavaScriptThrowable {
+    public init()
+    public var code: Swift.String {
+      get
+    }
+    public var message: Swift.String {
+      get
+    }
+  }
+  public struct KindMismatchException : ExpoModulesJSI.JavaScriptThrowable {
+    public let expected: ExpoModulesJSI.JavaScriptTypedArray.Kind?
+    public let received: ExpoModulesJSI.JavaScriptTypedArray.Kind
+    public init(expected: ExpoModulesJSI.JavaScriptTypedArray.Kind?, received: ExpoModulesJSI.JavaScriptTypedArray.Kind)
+    public var code: Swift.String {
+      get
+    }
+    public var message: Swift.String {
+      get
+    }
+  }
+}
+public protocol AnyViewProp : ExpoModulesCore.AnyViewDefinitionElement {
+  var name: Swift.String { get }
+  func set(value: Any, onView: UIKit.UIView, appContext: ExpoModulesCore.AppContext) throws
+}
+public enum AppleView : @unchecked Swift.Sendable {
+  case uikit(UIKit.UIView)
+  case swiftui(any ExpoModulesCore.ExpoSwiftUIView)
+}
+public enum AppleViewConversionError : Swift.Error {
+  case cannotConvertSwiftUIViewToUIView
+  case cannotConvertUIKitViewToSwiftUIView
+  public static func == (a: ExpoModulesCore.AppleViewConversionError, b: ExpoModulesCore.AppleViewConversionError) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers final public class ConcreteViewProp<ViewType, PropType> : ExpoModulesCore.AnyViewProp, @unchecked Swift.Sendable where ViewType : UIKit.UIView, PropType : ExpoModulesCore.AnyArgument {
+  public typealias SetterType = @_Concurrency.MainActor @Sendable (ViewType, PropType) -> Swift.Void
+  final public let name: Swift.String
+  final public func set(value: Any, onView view: UIKit.UIView, appContext: ExpoModulesCore.AppContext) throws
+  @objc deinit
+}
+public typealias ExpoView = ExpoModulesCore.ExpoFabricView
+extension ExpoModulesCore.ExpoSwiftUI {
+  @_Concurrency.MainActor @preconcurrency public protocol AnyChild : SwiftUICore.View {
+    associatedtype ChildViewType : SwiftUICore.View
+    @_Concurrency.MainActor @preconcurrency var childView: Self.ChildViewType { get }
+    @_Concurrency.MainActor @preconcurrency var id: Swift.ObjectIdentifier { get }
+    @_Concurrency.MainActor @preconcurrency var uiView: UIKit.UIView? { get }
+  }
+}
+extension ExpoModulesCore.ExpoSwiftUI.AnyChild where Self == Self.ChildViewType {
+  @_Concurrency.MainActor @preconcurrency public var childView: Self {
+    get
+  }
+  @_Concurrency.MainActor @preconcurrency public var id: Swift.ObjectIdentifier {
+    get
+  }
+  @_Concurrency.MainActor @preconcurrency public var uiView: UIKit.UIView? {
+    get
+  }
+}
+extension ExpoModulesCore.ExpoSwiftUI {
+  public struct AxisSet : Swift.OptionSet, Swift.Sendable {
+    public init(rawValue: Swift.Int)
+    public let rawValue: Swift.Int
+    public static let horizontal: ExpoModulesCore.ExpoSwiftUI.AxisSet
+    public static let vertical: ExpoModulesCore.ExpoSwiftUI.AxisSet
+    public static let both: ExpoModulesCore.ExpoSwiftUI.AxisSet
+    public typealias ArrayLiteralElement = ExpoModulesCore.ExpoSwiftUI.AxisSet
+    public typealias Element = ExpoModulesCore.ExpoSwiftUI.AxisSet
+    public typealias RawValue = Swift.Int
+  }
+  @_Concurrency.MainActor @preconcurrency public struct AutoSizingStack<Content> : SwiftUICore.View where Content : SwiftUICore.View {
+    @_Concurrency.MainActor @preconcurrency public init(shadowNodeProxy: ExpoModulesCore.ExpoSwiftUI.ShadowNodeProxy, axis: ExpoModulesCore.ExpoSwiftUI.AxisSet = .both, @SwiftUICore.ViewBuilder _ content: () -> Content)
+    @_Concurrency.MainActor @preconcurrency public var body: some SwiftUICore.View {
+      get
+    }
+    public typealias Body = @_opaqueReturnTypeOf("$s15ExpoModulesCore0A7SwiftUIV15AutoSizingStackV4bodyQrvp", 0) __<Content>
+  }
+}
+extension SwiftUICore.Color : ExpoModulesCore.Convertible {
+  public static func convert(from value: Any?) throws -> SwiftUICore.Color
+  public static func convert(from value: Any?, appContext: ExpoModulesCore.AppContext) throws -> SwiftUICore.Color
+}
+extension SwiftUICore.UnitPoint : ExpoModulesCore.Convertible {
+  public static func convert(from value: Any?, appContext: ExpoModulesCore.AppContext) throws -> SwiftUICore.UnitPoint
+}
+public struct ExpoSwiftUI {
+}
+extension ExpoModulesCore.ExpoSwiftUI {
+  public protocol FocusableView {
+    func forceResignFirstResponder()
+  }
+  public protocol ViewWrapper {
+    func getWrappedView() -> Any
+  }
+}
+extension SwiftUICore.Color {
+  public static let expoSystemBackground: SwiftUICore.Color
+  public static let expoSystemGroupedBackground: SwiftUICore.Color
+  public static let expoSecondaryLabel: SwiftUICore.Color
+  public static let expoSecondarySystemBackground: SwiftUICore.Color
+  public static let expoSecondarySystemGroupedBackground: SwiftUICore.Color
+  public static let expoSystemGray4: SwiftUICore.Color
+  public static let expoSystemGray5: SwiftUICore.Color
+  public static let expoSystemGray6: SwiftUICore.Color
+}
+extension ExpoModulesCore.ExpoSwiftUI {
+  public static func isHostingView(_ view: any ExpoModulesCore.ExpoSwiftUI.AnyChild) -> Swift.Bool
+  public static func isHostingViewOfType<Props, ViewType>(view: any ExpoModulesCore.ExpoSwiftUI.AnyChild, viewType: ViewType.Type) -> Swift.Bool where Props == ViewType.Props, ViewType : ExpoModulesCore.ExpoSwiftUIView
+}
+extension ExpoModulesCore.ExpoSwiftUI {
+  public protocol WithHostingView {
+  }
+  @_hasMissingDesignatedInitializers @_Concurrency.MainActor @preconcurrency final public class HostingView<Props, ContentView> : ExpoModulesCore.ExpoView where Props == ContentView.Props, ContentView : ExpoModulesCore.ExpoSwiftUIView {
+    @available(*, unavailable)
+    @_Concurrency.MainActor @preconcurrency required public init(appContext: ExpoModulesCore.AppContext? = nil)
+    @_Concurrency.MainActor @preconcurrency @objc override final public func updateProps(_ rawProps: [Swift.String : Any])
+    @_Concurrency.MainActor @preconcurrency final public func getContentView() -> any ExpoModulesCore.ExpoSwiftUIView
+    @_Concurrency.MainActor @preconcurrency final public func getProps() -> ExpoModulesCore.ExpoSwiftUI.ViewProps
+    @_Concurrency.MainActor @preconcurrency @objc override final public func supportsProp(withName name: Swift.String) -> Swift.Bool
+    @_Concurrency.MainActor @preconcurrency @objc override final public func layoutSubviews()
+    @_Concurrency.MainActor @preconcurrency @objc override final public func mountChildComponentView(_ childComponentView: UIKit.UIView, index: Swift.Int)
+    @_Concurrency.MainActor @preconcurrency @objc override final public func unmountChildComponentView(_ childComponentView: UIKit.UIView, index: Swift.Int)
+    @_Concurrency.MainActor @preconcurrency @objc override final public func didMoveToWindow()
+    @objc deinit
+  }
+}
+extension ExpoModulesCore.ExpoSwiftUI {
+  open class ShadowNodeProxy : Foundation.ObservableObject, ExpoModulesCore.Record, @unchecked Swift.Sendable {
+    required nonisolated public init()
+    public var setViewSize: ((CoreFoundation.CGSize) -> Swift.Void)?
+    public var setStyleSize: ((Foundation.NSNumber?, Foundation.NSNumber?) -> Swift.Void)?
+    public var setContentOrigin: ((CoreFoundation.CGPoint) -> Swift.Void)?
+    public var clearContentOrigin: (() -> Swift.Void)?
+    public typealias ObjectWillChangePublisher = Combine.ObservableObjectPublisher
+    @objc deinit
+  }
+}
+@_Concurrency.MainActor @preconcurrency public protocol ExpoSwiftUIView<Props> : ExpoModulesCore.AnyArgument, ExpoModulesCore.ExpoSwiftUI.AnyChild {
+  associatedtype Props : ExpoModulesCore.ExpoSwiftUI.ViewProps
+  @_Concurrency.MainActor @preconcurrency var props: Self.Props { get }
+  @_Concurrency.MainActor @preconcurrency init(props: Self.Props)
+}
+extension ExpoModulesCore.ExpoSwiftUIView {
+  @_Concurrency.MainActor @preconcurrency public func Children() -> SwiftUICore.ForEach<[any ExpoModulesCore.ExpoSwiftUI.AnyChild], Swift.ObjectIdentifier, SwiftUICore.AnyView>
+  @_Concurrency.MainActor @preconcurrency public func UnwrappedChildren<T>(children: [(any ExpoModulesCore.ExpoSwiftUI.AnyChild)?]? = nil, @SwiftUICore.ViewBuilder transform: @escaping (_ child: SwiftUICore.AnyView, _ isHostingView: Swift.Bool) -> T = { child, _ in  child }) -> SwiftUICore.ForEach<Swift.Range<Swift.Int>, Swift.Int, SwiftUICore.AnyView> where T : SwiftUICore.View
+  nonisolated public static func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+  @_Concurrency.MainActor @preconcurrency public var appContext: ExpoModulesCore.AppContext? {
+    get
+  }
+}
+extension ExpoModulesCore.ExpoSwiftUI {
+  public typealias View = ExpoModulesCore.ExpoSwiftUIView
+  public typealias ViewDefinition = ExpoModulesCore.SwiftUIViewDefinition
+}
+@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers final public class SwiftUIViewDefinition<Props, ViewType> : ExpoModulesCore.ViewDefinition<ViewType>, @unchecked Swift.Sendable where Props == ViewType.Props, ViewType : ExpoModulesCore.ExpoSwiftUIView {
+  convenience public init(_ viewType: ViewType.Type, name: Swift.String, elements: [any ExpoModulesCore.AnyViewDefinitionElement])
+  override final public func createView(appContext: ExpoModulesCore.AppContext) -> ExpoModulesCore.AppleView?
+  override final public func getSupportedPropNames() -> [Swift.String]
+  override final public func getSupportedEventNames() -> [Swift.String]
+  @objc deinit
+}
+extension ExpoModulesCore.ExpoSwiftUI {
+  @_functionBuilder public struct ViewDefinitionBuilder<ViewType> where ViewType : ExpoModulesCore.ExpoSwiftUIView {
+    public static func buildBlock(_ elements: any ExpoModulesCore.AnyViewDefinitionElement...) -> [any ExpoModulesCore.AnyViewDefinitionElement]
+    public static func buildExpression(_ element: ExpoModulesCore.ViewNameDefinition) -> any ExpoModulesCore.AnyViewDefinitionElement
+    public static func buildExpression<ElementType>(_ element: ElementType) -> any ExpoModulesCore.AnyViewDefinitionElement where ElementType : ExpoModulesCore.ViewDefinitionFunctionElement
+    public static func buildExpression<ElementType>(_ element: ElementType) -> any ExpoModulesCore.AnyViewDefinitionElement where ViewType == ElementType.ViewType, ElementType : ExpoModulesCore.ViewDefinitionFunctionElement
+  }
+}
+@_inheritsConvenienceInitializers public class ExpoSwiftUIDefaultProps : ExpoModulesCore.ExpoSwiftUI.ViewProps {
+  required public init()
+  required public init(rawProps: [Swift.String : Any], context: ExpoModulesCore.AppContext) throws
+  @objc deinit
+}
+extension ExpoModulesCore.ExpoSwiftUIView {
+  @_Concurrency.MainActor @preconcurrency public var props: ExpoModulesCore.ExpoSwiftUIDefaultProps {
+    get
+  }
+}
+extension ExpoModulesCore.ExpoSwiftUI {
+  public enum IgnoreSafeArea : Swift.String, ExpoModulesCore.Enumerable {
+    case all
+    case container
+    case keyboard
+    public init?(rawValue: Swift.String)
+    public typealias AllCases = [ExpoModulesCore.ExpoSwiftUI.IgnoreSafeArea]
+    public typealias RawValue = Swift.String
+    nonisolated public static var allCases: [ExpoModulesCore.ExpoSwiftUI.IgnoreSafeArea] {
+      get
+    }
+    public var rawValue: Swift.String {
+      get
+    }
+  }
+  public protocol SafeAreaControllable {
+    var ignoreSafeArea: ExpoModulesCore.ExpoSwiftUI.IgnoreSafeArea? { get set }
+  }
+  open class ViewProps : Foundation.ObservableObject, ExpoModulesCore.Record {
+    required nonisolated public init()
+    required public init(rawProps: [Swift.String : Any], context: ExpoModulesCore.AppContext) throws
+    public var children: [any ExpoModulesCore.ExpoSwiftUI.AnyChild]?
+    public var shadowNodeProxy: ExpoModulesCore.ExpoSwiftUI.ShadowNodeProxy {
+      get
+    }
+    weak public var appContext: ExpoModulesCore.AppContext? {
+      get
+    }
+    final public let globalEventDispatcher: ExpoModulesCore.EventDispatcher
+    public typealias ObjectWillChangePublisher = Combine.ObservableObjectPublisher
+    @objc deinit
+  }
+}
+extension SwiftUICore.View {
+  @_Concurrency.MainActor @preconcurrency public func `if`<Content>(_ condition: @autoclosure () -> Swift.Bool, _ transform: (Self) -> Content) -> some SwiftUICore.View where Content : SwiftUICore.View
+  
+  @_Concurrency.MainActor @preconcurrency public func `let`<Value, Content>(_ value: Value?, _ transform: (Self, Value) -> Content) -> some SwiftUICore.View where Content : SwiftUICore.View
+  
+}
+@objc @_Concurrency.MainActor @preconcurrency public class UnimplementedExpoView : ExpoModulesCore.ExpoView {
+  @_Concurrency.MainActor @preconcurrency required public init(appContext: ExpoModulesCore.AppContext? = nil)
+  @_Concurrency.MainActor @preconcurrency convenience public init(appContext: ExpoModulesCore.AppContext, text: Swift.String)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public var bounds: CoreFoundation.CGRect {
+    @objc get
+    @objc set
+  }
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class ViewDefinition<ViewType> : ExpoModulesCore.ObjectDefinition, ExpoModulesCore.AnyViewDefinition, @unchecked Swift.Sendable {
+  final public let props: [any ExpoModulesCore.AnyViewProp]
+  public var name: Swift.String
+  final public let eventNames: [Swift.String]
+  public func createView(appContext: ExpoModulesCore.AppContext) -> ExpoModulesCore.AppleView?
+  public func propsDict() -> [Swift.String : any ExpoModulesCore.AnyViewProp]
+  public func getSupportedPropNames() -> [Swift.String]
+  public func getSupportedEventNames() -> [Swift.String]
+  @_Concurrency.MainActor public func callLifecycleMethods(withType type: ExpoModulesCore.ViewLifecycleMethodType, forView view: ExpoModulesCore.AppleView)
+  @ExpoModulesJSI.JavaScriptActor public func createReactComponentPrototype(appContext: ExpoModulesCore.AppContext) throws -> ExpoModulesJSI.JavaScriptObject
+  @objc deinit
+}
+public protocol AnyViewDefinitionElement : ExpoModulesCore.AnyDefinition {
+}
+extension ExpoModulesCore.ConcreteViewProp : ExpoModulesCore.AnyViewDefinitionElement {
+}
+extension ExpoModulesCore.EventsDefinition : ExpoModulesCore.AnyViewDefinitionElement {
+}
+extension ExpoModulesCore.ViewLifecycleMethod : ExpoModulesCore.AnyViewDefinitionElement {
+}
+public protocol ViewDefinitionFunctionElement : ExpoModulesCore.AnyViewDefinitionElement {
+  associatedtype ViewType
+}
+extension ExpoModulesCore.AsyncFunctionDefinition : ExpoModulesCore.ViewDefinitionFunctionElement {
+  public typealias ViewType = FirstArgType
+}
+extension ExpoModulesCore.ConcurrentFunctionDefinition : ExpoModulesCore.ViewDefinitionFunctionElement {
+  public typealias ViewType = FirstArgType
+}
+extension UIKit.UIView : @_Concurrency.MainActor ExpoModulesCore.AnyArgument {
+  nonisolated public static func getDynamicType() -> any ExpoModulesCore.AnyDynamicType
+}
+public struct ViewNameDefinition : ExpoModulesCore.AnyViewDefinitionElement {
+}
+public enum ViewLifecycleMethodType : Swift.Sendable {
+  case didUpdateProps
+  public static func == (a: ExpoModulesCore.ViewLifecycleMethodType, b: ExpoModulesCore.ViewLifecycleMethodType) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers final public class ViewLifecycleMethod<ViewType> {
+  public typealias Closure = @_Concurrency.MainActor @Sendable (ViewType) -> Swift.Void
+  @objc deinit
+}
+@_inheritsConvenienceInitializers @objc(EXViewModuleWrapper) final public class ViewModuleWrapper : ObjectiveC.NSObject {
+  public init(_ moduleHolder: ExpoModulesCore.ModuleHolder, _ viewDefinition: any ExpoModulesCore.AnyViewDefinition, isDefaultModuleView: Swift.Bool = false)
+  @objc override dynamic public init()
+  @objc public init(dummy: Any?)
+  @objc final public func name() -> Swift.String
+  @objc final public func moduleName() -> Swift.String
+  @objc final public func viewName() -> Swift.String
+  @objc final public class func moduleName() -> Swift.String
+  @objc final public class func requiresMainQueueSetup() -> Swift.Bool
+  @objc final public func view() -> UIKit.UIView!
+  public static let viewManagerAdapterPrefix: Swift.String
+  @objc public static func createViewModuleWrapperClass(module: ExpoModulesCore.ViewModuleWrapper, appId: Swift.String?) -> ExpoModulesCore.ViewModuleWrapper.Type?
+  @objc deinit
+}
+@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @objc(EXRequestCdpInterceptor) final public class ExpoRequestCdpInterceptor : ObjectiveC.NSObject, @unchecked Swift.Sendable {
+  final public var dispatchQueue: Dispatch.DispatchQueue
+  @objc public static let shared: ExpoModulesCore.ExpoRequestCdpInterceptor
+  @objc final public func setDelegate(_ newValue: (any ExpoModulesCore.ExpoRequestCdpInterceptorDelegate)?)
+  @objc deinit
+}
+@objc(EXRequestCdpInterceptorDelegate) public protocol ExpoRequestCdpInterceptorDelegate : Swift.Sendable {
+  @objc func dispatch(_ event: Swift.String)
+}
+@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @objc(EXRequestInterceptorProtocol) final public class ExpoRequestInterceptorProtocol : Foundation.URLProtocol, Foundation.URLSessionDataDelegate, @unchecked Swift.Sendable {
+  @objc override final public class func canInit(with request: Foundation.URLRequest) -> Swift.Bool
+  @objc override final public class func canonicalRequest(for request: Foundation.URLRequest) -> Foundation.URLRequest
+  @objc override final public func startLoading()
+  @objc override final public func stopLoading()
+  @objc final public func urlSession(_: Foundation.URLSession, dataTask _: Foundation.URLSessionDataTask, didReceive data: Foundation.Data)
+  @objc final public func urlSession(_: Foundation.URLSession, task: Foundation.URLSessionTask, didCompleteWithError error: (any Swift.Error)?)
+  @objc final public func urlSession(_: Foundation.URLSession, dataTask: Foundation.URLSessionDataTask, didReceive response: Foundation.URLResponse, completionHandler: @escaping (Foundation.URLSession.ResponseDisposition) -> Swift.Void)
+  @objc final public func urlSession(_: Foundation.URLSession, task: Foundation.URLSessionTask, willPerformHTTPRedirection response: Foundation.HTTPURLResponse, newRequest request: Foundation.URLRequest, completionHandler: @escaping (Foundation.URLRequest?) -> Swift.Void)
+  @objc final public func urlSession(_ session: Foundation.URLSession, task: Foundation.URLSessionTask, didReceive challenge: Foundation.URLAuthenticationChallenge, completionHandler: @escaping (Foundation.URLSession.AuthChallengeDisposition, Foundation.URLCredential?) -> Swift.Void)
+  @objc final public func urlSession(_ session: Foundation.URLSession, task: Foundation.URLSessionTask, didSendBodyData bytesSent: Swift.Int64, totalBytesSent: Swift.Int64, totalBytesExpectedToSend: Swift.Int64)
+  @objc deinit
+}
+public class ModuleRegistryEncoder : Swift.Encodable {
+  public init(_ registry: ExpoModulesCore.ModuleRegistry)
+  public func encode(to encoder: any Swift.Encoder) throws
+  @objc deinit
+}
+@objc final public class URLSessionSessionDelegateProxy : ObjectiveC.NSObject, Foundation.URLSessionDataDelegate {
+  public init(dispatchQueue: Dispatch.DispatchQueue)
+  final public func addDelegate(task: Foundation.URLSessionTask, delegate: any Foundation.URLSessionDataDelegate)
+  final public func removeDelegate(task: Foundation.URLSessionTask)
+  final public func getDelegate(task: Foundation.URLSessionTask) -> (any Foundation.URLSessionDataDelegate)?
+  @objc final public func urlSession(_ session: Foundation.URLSession, dataTask: Foundation.URLSessionDataTask, didReceive: Foundation.Data)
+  @objc final public func urlSession(_ session: Foundation.URLSession, task: Foundation.URLSessionTask, didCompleteWithError: (any Swift.Error)?)
+  @objc final public func urlSession(_ session: Foundation.URLSession, dataTask: Foundation.URLSessionDataTask, didReceive: Foundation.URLResponse, completionHandler: @escaping (Foundation.URLSession.ResponseDisposition) -> Swift.Void)
+  @objc final public func urlSession(_ session: Foundation.URLSession, task: Foundation.URLSessionTask, willPerformHTTPRedirection: Foundation.HTTPURLResponse, newRequest: Foundation.URLRequest, completionHandler: @escaping (Foundation.URLRequest?) -> Swift.Void)
+  @objc final public func urlSession(_ session: Foundation.URLSession, task: Foundation.URLSessionTask, didReceive challenge: Foundation.URLAuthenticationChallenge, completionHandler: @escaping (Foundation.URLSession.AuthChallengeDisposition, Foundation.URLCredential?) -> Swift.Void)
+  @objc final public func urlSession(_ session: Foundation.URLSession, task: Foundation.URLSessionTask, didSendBodyData bytesSent: Swift.Int64, totalBytesSent: Swift.Int64, totalBytesExpectedToSend: Swift.Int64)
+  @objc deinit
+}
+@_inheritsConvenienceInitializers @objc(ExpoFabricView) @_Concurrency.MainActor @preconcurrency open class ExpoFabricView : ExpoModulesCore.ExpoFabricViewObjC, ExpoModulesCore.AnyExpoView {
+  @_Concurrency.MainActor @preconcurrency weak public var appContext: ExpoModulesCore.AppContext?
+  @_Concurrency.MainActor @preconcurrency @objc dynamic public init()
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init(frame: CoreFoundation.CGRect)
+  @_Concurrency.MainActor @preconcurrency public func setViewSize(_ size: CoreFoundation.CGSize)
+  @_Concurrency.MainActor @preconcurrency required public init(appContext: ExpoModulesCore.AppContext? = nil)
+  @available(*, unavailable)
+  @_Concurrency.MainActor @preconcurrency @objc required dynamic public init?(coder: Foundation.NSCoder)
+  @_Concurrency.MainActor @objc override dynamic public func updateProps(_ props: [Swift.String : Any])
+  @_Concurrency.MainActor @objc override dynamic public func viewDidUpdateProps()
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public func supportsProp(withName name: Swift.String) -> Swift.Bool
+  @objc @_Concurrency.MainActor @preconcurrency public static func shouldBeRecycled() -> Swift.Bool
+  @objc @_Concurrency.MainActor @preconcurrency public static func makeViewClass(forAppContext appContext: ExpoModulesCore.AppContext, moduleName: Swift.String, viewName: Swift.String, className: Swift.String) -> Swift.AnyClass?
+  @objc deinit
+}
+@_inheritsConvenienceInitializers @objc(EXFileSystemLegacyUtilities) public class FileSystemManager : ObjectiveC.NSObject, ExpoModulesCore.EXInternalModule, ExpoModulesCore.EXFileSystemInterface, ExpoModulesCore.EXFilePermissionModuleInterface {
+  @objc final public let documentDirectory: Swift.String
+  @objc final public let cachesDirectory: Swift.String
+  @objc final public let applicationSupportDirectory: Swift.String
+  @objc public init(documentDirectory: Swift.String, cachesDirectory: Swift.String, applicationSupportDirectory: Swift.String)
+  @objc required override dynamic public init()
+  convenience public init(appGroupSharedDirectories directories: [Foundation.URL])
+  @objc public static func exportedInterfaces() -> [ObjectiveC.`Protocol`]
+  @objc public func permissions(forURI uri: Foundation.URL) -> ExpoModulesCore.EXFileSystemPermissionFlags
+  @objc public func generatePath(inDirectory directory: Swift.String, withExtension ext: Swift.String) -> Swift.String
+  @discardableResult
+  @objc public func ensureDirExists(withPath path: Swift.String) -> Swift.Bool
+  @objc public func getPathPermissions(_ path: Swift.String) -> ExpoModulesCore.EXFileSystemPermissionFlags
+  @objc public func getInternalPathPermissions(_ url: Foundation.URL) -> ExpoModulesCore.EXFileSystemPermissionFlags
+  @objc public func getExternalPathPermissions(_ url: Foundation.URL) -> ExpoModulesCore.EXFileSystemPermissionFlags
+  @objc deinit
+}
+public enum FileSystemPermissionFlags {
+  case none
+  case read
+  case write
+  public static func == (a: ExpoModulesCore.FileSystemPermissionFlags, b: ExpoModulesCore.FileSystemPermissionFlags) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct FileSystemUtilities {
+  @discardableResult
+  public static func ensureDirExists(at url: Foundation.URL?) -> Swift.Bool
+  public static func generatePathInCache(_ appContext: ExpoModulesCore.AppContext?, in directory: Swift.String, extension: Swift.String) -> Swift.String
+  public static func permissions(_ appContext: ExpoModulesCore.AppContext?, for uri: Foundation.URL) -> [ExpoModulesCore.FileSystemPermissionFlags]
+  public static func isReadableFile(_ appContext: ExpoModulesCore.AppContext?, _ uri: Foundation.URL) -> Swift.Bool
+  public static func getInternalPathPermissions(_ appContext: ExpoModulesCore.AppContext?, for url: Foundation.URL) -> [ExpoModulesCore.FileSystemPermissionFlags]
+}
+@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @objc(EXLegacyModuleRegistry) final public class LegacyModuleRegistry : ObjectiveC.NSObject, @unchecked Swift.Sendable {
+  nonisolated(unsafe) public static let shared: ExpoModulesCore.LegacyModuleRegistry
+  @objc final public func registerModule(_ moduleClass: Swift.AnyClass)
+  @objc final public func registerSingletonModule(_ singletonModuleClass: Swift.AnyClass)
+  @objc final public func getModuleClasses() -> Foundation.NSSet
+  @objc final public func getModuleClassesArray() -> [Swift.AnyClass]
+  @objc final public func getSingletonModules() -> Swift.Set<ExpoModulesCore.EXSingletonModule>
+  @objc final public func getSingletonModule(for singletonClass: Swift.AnyClass) -> ExpoModulesCore.EXSingletonModule?
+  @objc deinit
+}
+@objc(EXReactDelegate) public class ExpoReactDelegate : ObjectiveC.NSObject {
+  final public let reactNativeFactory: any ExpoModulesCore.ExpoReactNativeFactoryProtocol
+  public init(handlers: [ExpoModulesCore.ExpoReactDelegateHandler], reactNativeFactory: any ExpoModulesCore.ExpoReactNativeFactoryProtocol)
+  @objc public func createReactRootView(moduleName: Swift.String, initialProperties: [Swift.AnyHashable : Any]?, launchOptions: [UIKit.UIApplication.LaunchOptionsKey : Any]?) -> UIKit.UIView
+  @objc public func bundleURL() -> Foundation.URL?
+  @objc public func createRootViewController() -> UIKit.UIViewController
+  @objc deinit
+}
+@_inheritsConvenienceInitializers @objc(EXReactDelegateHandler) open class ExpoReactDelegateHandler : ObjectiveC.NSObject {
+  @objc override required dynamic public init()
+  @objc open func createReactRootView(reactDelegate: ExpoModulesCore.ExpoReactDelegate, moduleName: Swift.String, initialProperties: [Swift.AnyHashable : Any]?, launchOptions: [UIKit.UIApplication.LaunchOptionsKey : Any]?) -> UIKit.UIView?
+  @objc open func bundleURL(reactDelegate: ExpoModulesCore.ExpoReactDelegate) -> Foundation.URL?
+  @objc open func createRootViewController() -> UIKit.UIViewController?
+  @objc deinit
+}
+@available(iOS, deprecated: 18.0, message: "Use Mutex from the Synchronization framework")
+@available(macOS, deprecated: 15.0, message: "Use Mutex from the Synchronization framework")
+@available(tvOS, deprecated: 18.0, message: "Use Mutex from the Synchronization framework")
+final public class Mutex<Value> : @unchecked Swift.Sendable {
+  public init(_ initialValue: Value)
+  @discardableResult
+  final public func withLock<T>(_ body: (inout Value) throws -> T) rethrows -> T
+  @objc deinit
+}
+public enum SceneGeometry {
+  public static func windowScene(for view: UIKit.UIView? = nil) -> UIKit.UIWindowScene?
+  public static func foregroundActiveScene() -> UIKit.UIWindowScene?
+  public static func foregroundScene() -> UIKit.UIWindowScene?
+  public static func keyWindow(for view: UIKit.UIView? = nil) -> UIKit.UIWindow?
+  public static func bounds(for view: UIKit.UIView? = nil) -> CoreFoundation.CGRect
+  public static func safeAreaSize(for view: UIKit.UIView? = nil) -> CoreFoundation.CGSize
+  public static func displayScale(for view: UIKit.UIView? = nil) -> CoreFoundation.CGFloat
+}
+extension ExpoModulesCore.SceneGeometry {
+  public static func interfaceOrientation(for view: UIKit.UIView? = nil) -> UIKit.UIInterfaceOrientation
+}
+public struct Utilities {
+  public static func urlFrom(string: Swift.String) -> Foundation.URL?
+  nonisolated public func currentViewController() -> UIKit.UIViewController?
+}
+extension ExpoModulesCore.ExpoAppDelegateSubscriberManager : Swift.Sendable {}
+extension ExpoModulesCore.ExpoAppDelegateSubscriberRepository : Swift.Sendable {}
+extension ExpoModulesCore.ValueOrUndefined : ExpoModulesCore.AnyArgument {}
+extension ExpoModulesCore.TypedArray : ExpoModulesCore.AnyArgument {}
+extension ExpoModulesCore.EventObservingDefinition : ExpoModulesCore.AnyDefinition {}
+extension ExpoModulesCore.OptimizedAsyncFunctionDefinition : ExpoModulesCore.AnyDefinition {}
+extension ExpoModulesCore.OptimizedSyncFunctionDefinition : ExpoModulesCore.AnyDefinition {}
+extension ExpoModulesCore.LogType : Swift.Equatable {}
+extension ExpoModulesCore.LogType : Swift.Hashable {}
+extension ExpoModulesCore.LogType : Swift.RawRepresentable {}
+extension ExpoModulesCore.Field : ExpoModulesCore.AnyField {}
+extension ExpoModulesCore.AppleViewConversionError : Swift.Equatable {}
+extension ExpoModulesCore.AppleViewConversionError : Swift.Hashable {}
+extension ExpoModulesCore.ExpoSwiftUI.AutoSizingStack : Swift.Sendable {}
+extension ExpoModulesCore.ExpoSwiftUI.IgnoreSafeArea : Swift.Equatable {}
+extension ExpoModulesCore.ExpoSwiftUI.IgnoreSafeArea : Swift.Hashable {}
+extension ExpoModulesCore.ExpoSwiftUI.IgnoreSafeArea : Swift.RawRepresentable {}
+extension ExpoModulesCore.ViewLifecycleMethodType : Swift.Equatable {}
+extension ExpoModulesCore.ViewLifecycleMethodType : Swift.Hashable {}
+extension ExpoModulesCore.FileSystemPermissionFlags : Swift.Equatable {}
+extension ExpoModulesCore.FileSystemPermissionFlags : Swift.Hashable {}

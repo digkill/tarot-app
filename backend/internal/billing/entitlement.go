@@ -26,3 +26,18 @@ func IsRuStoreManaged(source string) bool {
 		return false
 	}
 }
+
+func IsYooKassaManaged(source string) bool {
+	return strings.ToLower(strings.TrimSpace(source)) == ProviderYooKassa
+}
+
+func ActivePremiumSource(hasPremium bool, source string) (string, bool) {
+	if !hasPremium {
+		return "", false
+	}
+	normalized := strings.ToLower(strings.TrimSpace(source))
+	if normalized == "" {
+		return ProviderRuStore, true
+	}
+	return NormalizeProvider(source), true
+}

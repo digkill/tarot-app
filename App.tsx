@@ -26,6 +26,7 @@ import {SettingsScreen} from './screens/SettingsScreen';
 import {ReadingScreen} from './screens/ReadingScreen';
 import {InterpretationScreen} from './screens/InterpretationScreen';
 import {Ionicons} from '@expo/vector-icons';
+import {AppBackground} from './components/AppBackground';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {I18n} from './i18n';
 import {VideoSplash} from './components/VideoSplash';
@@ -53,6 +54,7 @@ const stackHeader = (colors: AppColors) => ({
     headerStyle: {backgroundColor: colors.bg},
     headerShadowVisible: false,
     headerTitleStyle: {color: colors.gold, fontWeight: '700' as const},
+    contentStyle: {backgroundColor: 'transparent'},
 });
 
 const HomeStackNavigator = () => {
@@ -87,6 +89,7 @@ const MainTabs = () => {
                 tabBarActiveTintColor: colors.accent,
                 tabBarInactiveTintColor: colors.muted,
                 tabBarStyle: {backgroundColor: colors.tabBar, borderTopColor: colors.gold},
+                sceneStyle: {backgroundColor: 'transparent'},
                 tabBarIcon: ({color, size}) => (
                     <Ionicons name={TAB_ICONS[route.name]} size={size} color={color} />
                 ),
@@ -136,7 +139,7 @@ const AppNavigation = () => {
         colors: {
             ...baseTheme.colors,
             primary: colors.accent,
-            background: colors.bg,
+            background: 'transparent',
             card: colors.tabBar,
             text: colors.text,
             border: colors.gold,
@@ -146,10 +149,12 @@ const AppNavigation = () => {
 
     if (settingsLoading || authLoading) {
         return (
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.bg}}>
-                <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
-                <ActivityIndicator color={colors.accent} />
-            </View>
+            <AppBackground>
+                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                    <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
+                    <ActivityIndicator color={colors.accent} />
+                </View>
+            </AppBackground>
         );
     }
 
@@ -157,9 +162,10 @@ const AppNavigation = () => {
     const showAuth = !showDisclaimer && !user;
 
     return (
-        <NavigationContainer theme={theme}>
-            <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
-            <RootStack.Navigator screenOptions={{headerShown: false, ...stackHeader(colors)}}>
+        <AppBackground>
+            <NavigationContainer theme={theme}>
+                <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
+                <RootStack.Navigator screenOptions={{headerShown: false, ...stackHeader(colors)}}>
                 {showDisclaimer ? (
                     <RootStack.Screen name="Disclaimer" component={DisclaimerScreen} />
                 ) : showAuth ? (
@@ -193,8 +199,9 @@ const AppNavigation = () => {
                         />
                     </>
                 )}
-            </RootStack.Navigator>
-        </NavigationContainer>
+                </RootStack.Navigator>
+            </NavigationContainer>
+        </AppBackground>
     );
 };
 

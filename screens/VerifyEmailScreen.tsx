@@ -74,7 +74,7 @@ export const VerifyEmailScreen = ({navigation, route}: Props) => {
     };
 
     return (
-        <SafeAreaView style={[styles.safe, {backgroundColor: colors.bg}]}>
+        <SafeAreaView style={styles.safe}>
             <KeyboardAvoidingView
                 style={styles.flex}
                 behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -124,7 +124,7 @@ export const VerifyEmailScreen = ({navigation, route}: Props) => {
 };
 
 const styles = StyleSheet.create({
-    safe: {flex: 1, backgroundColor: '#040307'},
+    safe: {flex: 1, backgroundColor: 'transparent'},
     flex: {flex: 1},
     content: {padding: 24, paddingBottom: 48, gap: 8},
     title: {fontSize: 28, fontWeight: '700', color: '#f4d386', marginBottom: 8},

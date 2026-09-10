@@ -20,6 +20,20 @@ func TestCanRevokeFrom(t *testing.T) {
 	}
 }
 
+func TestActivePremiumSource(t *testing.T) {
+	if _, ok := ActivePremiumSource(false, ProviderYooKassa); ok {
+		t.Fatal("inactive must not block")
+	}
+	source, ok := ActivePremiumSource(true, "")
+	if !ok || source != ProviderRuStore {
+		t.Fatalf("legacy rustore: %s %v", source, ok)
+	}
+	source, ok = ActivePremiumSource(true, ProviderYooKassa)
+	if !ok || source != ProviderYooKassa {
+		t.Fatalf("yookassa: %s %v", source, ok)
+	}
+}
+
 func TestKeepLifetime(t *testing.T) {
 	if !KeepLifetime(ProductLifetime, ProductMonthly) {
 		t.Fatal("keep lifetime")

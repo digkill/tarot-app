@@ -20,7 +20,7 @@ export const DisclaimerScreen = (_props: Props) => {
     };
 
     return (
-        <SafeAreaView style={[styles.container, {backgroundColor: colors.bg}]}>
+        <SafeAreaView style={styles.container}>
             <ScrollView contentContainerStyle={styles.content}>
                 <Text style={[styles.title, {color: colors.gold}]}>{t('disclaimer.title')}</Text>
                 <Text style={[styles.body, {color: colors.text}]}>{t('disclaimer.description1')}</Text>
@@ -48,7 +48,7 @@ export const DisclaimerScreen = (_props: Props) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#08070f',
+        backgroundColor: 'transparent',
     },
     content: {
         padding: 24,
