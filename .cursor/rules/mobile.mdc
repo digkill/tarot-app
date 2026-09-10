@@ -1,0 +1,14 @@
+---
+description: UI клиента — экраны, навигация, i18n, стили
+globs: "{App.tsx,screens/**,components/**,providers/**,navigation/**,i18n/**,theme/**}"
+alwaysApply: false
+---
+
+# Mobile UI
+
+Именованные функциональные компоненты. Стили — `StyleSheet.create` внизу, отступ 4 пробела.
+Палитра: акцент `#6c5ce7`, текст `#f7f4ea`, ошибка `#ff6b6b`, золото `#d4af37`.
+Строки только `t('...')` → `i18n/{en,ru,th,zh}.json`.
+Маршруты типизировать в `navigation/types.ts`. Нативные модули — `npx expo install`.
+Состояния loading/error обязательны для async UI. Safe area + `Platform.select` для iOS/Android.
+Подробности: `.cursor/memory/architecture.md`, `.cursor/memory/conventions.md`.

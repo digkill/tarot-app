@@ -1,0 +1,15 @@
+---
+description: RuStore подпись, prebuild, adb
+globs: "{plugins/**,eas.json,app.config.js,android/**}"
+alwaysApply: false
+---
+
+# Android релиз
+
+Подпись: `/Users/digkill/Projects/Android/tarot/keystore.properties`, алиас **sign**.
+Плагин `withRuStoreReleaseSigning.js`. JDK 17, NDK 27.2 (пин в gradle, без копий NDK в SDK).
+AAB: `./gradlew :app:bundleRelease`. На устройство: `assembleRelease` + `adb install -r`.
+Пакеты: прод `org.mediarise.tarot`, debug `org.mediarise.tarot.debug`.
+После копирования AAB удали `android/` и неактуальные `tarot-*-sign.{aab,apk}`.
+Не используй облачный EAS для стора — другой ключ. Пароли keystore в чат не писать.
+См. `.cursor/memory/android-release.md`.

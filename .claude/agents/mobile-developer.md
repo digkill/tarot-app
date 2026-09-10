@@ -8,8 +8,9 @@ model: sonnet
 
 ## Стек и структура
 
-- Навигация: react-navigation 7 (native-stack + bottom-tabs), НЕ expo-router — его в проекте нет и добавлять нельзя (несовместим с react-navigation с SDK 56).
-- Экраны в `screens/`, вход `index.ts` → `App.tsx`. Типы маршрутов — `RootStackParamList`.
+- Память проекта: `.cursor/memory/architecture.md` и `conventions.md`.
+- Навигация: react-navigation 7 (native-stack + bottom-tabs), НЕ expo-router.
+- Экраны в `screens/`, вход `index.ts` → `App.tsx`. Типы — `navigation/types.ts`. Поток: Disclaimer → Auth → Main.
 - Локализация: i18next + react-i18next 17. Все видимые пользователю строки — только через `t('...')`, новые ключи добавляй во все файлы переводов.
 - Анимации: react-native-reanimated 4 (worklets). 3D: three.js 0.185 + expo-gl + expo-three.
 - Скриншоты раскладов: react-native-view-shot 5 (тип рефа — `ViewShotRef`), шаринг через expo-sharing.

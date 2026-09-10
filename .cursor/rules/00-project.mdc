@@ -1,0 +1,20 @@
+---
+description: Память проекта Tarot — читать перед работой
+alwaysApply: true
+---
+
+# Tarot — инварианты
+
+Перед задачей открой `.cursor/memory/README.md` и нужный файл из той папки.
+
+- Клиент: Expo 57 / RN 0.86 / yarn. Конфиг только `app.config.js` (без `app.json`).
+- Навигация: react-navigation 7. **Не добавлять expo-router.**
+- Слои: UI `screens/` `components/` → `providers/` → `features/` / `storage/` / `entities/`. Экраны не ходят в AsyncStorage.
+- Сеть: только `features/apiClient.ts` → `https://tarot.sorapure.fun`. AI и ключи OpenAI/Kie **на сервере**, не в extra клиента.
+- i18n: все видимые строки через `t('...')`, ключ во все 4 языка.
+- Платежи Android: RuStore Pay. Не BillingClient. AAB подписывать алиасом `sign` из `/Users/digkill/Projects/Android/tarot`.
+- CNG: `android/` `ios/` gitignored. После релиза удаляй `android/` и старые AAB/APK — не засоряй диск.
+- iOS Release: `ios/Tarot.xcworkspace`, схема Tarot → Run/Archive = Release. `ios-native/` исключён по указанию пользователя; не читать и не использовать. Metro не запускать.
+- Мёртвое: `utils/gpt.ts`, `PREMIUM_FEATURE.md` (устарел). История раскладов пока локальная.
+
+Проверка: `npx tsc --noEmit`.

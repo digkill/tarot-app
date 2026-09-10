@@ -50,6 +50,7 @@ module.exports = {
       './plugins/withRuStoreReleaseSigning',
       './plugins/withXcode27ClangWorkaround',
       './plugins/withXcode27SceneLifecycle',
+      './plugins/withIosReleaseScheme',
     ],
     splash: {
       image: './assets/icon.png',

@@ -1,0 +1,14 @@
+---
+description: Go API, биллинг, квоты, LLM
+globs: "{backend/**,features/**,storage/**,entities/**}"
+alwaysApply: false
+---
+
+# Backend и клиентский API-слой
+
+Сервер: `backend/cmd/server` (chi, Postgres, goose). Ошибки `{error:{code,message}}`.
+Auth JWT + refresh. Квоты и AI — на сервере. Не звать OpenAI из клиента.
+Новые эндпоинты сразу отражай в `features/*.ts` и `.cursor/memory/protocols.md`.
+Миграции только goose в `backend/migrations/`. Секреты — env, не в репо.
+Клиентские вызовы — `apiClient.ts`. Readings CRUD на сервере есть, UI пока на AsyncStorage.
+Протокол: `.cursor/memory/protocols.md`.
