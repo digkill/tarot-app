@@ -136,6 +136,9 @@ export const PremiumModal = ({visible, onClose, onActivated}: PremiumModalProps)
             setProcessing(true);
             try {
                 const status = await startYooKassaCheckout(selected);
+                if (status === null) {
+                    return;
+                }
                 await refreshUser();
                 if (status.hasPremium || status.status === 'paid') {
                     await activatePremium();
