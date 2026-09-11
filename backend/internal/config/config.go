@@ -39,6 +39,7 @@ type Config struct {
 	YooKassaShopID     string
 	YooKassaSecretKey  string
 	YooKassaVatCode    int
+	IsProd             bool
 }
 
 func Load() (*Config, error) {
@@ -63,9 +64,16 @@ func Load() (*Config, error) {
 		AdminPassword:      os.Getenv("ADMIN_PASSWORD"),
 		DeckStorageDir:     getEnv("DECK_STORAGE_DIR", "data/decks"),
 		PublicBaseURL:      strings.TrimRight(getEnv("PUBLIC_BASE_URL", "https://tarot.sorapure.fun"), "/"),
-		YooKassaShopID:     strings.TrimSpace(os.Getenv("YOOKASSA_SHOP_ID")),
-		YooKassaSecretKey:  strings.TrimSpace(os.Getenv("YOOKASSA_SECRET_KEY")),
 		YooKassaVatCode:    getEnvInt("YOOKASSA_VAT_CODE", 1),
+		IsProd:             getEnvBool("IS_PROD", true),
+	}
+
+	if cfg.IsProd {
+		cfg.YooKassaShopID = strings.TrimSpace(os.Getenv("YOOKASSA_SHOP_ID"))
+		cfg.YooKassaSecretKey = strings.TrimSpace(os.Getenv("YOOKASSA_SECRET_KEY"))
+	} else {
+		cfg.YooKassaShopID = strings.TrimSpace(os.Getenv("YOOKASSA_SHOP_ID_TEST"))
+		cfg.YooKassaSecretKey = strings.TrimSpace(os.Getenv("YOOKASSA_SECRET_KEY_TEST"))
 	}
 
 	if cfg.DatabaseURL == "" {
@@ -120,6 +128,18 @@ func getEnv(key, fallback string) string {
 		return v
 	}
 	return fallback
+}
+
+func getEnvBool(key string, fallback bool) bool {
+	v := strings.TrimSpace(os.Getenv(key))
+	if v == "" {
+		return fallback
+	}
+	b, err := strconv.ParseBool(v)
+	if err != nil {
+		return fallback
+	}
+	return b
 }
 
 func getEnvInt(key string, fallback int) int {

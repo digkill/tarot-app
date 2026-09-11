@@ -27,7 +27,8 @@
 Продукты: `premium_monthly` 599₽, `premium_yearly` 4990₽, `premium_lifetime` 6990₽.
 
 - Android: RuStore Pay (`features/payments.ts`, плагин `withRuStorePay`). После покупки `POST /billing/purchases`.
-- iOS: только веб-шлюз ЮKassa `POST /billing/checkout` + `startYooKassaCheckout`, webhook `POST /billing/yookassa/webhook`, return `mediarisetarot://billing/complete`. RuStore на iOS не вызывается.
+- iOS: только веб-шлюз ЮKassa `POST /billing/checkout` + `startYooKassaCheckout`, webhook `POST /billing/yookassa/webhook`, return `mediarisetarot://billing/complete`. RuStore на iOS не вызывается. На сервере `IS_PROD=false` берёт `YOOKASSA_*_TEST`, иначе live `YOOKASSA_SHOP_ID` / `YOOKASSA_SECRET_KEY`.
+- Закрытие Safari завершает текущую попытку без polling и сообщения «оплата ожидается»: кнопка сразу разблокируется, следующее нажатие создаёт новый checkout. Проверка статуса с ожиданием выполняется только после callback браузера; закрытие окна само по себе не отменяет платёж у ЮKassa.
 - Кросс-платформа: премиум привязан к аккаунту. Если `premiumSource=rustore`, на iOS покупка ЮKassa блокируется (`premium_already_active`) и UI говорит «управляется в RuStore». Если `yookassa` — на Android RuStore не открывает второй план и UI говорит «управляется в ЮKassa».
 - Статус стора: `POST /billing/subscription-status` (может отозвать только свой источник).
 - Админ может выдать премиум. `__DEV__` без нативного модуля — активация без оплаты.
