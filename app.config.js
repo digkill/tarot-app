@@ -4,7 +4,7 @@ module.exports = {
   expo: {
     name: 'Tarot',
     slug: 'tarot',
-    version: '1.1.8',
+    version: '1.1.9',
     scheme: 'mediarisetarot',
     orientation: 'portrait',
     icon: './assets/icon.png',
@@ -62,14 +62,14 @@ module.exports = {
       icon: './assets/icon-composer/tarot-ios27-default.png',
       bundleIdentifier: 'org.mediarise.tarot',
       appleTeamId: '39CP3623CD',
-      buildNumber: '11',
+      buildNumber: '12',
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
       },
     },
     android: {
       package: 'org.mediarise.tarot',
-      versionCode: 11,
+      versionCode: 12,
       permissions: [],
       adaptiveIcon: {
         foregroundImage: './assets/adaptive-icon.png',
