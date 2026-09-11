@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {
     ActivityIndicator,
     Alert,
@@ -14,6 +14,8 @@ import {
 import {Image as ExpoImage, type ImageProps} from 'expo-image';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
+import {useRoute, type RouteProp} from '@react-navigation/native';
+import type {AppTabsParamList} from '../navigation/types';
 import {loadDeck} from '../utils/decks';
 import {useSettings} from '../providers/SettingsProvider';
 import {useDeckShop} from '../providers/DeckShopProvider';
@@ -57,12 +59,29 @@ export const DeckGalleryScreen = () => {
         loading,
         faceSource,
     } = useDeckShop();
+    const route = useRoute<RouteProp<AppTabsParamList, 'Decks'>>();
+    const targetSlug = route.params?.slug;
+    const shopScrollRef = useRef<ScrollView>(null);
+    const shopOffsets = useRef<Record<string, number>>({});
+    const scrolledToTarget = useRef<string | undefined>(undefined);
     const [arcanaFilter, setArcanaFilter] = useState<(Arcana | 'all')>('all');
     const [suitFilter, setSuitFilter] = useState<(Suit | 'all')>('all');
     const [buying, setBuying] = useState<string | null>(null);
     const [listWidth, setListWidth] = useState(0);
     const [search, setSearch] = useState('');
     const [selectedCard, setSelectedCard] = useState<Card | null>(null);
+
+    useEffect(() => {
+        if (!targetSlug || scrolledToTarget.current === targetSlug) {
+            return;
+        }
+        const x = shopOffsets.current[targetSlug];
+        if (x === undefined) {
+            return;
+        }
+        scrolledToTarget.current = targetSlug;
+        shopScrollRef.current?.scrollTo({x: Math.max(0, x - 16), animated: true});
+    }, [targetSlug, decks]);
     const gridImageHeight =
         listWidth > 0 ? Math.round((((listWidth - 16) / 2) - 20) * (1 / CARD_ASPECT)) : 210;
 
@@ -103,16 +122,21 @@ export const DeckGalleryScreen = () => {
     const renderShopDeck = (item: ShopDeck) => {
         const owned = isOwned(item.slug) || item.isFree || item.bundled;
         const active = selectedSlug === item.slug;
+        const isTarget = targetSlug === item.slug;
         const price = item.isFree || item.bundled ? t('deck.free') : formatRub(item.priceKop / 100);
         return (
             <View
                 key={item.slug}
+                onLayout={(event) => {
+                    shopOffsets.current[item.slug] = event.nativeEvent.layout.x;
+                }}
                 style={[
                     styles.shopCard,
                     {
                         backgroundColor: colors.panel,
                         borderColor: active ? colors.accent : hexAlpha(colors.gold, 0.45),
                     },
+                    isTarget && {borderColor: colors.gold, borderWidth: 2},
                 ]}
             >
                 <View style={[styles.coverFrame, {backgroundColor: colors.bg}]}>
@@ -221,6 +245,7 @@ export const DeckGalleryScreen = () => {
                             <Text style={[styles.pageHint, {color: colors.muted}]}>{t('deck.shopHint')}</Text>
                             {loading ? <ActivityIndicator color={colors.accent} style={styles.loader} /> : null}
                             <ScrollView
+                                ref={shopScrollRef}
                                 horizontal
                                 showsHorizontalScrollIndicator={false}
                                 contentContainerStyle={styles.shopList}

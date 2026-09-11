@@ -4,6 +4,7 @@ import {
     DarkTheme as NavigationDarkTheme,
     DefaultTheme as NavigationDefaultTheme,
     NavigationContainer,
+    type LinkingOptions,
 } from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -38,6 +39,26 @@ WebBrowser.maybeCompleteAuthSession();
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 const HomeStack = createNativeStackNavigator<HomeStackParamList>();
 const Tab = createBottomTabNavigator<AppTabsParamList>();
+
+// Deep links, e.g. mediarisetarot://deck/japanese opens the Decks tab
+// scrolled to that deck's promo card. Only resolves once the user has
+// passed the disclaimer/auth gate and Main is on screen.
+const linking: LinkingOptions<RootStackParamList> = {
+    prefixes: ['mediarisetarot://'],
+    config: {
+        screens: {
+            Main: {
+                screens: {
+                    Decks: 'deck/:slug?',
+                },
+            },
+            // react-navigation's PathConfigMap can't express a nested tab
+            // navigator's param list through RootStackParamList without
+            // threading generics through every level; the shape above is
+            // valid at runtime, so cast past the type-checker here.
+        } as never,
+    },
+};
 
 const legalScreenOptions = (t: (key: string) => string, colors: AppColors) => {
     return ({route}: {route: {params: RootStackParamList['LegalDocument']}}) => ({
@@ -163,7 +184,7 @@ const AppNavigation = () => {
 
     return (
         <AppBackground>
-            <NavigationContainer theme={theme}>
+            <NavigationContainer theme={theme} linking={linking}>
                 <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
                 <RootStack.Navigator screenOptions={{headerShown: false, ...stackHeader(colors)}}>
                 {showDisclaimer ? (

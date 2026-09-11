@@ -24,7 +24,7 @@ export type HomeStackParamList = {
 
 export type AppTabsParamList = {
     Explore: undefined;
-    Decks: undefined;
+    Decks: {slug?: string} | undefined;
     History: undefined;
     Settings: undefined;
 };
