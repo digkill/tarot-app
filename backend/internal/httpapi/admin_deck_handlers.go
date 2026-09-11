@@ -112,6 +112,19 @@ func parsePriceKop(r *http.Request) int {
 	return int(rub * 100)
 }
 
+func parseOriginalPriceKop(r *http.Request) *int {
+	raw := strings.ReplaceAll(strings.TrimSpace(r.FormValue("original_price_rub")), ",", ".")
+	if raw == "" {
+		return nil
+	}
+	rub, err := strconv.ParseFloat(raw, 64)
+	if err != nil || rub <= 0 {
+		return nil
+	}
+	kop := int(rub * 100)
+	return &kop
+}
+
 func deckParamsFromForm(r *http.Request, slug string) storage.UpsertDeckParams {
 	product := storage.NullIfBlank(r.FormValue("rustore_product_id"))
 	if product == nil {
@@ -123,6 +136,7 @@ func deckParamsFromForm(r *http.Request, slug string) storage.UpsertDeckParams {
 		DescriptionI18n:  formI18n(r, "description"),
 		Theme:            formTheme(r),
 		PriceKop:         parsePriceKop(r),
+		OriginalPriceKop: parseOriginalPriceKop(r),
 		RustoreProductID: product,
 		IsFree:           r.FormValue("is_free") == "1",
 		IsPublished:      r.FormValue("is_published") == "1",

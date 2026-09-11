@@ -7,6 +7,7 @@ export type ShopDeck = {
     descriptions: Record<string, string>;
     theme: AppColors;
     priceKop: number;
+    originalPriceKop?: number;
     productId: string;
     isFree: boolean;
     owned: boolean;

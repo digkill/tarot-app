@@ -38,12 +38,13 @@ var adminTmpl = template.Must(template.New("admin").Funcs(template.FuncMap{
 	"fmtDay": func(t time.Time) string {
 		return t.Format("02.01.2006")
 	},
-	"fmtRub":  formatRubKop,
-	"fmtRubI": func(v int) string { return formatRubKop(int64(v)) },
-	"titleOf": billing.Title,
-	"deref":   derefString,
-	"short":   shortID,
-	"kopRub":  func(k int) int { return k / 100 },
+	"fmtRub":   formatRubKop,
+	"fmtRubI":  func(v int) string { return formatRubKop(int64(v)) },
+	"titleOf":  billing.Title,
+	"deref":    derefString,
+	"derefInt": derefInt,
+	"short":    shortID,
+	"kopRub":   func(k int) int { return k / 100 },
 }).ParseFS(adminFS, "adminhtml/*.html"))
 
 func derefString(s *string) string {
@@ -51,6 +52,13 @@ func derefString(s *string) string {
 		return "—"
 	}
 	return *s
+}
+
+func derefInt(v *int) int {
+	if v == nil {
+		return 0
+	}
+	return *v
 }
 
 func shortID(id string) string {

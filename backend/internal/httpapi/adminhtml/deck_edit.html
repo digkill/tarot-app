@@ -22,6 +22,10 @@
       <input name="price_rub" inputmode="decimal" value="{{if .Deck}}{{kopRub .Deck.PriceKop}}{{end}}" placeholder="349">
     </div>
     <div class="field">
+      <label>Старая цена (зачёркнутая), ₽ — пусто = не показывать</label>
+      <input name="original_price_rub" inputmode="decimal" value="{{if and .Deck .Deck.OriginalPriceKop}}{{kopRub (derefInt .Deck.OriginalPriceKop)}}{{end}}" placeholder="999">
+    </div>
+    <div class="field">
       <label>RuStore product id</label>
       <input name="rustore_product_id" value="{{if .Deck}}{{deref .Deck.RustoreProductID}}{{end}}" placeholder="deck_japanese">
     </div>

@@ -31,8 +31,8 @@ type User struct {
 	PrivacyAcceptedAt   *time.Time
 	PdnAcceptedAt       *time.Time
 	ConsentVersion      string
-	ConsentIPEnc        string
-	ConsentUserAgentEnc string
+	ConsentIPEnc        *string
+	ConsentUserAgentEnc *string
 }
 
 type AdminUser struct {

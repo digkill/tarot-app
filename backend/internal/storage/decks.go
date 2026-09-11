@@ -23,6 +23,7 @@ type Deck struct {
 	DescriptionI18n  I18nMap
 	Theme            decks.Theme
 	PriceKop         int
+	OriginalPriceKop *int
 	Currency         string
 	RustoreProductID *string
 	IsFree           bool
@@ -50,7 +51,7 @@ func NewDeckRepo(pool *pgxpool.Pool) *DeckRepo {
 }
 
 const deckSelect = `
-	id, slug, title_i18n, description_i18n, theme, price_kop, currency,
+	id, slug, title_i18n, description_i18n, theme, price_kop, original_price_kop, currency,
 	rustore_product_id, is_free, is_published, sort_order, card_count, has_back,
 	created_at, updated_at`
 
@@ -58,7 +59,7 @@ func scanDeck(row rowScanner) (*Deck, error) {
 	var d Deck
 	var titleRaw, descRaw, themeRaw []byte
 	err := row.Scan(
-		&d.ID, &d.Slug, &titleRaw, &descRaw, &themeRaw, &d.PriceKop, &d.Currency,
+		&d.ID, &d.Slug, &titleRaw, &descRaw, &themeRaw, &d.PriceKop, &d.OriginalPriceKop, &d.Currency,
 		&d.RustoreProductID, &d.IsFree, &d.IsPublished, &d.SortOrder, &d.CardCount, &d.HasBack,
 		&d.CreatedAt, &d.UpdatedAt,
 	)
@@ -83,6 +84,7 @@ type UpsertDeckParams struct {
 	DescriptionI18n  I18nMap
 	Theme            decks.Theme
 	PriceKop         int
+	OriginalPriceKop *int
 	RustoreProductID *string
 	IsFree           bool
 	IsPublished      bool
@@ -94,12 +96,12 @@ func (r *DeckRepo) Create(ctx context.Context, p UpsertDeckParams) (*Deck, error
 	desc, _ := json.Marshal(p.DescriptionI18n)
 	const q = `
 		INSERT INTO decks (
-			slug, title_i18n, description_i18n, theme, price_kop, rustore_product_id,
+			slug, title_i18n, description_i18n, theme, price_kop, original_price_kop, rustore_product_id,
 			is_free, is_published, sort_order
-		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
 		RETURNING ` + deckSelect
 	d, err := scanDeck(r.pool.QueryRow(ctx, q,
-		p.Slug, title, desc, p.Theme.JSON(), p.PriceKop, p.RustoreProductID,
+		p.Slug, title, desc, p.Theme.JSON(), p.PriceKop, p.OriginalPriceKop, p.RustoreProductID,
 		p.IsFree, p.IsPublished, p.SortOrder,
 	))
 	if err != nil {
@@ -120,15 +122,16 @@ func (r *DeckRepo) Update(ctx context.Context, id string, p UpsertDeckParams) (*
 			description_i18n = $3,
 			theme = $4,
 			price_kop = $5,
-			rustore_product_id = $6,
-			is_free = $7,
-			is_published = $8,
-			sort_order = $9,
+			original_price_kop = $6,
+			rustore_product_id = $7,
+			is_free = $8,
+			is_published = $9,
+			sort_order = $10,
 			updated_at = NOW()
 		WHERE id = $1
 		RETURNING ` + deckSelect
 	d, err := scanDeck(r.pool.QueryRow(ctx, q,
-		id, title, desc, p.Theme.JSON(), p.PriceKop, p.RustoreProductID,
+		id, title, desc, p.Theme.JSON(), p.PriceKop, p.OriginalPriceKop, p.RustoreProductID,
 		p.IsFree, p.IsPublished, p.SortOrder,
 	))
 	if err != nil {

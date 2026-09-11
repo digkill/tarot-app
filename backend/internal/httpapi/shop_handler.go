@@ -11,37 +11,39 @@ import (
 )
 
 type shopDeckView struct {
-	Slug         string            `json:"slug"`
-	Titles       map[string]string `json:"titles"`
-	Descriptions map[string]string `json:"descriptions"`
-	Theme        decks.Theme       `json:"theme"`
-	PriceKop     int               `json:"priceKop"`
-	ProductID    string            `json:"productId"`
-	IsFree       bool              `json:"isFree"`
-	Owned        bool              `json:"owned"`
-	CardCount    int               `json:"cardCount"`
-	HasBack      bool              `json:"hasBack"`
-	CoverURL     string            `json:"coverUrl"`
-	BackURL      string            `json:"backUrl"`
-	Cards        map[string]string `json:"cards"`
+	Slug             string            `json:"slug"`
+	Titles           map[string]string `json:"titles"`
+	Descriptions     map[string]string `json:"descriptions"`
+	Theme            decks.Theme       `json:"theme"`
+	PriceKop         int               `json:"priceKop"`
+	OriginalPriceKop *int              `json:"originalPriceKop,omitempty"`
+	ProductID        string            `json:"productId"`
+	IsFree           bool              `json:"isFree"`
+	Owned            bool              `json:"owned"`
+	CardCount        int               `json:"cardCount"`
+	HasBack          bool              `json:"hasBack"`
+	CoverURL         string            `json:"coverUrl"`
+	BackURL          string            `json:"backUrl"`
+	Cards            map[string]string `json:"cards"`
 }
 
 func (h *Handler) toShopView(d *storage.Deck, owned bool) shopDeckView {
 	cover, back, cards := h.deckCardURLs(d.Slug)
 	return shopDeckView{
-		Slug:         d.Slug,
-		Titles:       d.TitleI18n,
-		Descriptions: d.DescriptionI18n,
-		Theme:        d.Theme,
-		PriceKop:     d.PriceKop,
-		ProductID:    d.ProductID(),
-		IsFree:       d.IsFree,
-		Owned:        owned || d.IsFree,
-		CardCount:    d.CardCount,
-		HasBack:      d.HasBack,
-		CoverURL:     cover,
-		BackURL:      back,
-		Cards:        cards,
+		Slug:             d.Slug,
+		Titles:           d.TitleI18n,
+		Descriptions:     d.DescriptionI18n,
+		Theme:            d.Theme,
+		PriceKop:         d.PriceKop,
+		OriginalPriceKop: d.OriginalPriceKop,
+		ProductID:        d.ProductID(),
+		IsFree:           d.IsFree,
+		Owned:            owned || d.IsFree,
+		CardCount:        d.CardCount,
+		HasBack:          d.HasBack,
+		CoverURL:         cover,
+		BackURL:          back,
+		Cards:            cards,
 	}
 }
 

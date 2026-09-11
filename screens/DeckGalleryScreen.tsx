@@ -128,10 +128,17 @@ export const DeckGalleryScreen = () => {
                 <Text style={[styles.shopHint, {color: colors.text}]} numberOfLines={3}>
                     {localizeShopText(item.descriptions, i18n.language, t('deck.classicHint'))}
                 </Text>
-                <Text style={[styles.shopPrice, {color: colors.text}]}>
-                    {price}
-                    {owned ? ` · ${t('deck.owned')}` : ''}
-                </Text>
+                <View style={styles.shopPriceRow}>
+                    {item.originalPriceKop ? (
+                        <Text style={[styles.shopOldPrice, {color: colors.muted}]}>
+                            {formatRub(item.originalPriceKop / 100)}
+                        </Text>
+                    ) : null}
+                    <Text style={[styles.shopPrice, {color: colors.text}]}>
+                        {price}
+                        {owned ? ` · ${t('deck.owned')}` : ''}
+                    </Text>
+                </View>
                 {owned ? (
                     <TouchableOpacity
                         style={[styles.shopBtn, {backgroundColor: active ? colors.gold : colors.accent}]}
@@ -340,7 +347,9 @@ const styles = StyleSheet.create({
     },
     shopTitle: {fontWeight: '700', fontSize: 16, marginBottom: 4},
     shopHint: {opacity: 0.8, fontSize: 13, lineHeight: 18, marginBottom: 8, minHeight: 54},
-    shopPrice: {fontSize: 13, marginBottom: 10},
+    shopPriceRow: {flexDirection: 'row', alignItems: 'baseline', gap: 6, marginBottom: 10},
+    shopOldPrice: {fontSize: 13, textDecorationLine: 'line-through'},
+    shopPrice: {fontSize: 13},
     shopBtn: {borderRadius: 12, paddingVertical: 10, alignItems: 'center', minHeight: 40, justifyContent: 'center'},
     shopBtnText: {color: '#fff', fontWeight: '700'},
     filters: {paddingVertical: 12, gap: 6},
