@@ -67,6 +67,8 @@ func (h *Handler) Router() http.Handler {
 	r.Get("/pay/go", h.PayGo)
 	r.Get("/pay/return", h.PayReturn)
 
+	r.Get("/", h.MarketingPage)
+	r.Get("/marketing-icon.png", h.MarketingIcon)
 	r.Get("/support", h.SupportPage)
 	r.Get("/privacy", h.PrivacyPolicyPage)
 
