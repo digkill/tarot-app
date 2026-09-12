@@ -67,6 +67,8 @@ func (h *Handler) Router() http.Handler {
 	r.Get("/pay/go", h.PayGo)
 	r.Get("/pay/return", h.PayReturn)
 
+	r.Get("/support", h.SupportPage)
+
 	r.Get("/media/decks/{slug}/{file}", h.ServeDeckMedia)
 
 	r.Route("/admin", func(r chi.Router) {
