@@ -14,6 +14,7 @@ func (h *Handler) Router() http.Handler {
 	r.Use(bodyLimit)
 	r.Use(requestLogger)
 	r.Use(middleware.Recoverer)
+	r.Use(middleware.GetHead)
 
 	r.Get("/healthz", func(w http.ResponseWriter, _ *http.Request) {
 		writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})
