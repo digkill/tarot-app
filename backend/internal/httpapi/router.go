@@ -68,9 +68,12 @@ func (h *Handler) Router() http.Handler {
 	r.Get("/pay/return", h.PayReturn)
 
 	r.Get("/", h.MarketingPage)
+	r.Get("/{lang}/", h.MarketingPage)
 	r.Get("/marketing-icon.png", h.MarketingIcon)
 	r.Get("/support", h.SupportPage)
+	r.Get("/{lang}/support", h.SupportPage)
 	r.Get("/privacy", h.PrivacyPolicyPage)
+	r.Get("/{lang}/privacy", h.PrivacyPolicyPage)
 
 	r.Get("/media/decks/{slug}/{file}", h.ServeDeckMedia)
 
