@@ -45,6 +45,7 @@ module.exports = {
         },
       ],
       './plugins/withGradleJdk17',
+      './plugins/withAndroidNdkVersion',
       './plugins/withAndroidCleanCxx',
       './plugins/withDebugInstallGuard',
       './plugins/withRuStoreReleaseSigning',

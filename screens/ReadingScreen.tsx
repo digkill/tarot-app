@@ -7,7 +7,6 @@ import {
     ScrollView,
     StyleSheet,
     Text,
-    TextInput,
     TouchableOpacity,
     View,
 } from 'react-native';
@@ -29,7 +28,6 @@ import {consumeOneCardSlot, isOneCardSpread, isQuotaExceeded} from '../features/
 import TarotCard from '../components/TarotCard';
 import {CardMeaningSheet} from '../components/CardMeaningSheet';
 import {ZoomableView} from '../components/ZoomableView';
-import {cardMatchesQuery} from '../features/premiumSource';
 
 type Route = RouteProp<RootStackParamList, 'Reading'>;
 type Navigation = NativeStackNavigationProp<RootStackParamList, 'Reading'>;
@@ -111,7 +109,6 @@ export const ReadingScreen = () => {
     const [animatedValues, setAnimatedValues] = useState<Animated.Value[]>([]);
     const [layout, setLayout] = useState({width: 0, height: 0});
     const [saving, setSaving] = useState(false);
-    const [search, setSearch] = useState('');
     const [selectedEntry, setSelectedEntry] = useState<DrawnEntry | null>(null);
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const savedIdRef = useRef<string | null>(null);
@@ -277,8 +274,6 @@ export const ReadingScreen = () => {
                     width={cardWidth}
                     artDeckId={deckId}
                     interactive={phase === 'review'}
-                    highlighted={Boolean(search.trim()) && cardMatchesQuery(entry.card, search)}
-                    dimmed={Boolean(search.trim()) && !cardMatchesQuery(entry.card, search)}
                     onPressFace={() => setSelectedEntry(entry)}
                 />
                 <Text style={[styles.cardLabel, {color: colors.text}]} numberOfLines={2}>
@@ -433,29 +428,8 @@ export const ReadingScreen = () => {
                 </View>
             </View>
 
-            {phase === 'review' ? (
-                <TextInput
-                    value={search}
-                    onChangeText={setSearch}
-                    placeholder={t('reading.searchPlaceholder')}
-                    placeholderTextColor={hexAlpha(colors.muted, 0.8)}
-                    style={[
-                        styles.search,
-                        {
-                            color: colors.text,
-                            borderColor: hexAlpha(colors.gold, 0.35),
-                            backgroundColor: hexAlpha(colors.panel, 0.72),
-                        },
-                    ]}
-                    autoCorrect={false}
-                    autoCapitalize="none"
-                />
-            ) : null}
-
             <ScrollView style={styles.details} contentContainerStyle={{paddingBottom: 20}}>
-                {entries
-                    .filter((entry) => cardMatchesQuery(entry.card, search))
-                    .map((entry) => (
+                {entries.map((entry) => (
                     <TouchableOpacity
                         key={`detail-${entry.position.index}`}
                         style={styles.detailItem}
@@ -470,9 +444,6 @@ export const ReadingScreen = () => {
                         </Text>
                     </TouchableOpacity>
                 ))}
-                {phase === 'review' && search.trim() && !entries.some((entry) => cardMatchesQuery(entry.card, search)) ? (
-                    <Text style={[styles.searchEmpty, {color: colors.muted}]}>{t('reading.searchEmpty')}</Text>
-                ) : null}
             </ScrollView>
 
             <CardMeaningSheet
@@ -513,20 +484,6 @@ const styles = StyleSheet.create({
     safe: {
         flex: 1,
         backgroundColor: 'transparent',
-    },
-    search: {
-        marginHorizontal: 20,
-        marginBottom: 8,
-        borderWidth: 1,
-        borderRadius: 14,
-        paddingHorizontal: 14,
-        paddingVertical: 10,
-        fontSize: 15,
-    },
-    searchEmpty: {
-        fontSize: 14,
-        textAlign: 'center',
-        marginTop: 12,
     },
     header: {
         flexDirection: 'row',
