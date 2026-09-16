@@ -6,17 +6,29 @@ import SwiftUI
 struct RootView: View {
     @Environment(SettingsStore.self) private var settings
     @Environment(SessionStore.self) private var session
-    @Environment(\.appColors) private var colors
+    @Environment(DeckStore.self) private var decks
+
+    /// A deck is also a palette: selecting one re-skins the whole app.
+    private var colors: AppColors {
+        decks.activeDeck(selectedSlug: settings.settings.selectedDeckId,
+                         locallyOwned: settings.settings.ownedDeckIds).colors
+    }
 
     var body: some View {
         ZStack {
             AppBackground()
             content
         }
+        .environment(\.appColors, colors)
+        .animation(.easeInOut(duration: 0.3), value: colors)
         .preferredColorScheme(.dark)
         .environment(\.locale, Locale(identifier: settings.settings.language.rawValue))
         .task {
             await session.start()
+        }
+        .task(id: session.user?.id) {
+            // The catalog is public; ownership needs a session.
+            await decks.refresh(signedIn: session.user != nil)
         }
     }
 

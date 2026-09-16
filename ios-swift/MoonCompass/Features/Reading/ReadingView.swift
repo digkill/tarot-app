@@ -85,7 +85,7 @@ struct ReadingView: View {
                 VStack(alignment: .leading, spacing: 14) {
                     ForEach(entries, id: \.position.index) { entry in
                         Button {
-                            selected = CardMeaningItem(card: entry.card, isReversed: entry.isReversed,
+                            selected = CardMeaningItem(card: entry.card, isReversed: entry.isReversed, deckId: deckId,
                                                        positionTitle: l.t(entry.position.titleKey))
                         } label: {
                             VStack(alignment: .leading, spacing: 3) {
@@ -179,11 +179,12 @@ struct ReadingView: View {
             TarotCardView(
                 card: entry.card,
                 isReversed: entry.isReversed,
+                deckId: deckId,
                 width: width,
                 startFaceDown: true,
                 interactive: phase == .review
             ) {
-                selected = CardMeaningItem(card: entry.card, isReversed: entry.isReversed,
+                selected = CardMeaningItem(card: entry.card, isReversed: entry.isReversed, deckId: deckId,
                                            positionTitle: l.t(entry.position.titleKey))
             }
             Text(l.t(entry.position.titleKey))

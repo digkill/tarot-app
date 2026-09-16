@@ -4,6 +4,7 @@ struct InterpretationView: View {
     @Environment(SettingsStore.self) private var settings
     @Environment(SessionStore.self) private var session
     @Environment(HistoryStore.self) private var history
+    @Environment(DeckStore.self) private var decks
     @Environment(\.services) private var services
     @Environment(\.appColors) private var colors
     @Environment(\.displayScale) private var displayScale
@@ -64,8 +65,10 @@ struct InterpretationView: View {
             VStack(alignment: .leading, spacing: 18) {
                 ReadingSummaryCard(
                     reading: reading, spread: spread, entries: entries, localizer: l,
+                    faceSource: { decks.faceSource(for: $0, deckSlug: reading.deckId) },
                     onSelect: { entry in
                         selected = CardMeaningItem(card: entry.card, isReversed: entry.isReversed,
+                                                   deckId: reading.deckId,
                                                    positionTitle: l.t(entry.position.titleKey))
                     }
                 )
@@ -245,7 +248,9 @@ struct InterpretationView: View {
     /// Renders the summary card to an image, the counterpart of the React
     /// Native `ViewShot` capture.
     private func share(_ reading: Reading, _ spread: Spread, _ entries: [DrawnCard], _ l: Localizer) {
-        let card = ReadingSummaryCard(reading: reading, spread: spread, entries: entries, localizer: l, onSelect: nil)
+        let deckId = reading.deckId
+        let card = ReadingSummaryCard(reading: reading, spread: spread, entries: entries, localizer: l,
+                                      faceSource: { decks.faceSource(for: $0, deckSlug: deckId) }, onSelect: nil)
             .frame(width: 390)
             .padding(16)
             .background(colors.bg)
@@ -273,6 +278,9 @@ struct ReadingSummaryCard: View {
     let spread: Spread
     let entries: [DrawnCard]
     let localizer: Localizer
+    /// Resolved by the caller: this view is also rendered off-screen for
+    /// sharing, where the environment's deck store is not available.
+    let faceSource: (TarotCard) -> CardArtSource
     let onSelect: ((DrawnCard) -> Void)?
 
     var body: some View {
@@ -310,7 +318,7 @@ struct ReadingSummaryCard: View {
                         .foregroundStyle(colors.muted)
                         .wrapsText()
                     HStack(alignment: .top, spacing: 14) {
-                        CardImage(file: entry.card.imageFile, width: 84)
+                        CardImage(source: faceSource(entry.card), width: 84)
                             .rotationEffect(.degrees(entry.isReversed ? 180 : 0))
                             .onTapGesture { onSelect?(entry) }
                         VStack(alignment: .leading, spacing: 6) {

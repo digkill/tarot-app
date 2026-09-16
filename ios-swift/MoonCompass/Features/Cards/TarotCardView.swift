@@ -5,10 +5,13 @@ import SwiftUI
 /// A reversed card is its art turned upside down.
 struct TarotCardView: View {
     @Environment(SettingsStore.self) private var settings
+    @Environment(DeckStore.self) private var decks
     @Environment(\.appColors) private var colors
 
     let card: TarotCard
     let isReversed: Bool
+    /// The deck whose art to show.
+    let deckId: String
     let width: CGFloat
     var startFaceDown = false
     var interactive = true
@@ -20,7 +23,8 @@ struct TarotCardView: View {
     var body: some View {
         FlippingCard(
             rotation: rotation ?? (startFaceDown ? 0 : 180),
-            faceFile: card.imageFile,
+            face: decks.faceSource(for: card, deckSlug: deckId),
+            back: decks.backSource(deckSlug: deckId),
             isReversed: isReversed,
             width: width
         )
@@ -66,7 +70,8 @@ struct TarotCardView: View {
 /// would jump to the face the moment the flip starts.
 private struct FlippingCard: View, Animatable {
     var rotation: Double
-    let faceFile: String
+    let face: CardArtSource
+    let back: CardArtSource
     let isReversed: Bool
     let width: CGFloat
 
@@ -78,10 +83,10 @@ private struct FlippingCard: View, Animatable {
     var body: some View {
         ZStack {
             if rotation < 90 {
-                CardImage(file: CardArt.backFile, width: width)
+                CardImage(source: back, width: width)
             } else {
                 // Pre-turned by 180° so it reads correctly once flipped over.
-                CardImage(file: faceFile, width: width)
+                CardImage(source: face, width: width)
                     .rotationEffect(.degrees(isReversed ? 180 : 0))
                     .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
             }

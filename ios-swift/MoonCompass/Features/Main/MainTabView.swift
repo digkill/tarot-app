@@ -1,8 +1,9 @@
 import SwiftUI
 
-/// The signed-in app. The Decks tab is still being ported.
+/// The signed-in app.
 struct MainTabView: View {
     @Environment(SettingsStore.self) private var settings
+    @Environment(DeepLinks.self) private var deepLinks
     @Environment(\.appColors) private var colors
 
     @State private var tab: AppTab = .home
@@ -13,7 +14,7 @@ struct MainTabView: View {
             HomeView()
                 .tabItem { Label(l.t("nav.home"), systemImage: "house") }
                 .tag(AppTab.home)
-            PendingTab(title: l.t("nav.decks"), systemImage: "rectangle.stack")
+            DecksView()
                 .tabItem { Label(l.t("nav.decks"), systemImage: "rectangle.stack") }
                 .tag(AppTab.decks)
             HistoryView()
@@ -28,29 +29,11 @@ struct MainTabView: View {
         .toolbarBackground(.visible, for: .tabBar)
         .toolbarColorScheme(.dark, for: .tabBar)
         .environment(\.selectTab) { tab = $0 }
+        .onChange(of: deepLinks.deckSlug, initial: true) { _, slug in
+            if slug != nil { tab = .decks }
+        }
         #if DEBUG
         .onAppear { if let debugTab = DebugLaunch.tab { tab = debugTab } }
         #endif
-    }
-}
-
-/// Stand-in for a tab whose screen has not been ported yet.
-private struct PendingTab: View {
-    @Environment(\.appColors) private var colors
-
-    let title: String
-    let systemImage: String
-
-    var body: some View {
-        VStack(spacing: 14) {
-            Image(systemName: systemImage)
-                .font(.system(size: 44, weight: .light))
-                .foregroundStyle(colors.gold)
-            Text(title)
-                .font(.title2.weight(.semibold))
-                .foregroundStyle(colors.text)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(AppBackground())
     }
 }

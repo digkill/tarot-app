@@ -4,6 +4,8 @@ import SwiftUI
 struct CardMeaningItem: Identifiable, Hashable {
     let card: TarotCard
     let isReversed: Bool
+    /// The deck whose art to show.
+    let deckId: String
     var positionTitle: String?
 
     var id: String { card.id }
@@ -17,6 +19,7 @@ struct CardMeaningItem: Identifiable, Hashable {
 /// always empty and are not ported.
 struct CardMeaningSheet: View {
     @Environment(SettingsStore.self) private var settings
+    @Environment(DeckStore.self) private var decks
     @Environment(\.appColors) private var colors
     @Environment(\.dismiss) private var dismiss
 
@@ -49,7 +52,7 @@ struct CardMeaningSheet: View {
                 }
                 .pickerStyle(.segmented)
 
-                CardImage(file: item.card.imageFile, width: 200)
+                CardImage(source: decks.faceSource(for: item.card, deckSlug: item.deckId), width: 200, contentMode: .fit)
                     .rotationEffect(.degrees(showReversed ? 180 : 0))
                     .animation(settings.settings.disableAnimations ? nil : .easeInOut(duration: 0.3), value: showReversed)
                     .shadow(color: .black.opacity(0.4), radius: 10, y: 4)

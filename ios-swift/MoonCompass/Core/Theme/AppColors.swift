@@ -7,7 +7,7 @@ import SwiftUI
 /// Every value arrives from the server as a hex string and is therefore
 /// validated: a malformed field falls back to the classic value rather than
 /// rendering something unreadable.
-struct AppColors: Equatable, Sendable {
+struct AppColors: Hashable, Sendable {
     var bg: Color
     var panel: Color
     var accent: Color

@@ -5,6 +5,8 @@ struct MoonCompassApp: App {
     @State private var settings: SettingsStore
     @State private var session: SessionStore
     @State private var history: HistoryStore
+    @State private var decks: DeckStore
+    @State private var deepLinks = DeepLinks()
     private let services: AppServices
 
     init() {
@@ -12,6 +14,7 @@ struct MoonCompassApp: App {
         _settings = State(initialValue: SettingsStore())
         _session = State(initialValue: SessionStore(client: client))
         _history = State(initialValue: HistoryStore())
+        _decks = State(initialValue: DeckStore(shop: ShopAPI(client: client), config: client.config))
         services = AppServices(client: client)
     }
 
@@ -21,8 +24,10 @@ struct MoonCompassApp: App {
                 .environment(settings)
                 .environment(session)
                 .environment(history)
+                .environment(decks)
+                .environment(deepLinks)
                 .environment(\.services, services)
-                .environment(\.appColors, .classic)
+                .onOpenURL { deepLinks.handle($0) }
         }
     }
 }
