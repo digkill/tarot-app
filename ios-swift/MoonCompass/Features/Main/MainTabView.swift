@@ -7,6 +7,7 @@ struct MainTabView: View {
     @Environment(\.appColors) private var colors
 
     @State private var tab: AppTab = .home
+    @State private var showingPremium = false
 
     var body: some View {
         let l = settings.localizer
@@ -29,11 +30,16 @@ struct MainTabView: View {
         .toolbarBackground(.visible, for: .tabBar)
         .toolbarColorScheme(.dark, for: .tabBar)
         .environment(\.selectTab) { tab = $0 }
+        .environment(\.showPremium) { showingPremium = true }
+        .sheet(isPresented: $showingPremium) { PremiumView() }
         .onChange(of: deepLinks.deckSlug, initial: true) { _, slug in
             if slug != nil { tab = .decks }
         }
         #if DEBUG
-        .onAppear { if let debugTab = DebugLaunch.tab { tab = debugTab } }
+        .onAppear {
+            if let debugTab = DebugLaunch.tab { tab = debugTab }
+            if DebugLaunch.premium { showingPremium = true }
+        }
         #endif
     }
 }

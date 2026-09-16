@@ -1,0 +1,19 @@
+{
+  "premiumIos": {
+    "dailyCards": "Up to 20 cards of the day.",
+    "disclosure": "Payment is charged to your Apple Account when you confirm the purchase. Monthly and yearly plans renew automatically unless cancelled at least 24 hours before the end of the current period; your account is charged for renewal within 24 hours before the period ends. Manage or cancel in your App Store account settings. Lifetime is a one-time purchase.",
+    "productsUnavailable": "Plans are unavailable right now. Check your connection and try again.",
+    "pending": "The purchase is waiting for approval. Premium turns on as soon as it is approved.",
+    "verifyFailed": "The payment went through, but we couldn't activate it yet. It will activate automatically — or tap Restore purchases.",
+    "otherAccount": "This App Store purchase is linked to another account. Sign in with that account to use it.",
+    "managedElsewhereTitle": "Bought outside the App Store",
+    "managedElsewhereBody": "Premium on this account was purchased on another platform. It works here too; change or cancel it where it was bought.",
+    "restoreDone": "Purchases restored",
+    "deckPurchased": "Deck unlocked"
+  },
+  "premium": {
+    "source": {
+      "apple": "Billed via the App Store"
+    }
+  }
+}

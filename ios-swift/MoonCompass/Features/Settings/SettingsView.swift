@@ -1,11 +1,12 @@
 import SwiftUI
 
-/// Settings, ported so far: the account section and the language picker.
-/// Premium, animations and the reversed-card chance follow with those features.
+/// Settings, ported so far: account, premium and language.
+/// Animations and the reversed-card chance follow with those features.
 struct SettingsView: View {
     @Environment(SettingsStore.self) private var settings
     @Environment(SessionStore.self) private var session
     @Environment(\.appColors) private var colors
+    @Environment(\.showPremium) private var showPremium
 
     @State private var confirmingLogout = false
     @State private var confirmingDelete = false
@@ -19,6 +20,7 @@ struct SettingsView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     accountSection(l)
+                    premiumSection(l)
                     languageSection(l)
                 }
                 .padding(20)
@@ -97,6 +99,38 @@ struct SettingsView: View {
             }
             .buttonStyle(.plain)
             .disabled(deleting)
+        }
+    }
+
+    private func premiumSection(_ l: Localizer) -> some View {
+        let user = session.user
+        let active = user?.hasPremium ?? false
+        return SettingsCard(title: l.t("settings.premiumSection")) {
+            HStack {
+                Text(l.t("premium.title"))
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(colors.text)
+                Spacer()
+                Text(l.t(active ? "premium.status.active" : "premium.status.inactive"))
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(active ? colors.bg : colors.muted)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                    .background(active ? colors.gold : colors.text.opacity(0.08), in: Capsule())
+            }
+            if let user, active {
+                Text(PremiumView.expiryText(user, l))
+                    .font(.subheadline)
+                    .foregroundStyle(colors.muted)
+            } else {
+                Text(l.t("premium.benefits"))
+                    .font(.subheadline)
+                    .foregroundStyle(colors.muted)
+                    .wrapsText()
+            }
+            PrimaryButton(title: l.t(active ? "premium.manage" : "premium.openSettings")) {
+                showPremium()
+            }
         }
     }
 

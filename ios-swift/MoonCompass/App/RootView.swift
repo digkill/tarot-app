@@ -7,6 +7,7 @@ struct RootView: View {
     @Environment(SettingsStore.self) private var settings
     @Environment(SessionStore.self) private var session
     @Environment(DeckStore.self) private var decks
+    @Environment(PurchaseStore.self) private var purchases
 
     /// A deck is also a palette: selecting one re-skins the whole app.
     private var colors: AppColors {
@@ -27,8 +28,18 @@ struct RootView: View {
             await session.start()
         }
         .task(id: session.user?.id) {
+            purchases.userId = session.user?.id
             // The catalog is public; ownership needs a session.
             await decks.refresh(signedIn: session.user != nil)
+            // Binds App Store purchases to the account and picks up anything
+            // bought while the server could not be reached.
+            await purchases.syncEntitlements()
+        }
+        .onChange(of: purchases.entitlementsVersion) {
+            Task {
+                await session.refreshUser()
+                await decks.refresh(signedIn: session.user != nil)
+            }
         }
     }
 

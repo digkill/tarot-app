@@ -1,7 +1,8 @@
 import Foundation
 
 /// Looks up UI strings in the i18next JSON files shared with the React Native
-/// client (`i18n/<lang>.json` plus `i18n/legal_<lang>.json`).
+/// client (`i18n/<lang>.json` plus `i18n/legal_<lang>.json`), with iOS-only
+/// strings from `i18n_ios/<lang>.json` layered on top.
 ///
 /// Apple's string catalogs are not used on purpose: the app lets the user pick
 /// a language in its own settings, independently of the device language, and
@@ -92,8 +93,10 @@ struct Localizer: Sendable {
 
     private static func load(_ language: Language, bundle: Bundle) -> Tables {
         var tables = Tables()
-        for name in [language.rawValue, "legal_\(language.rawValue)"] {
-            guard let url = bundle.url(forResource: name, withExtension: "json", subdirectory: "i18n"),
+        // The iOS overlay comes last, so its keys win over the shared ones.
+        let files = [("i18n", language.rawValue), ("i18n", "legal_\(language.rawValue)"), ("i18n_ios", language.rawValue)]
+        for (folder, name) in files {
+            guard let url = bundle.url(forResource: name, withExtension: "json", subdirectory: folder),
                   let data = try? Data(contentsOf: url),
                   let object = try? JSONSerialization.jsonObject(with: data) else {
                 continue

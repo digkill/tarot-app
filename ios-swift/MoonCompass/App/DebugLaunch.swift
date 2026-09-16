@@ -45,6 +45,9 @@ enum DebugLaunch {
     /// spread and open its interpretation.
     static var interpretationSpread: String? { value(after: "-previewInterpretation") }
 
+    /// `-previewPlans`: open the premium plans.
+    static var premium: Bool { arguments.contains("-previewPlans") }
+
     /// `-previewCatalog`: open the spread catalog.
     static var catalog: Bool { arguments.contains("-previewCatalog") }
 }

@@ -8,7 +8,7 @@ struct InterpretationView: View {
     @Environment(\.services) private var services
     @Environment(\.appColors) private var colors
     @Environment(\.displayScale) private var displayScale
-    @Environment(\.selectTab) private var selectTab
+    @Environment(\.showPremium) private var showPremium
 
     let readingId: String
     @Binding var path: [ReadingRoute]
@@ -165,7 +165,7 @@ struct InterpretationView: View {
                     .foregroundStyle(colors.text)
                     .wrapsText()
                 PrimaryButton(title: l.t("aiInterpretation.unlock")) {
-                    selectTab(.settings)
+                    showPremium()
                 }
             }
             .padding(16)

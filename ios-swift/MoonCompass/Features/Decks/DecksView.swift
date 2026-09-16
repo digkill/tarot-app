@@ -25,6 +25,8 @@ struct DecksView: View {
     @Environment(SettingsStore.self) private var settings
     @Environment(DeckStore.self) private var decks
     @Environment(DeepLinks.self) private var deepLinks
+    @Environment(PurchaseStore.self) private var purchases
+    @Environment(SessionStore.self) private var session
     @Environment(\.appColors) private var colors
 
     private enum ArcanaFilter: Hashable { case all, major, minor }
@@ -35,6 +37,7 @@ struct DecksView: View {
     @State private var search = ""
     @State private var selected: CardMeaningItem?
     @State private var highlightedSlug: String?
+    @State private var purchaseMessage: String?
 
     private var activeSlug: String {
         decks.activeDeck(selectedSlug: settings.settings.selectedDeckId,
@@ -88,6 +91,31 @@ struct DecksView: View {
             .refreshable { await decks.refresh(signedIn: true) }
         }
         .sheet(item: $selected) { CardMeaningSheet(item: $0) }
+        .task(id: deckSKUs) { await purchases.loadProducts(deckSKUs) }
+        .alert(purchaseMessage ?? "", isPresented: Binding(
+            get: { purchaseMessage != nil }, set: { if !$0 { purchaseMessage = nil } }
+        )) {
+            Button("OK", role: .cancel) {}
+        }
+    }
+
+    private var deckSKUs: [String] {
+        decks.shopDecks(locallyOwned: settings.settings.ownedDeckIds).compactMap(\.appleProductId)
+    }
+
+    private func buy(_ deck: DeckOption) async {
+        guard let sku = deck.appleProductId else { return }
+        let l = settings.localizer
+        let outcome = await purchases.purchase(sku)
+        if case .purchased = outcome {
+            await decks.refresh(signedIn: true)
+            if decks.isOwned(deck, locallyOwned: settings.settings.ownedDeckIds) {
+                settings.update { $0.selectedDeckId = deck.slug }
+            }
+            purchaseMessage = l.t("premiumIos.deckPurchased")
+        } else if let key = PurchaseStore.messageKey(for: outcome) {
+            purchaseMessage = l.t(key)
+        }
     }
 
     // MARK: - Shop
@@ -145,14 +173,26 @@ struct DecksView: View {
                 .allowsHitTesting(!active)
                 .accessibilityAddTraits(active ? .isSelected : [])
             } else {
-                // Paid decks reach this list only with an App Store SKU; the
-                // purchase itself arrives with the App Store purchases block.
-                Text(l.t("deck.buy"))
+                // Paid decks reach this list only with an App Store SKU.
+                let sku = deck.appleProductId ?? ""
+                let available = purchases.products[sku] != nil
+                let buying = purchases.purchasingId == sku
+                Button {
+                    Task { await buy(deck) }
+                } label: {
+                    ZStack {
+                        Text(l.t("deck.buy")).opacity(buying ? 0 : 1)
+                        if buying { ProgressView().tint(.white) }
+                    }
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 10)
-                    .background(colors.accent.opacity(0.45), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .background(colors.accent.opacity(available ? 1 : 0.45),
+                                in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .disabled(!available || purchases.purchasingId != nil)
             }
         }
         .padding(12)
@@ -167,13 +207,7 @@ struct DecksView: View {
 
     private func priceRow(_ deck: DeckOption, owned: Bool, _ l: Localizer) -> some View {
         HStack(spacing: 6) {
-            if let original = deck.originalPriceKop, !deck.isBundled {
-                Text(Self.rubles(original))
-                    .strikethrough()
-                    .foregroundStyle(colors.muted)
-            }
-            Text((deck.isFree || deck.isBundled ? l.t("deck.free") : Self.rubles(deck.priceKop))
-                 + (owned ? " · " + l.t("deck.owned") : ""))
+            Text(priceLabel(deck, owned: owned, l))
                 .foregroundStyle(colors.text)
         }
         .font(.caption.weight(.semibold))
@@ -181,8 +215,12 @@ struct DecksView: View {
         .minimumScaleFactor(0.8)
     }
 
-    private static func rubles(_ kopecks: Int) -> String {
-        "\((kopecks / 100).formatted(.number.grouping(.automatic))) ₽"
+    /// The App Store price, never the server's rubles: those are the Android
+    /// price, and on iOS the storefront decides price and currency.
+    private func priceLabel(_ deck: DeckOption, owned: Bool, _ l: Localizer) -> String {
+        if deck.isFree || deck.isBundled { return l.t("deck.free") }
+        if owned { return l.t("deck.owned") }
+        return deck.appleProductId.flatMap { purchases.products[$0]?.displayPrice } ?? "—"
     }
 
     // MARK: - Gallery

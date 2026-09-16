@@ -74,7 +74,7 @@ struct DailyLimitSheet: View {
     @Environment(HistoryStore.self) private var history
     @Environment(\.appColors) private var colors
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.selectTab) private var selectTab
+    @Environment(\.showPremium) private var showPremium
 
     @Binding var path: [ReadingRoute]
 
@@ -98,7 +98,11 @@ struct DailyLimitSheet: View {
             }
             Button {
                 dismiss()
-                selectTab(.settings)
+                // Two sheets cannot be on screen at once: let this one go first.
+                Task {
+                    try? await Task.sleep(for: .milliseconds(450))
+                    showPremium()
+                }
             } label: {
                 Text(l.t("dailyCard.subscribe"))
                     .font(.body.weight(.semibold))

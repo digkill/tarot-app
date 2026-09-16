@@ -44,3 +44,15 @@ extension EnvironmentValues {
         set { self[SelectTabKey.self] = newValue }
     }
 }
+
+private struct ShowPremiumKey: EnvironmentKey {
+    static let defaultValue: @MainActor @Sendable () -> Void = {}
+}
+
+extension EnvironmentValues {
+    /// Opens the premium plans from anywhere in the signed-in app.
+    var showPremium: @MainActor @Sendable () -> Void {
+        get { self[ShowPremiumKey.self] }
+        set { self[ShowPremiumKey.self] = newValue }
+    }
+}

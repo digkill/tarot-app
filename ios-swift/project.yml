@@ -44,6 +44,11 @@ targets:
       - path: ../i18n
         type: folder
         buildPhase: resources
+      # iOS-only strings (App Store purchase wording), layered over the shared
+      # files by `Localizer` so the Android translations stay untouched.
+      - path: Localization/i18n_ios
+        type: folder
+        buildPhase: resources
       # Card meanings and the classic Rider–Waite art, shared the same way.
       - path: ../data/tarot_en.json
         buildPhase: resources
@@ -81,6 +86,10 @@ targets:
     platform: iOS
     sources:
       - path: MoonCompassTests
+      # The same StoreKit configuration Xcode runs the app with, so tests can
+      # buy against it with SKTestSession.
+      - path: MoonCompass.storekit
+        buildPhase: resources
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: org.mediarise.tarot.tests
@@ -96,6 +105,9 @@ schemes:
         MoonCompassTests: [test]
     run:
       config: Debug
+      # Local StoreKit testing when run from Xcode: products and purchases
+      # come from this file instead of App Store Connect.
+      storeKitConfiguration: MoonCompass.storekit
     test:
       config: Debug
       gatherCoverageData: true

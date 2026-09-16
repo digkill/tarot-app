@@ -6,7 +6,7 @@ struct SpreadCatalogView: View {
     @Environment(HistoryStore.self) private var history
     @Environment(\.services) private var services
     @Environment(\.appColors) private var colors
-    @Environment(\.selectTab) private var selectTab
+    @Environment(\.showPremium) private var showPremium
 
     @Binding var path: [ReadingRoute]
 
@@ -54,7 +54,7 @@ struct SpreadCatalogView: View {
             get: { lockedSpread != nil }, set: { if !$0 { lockedSpread = nil } }
         )) {
             Button(l.t("premium.notNow"), role: .cancel) {}
-            Button(l.t("premium.openSettings")) { selectTab(.settings) }
+            Button(l.t("premium.openSettings")) { showPremium() }
         } message: {
             Text(l.t("premium.lockedDescription"))
         }
