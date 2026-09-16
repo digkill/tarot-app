@@ -15,6 +15,9 @@ struct MainTabView: View {
             HomeView()
                 .tabItem { Label(l.t("nav.home"), systemImage: "house") }
                 .tag(AppTab.home)
+            ArcanaHomeView()
+                .tabItem { Label(l.t("nav.arcana"), systemImage: "bolt.shield") }
+                .tag(AppTab.arcana)
             DecksView()
                 .tabItem { Label(l.t("nav.decks"), systemImage: "rectangle.stack") }
                 .tag(AppTab.decks)

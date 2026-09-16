@@ -7,6 +7,7 @@ struct MoonCompassApp: App {
     @State private var history: HistoryStore
     @State private var decks: DeckStore
     @State private var purchases: PurchaseStore
+    @State private var arcana: ArcanaStore
     @State private var deepLinks = DeepLinks()
     private let services: AppServices
 
@@ -21,6 +22,7 @@ struct MoonCompassApp: App {
         // can arrive at any moment.
         purchases.startListening()
         _purchases = State(initialValue: purchases)
+        _arcana = State(initialValue: ArcanaStore(api: ArcanaAPI(config: .current(api: client.config), client: client)))
         services = AppServices(client: client)
     }
 
@@ -32,6 +34,7 @@ struct MoonCompassApp: App {
                 .environment(history)
                 .environment(decks)
                 .environment(purchases)
+                .environment(arcana)
                 .environment(deepLinks)
                 .environment(\.services, services)
                 .onOpenURL { deepLinks.handle($0) }

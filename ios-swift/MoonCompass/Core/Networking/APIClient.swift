@@ -98,6 +98,33 @@ actor APIClient {
         try? tokenStore.clear()
     }
 
+    /// An access token valid for at least `margin`, refreshed first if needed —
+    /// for connections that authenticate once instead of per request, like the
+    /// Arcana Clash WebSocket. `force` refreshes even a token that looks
+    /// valid, after the server rejected it.
+    func validAccessToken(margin: TimeInterval = 60, force: Bool = false) async throws -> String {
+        guard let tokens = storedTokens() else { throw APIError.notAuthenticated }
+        if !force, let expiry = Self.expiry(ofJWT: tokens.accessToken), expiry > Date().addingTimeInterval(margin) {
+            return tokens.accessToken
+        }
+        return try await refreshedTokens(replacing: tokens).accessToken
+    }
+
+    /// The `exp` claim of a JWT, read without verifying it: only to decide
+    /// whether to refresh, never to trust the token.
+    static func expiry(ofJWT token: String) -> Date? {
+        let parts = token.split(separator: ".")
+        guard parts.count == 3 else { return nil }
+        var base64 = parts[1].replacingOccurrences(of: "-", with: "+").replacingOccurrences(of: "_", with: "/")
+        base64 += String(repeating: "=", count: (4 - base64.count % 4) % 4)
+        guard let data = Data(base64Encoded: base64),
+              let claims = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let exp = claims["exp"] as? NSNumber else {
+            return nil
+        }
+        return Date(timeIntervalSince1970: exp.doubleValue)
+    }
+
     /// The refresh token, for logout — which must name the token to revoke.
     func currentRefreshToken() -> String? {
         storedTokens()?.refreshToken

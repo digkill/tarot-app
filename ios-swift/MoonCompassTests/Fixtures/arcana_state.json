@@ -1,0 +1,165 @@
+{
+  "type": "match.state",
+  "seq": 3,
+  "match_id": "m-1",
+  "payload": {
+    "state": {
+      "rules_version": 1,
+      "seq": 3,
+      "phase": "playing",
+      "turn": 2,
+      "active_player": "me",
+      "you": {
+        "id": "me",
+        "hero": {
+          "id": "the_moon",
+          "hp": 27,
+          "max_hp": 27,
+          "armor": 0,
+          "charge": 1,
+          "ultimate_cost": 5,
+          "souls": 0,
+          "ultimate_ready": false
+        },
+        "mana": 0,
+        "max_mana": 3,
+        "hand": [
+          {
+            "uid": "p1c13",
+            "card_id": "queen_of_cups",
+            "cost": 4,
+            "base_cost": 4
+          },
+          {
+            "uid": "p1c5",
+            "card_id": "five_of_swords",
+            "cost": 2,
+            "base_cost": 2
+          },
+          {
+            "uid": "p1c10",
+            "card_id": "king_of_swords",
+            "cost": 5,
+            "base_cost": 5
+          },
+          {
+            "uid": "p1c2",
+            "card_id": "the_fool",
+            "cost": 0,
+            "base_cost": 0,
+            "playable": true,
+            "targets": [
+              "none"
+            ]
+          },
+          {
+            "uid": "p1c14",
+            "card_id": "ace_of_wands",
+            "cost": 1,
+            "base_cost": 1
+          }
+        ],
+        "deck_count": 10,
+        "discard": [
+          {
+            "uid": "p1c11",
+            "card_id": "five_of_wands",
+            "reversed": true,
+            "cost": 3,
+            "base_cost": 3
+          }
+        ],
+        "statuses": [],
+        "ability_cost": 1,
+        "ability_usable": false,
+        "ultimate_usable": false,
+        "mulliganed": true,
+        "timeout_streak": 0
+      },
+      "opponent": {
+        "id": "them",
+        "hero": {
+          "id": "death",
+          "hp": 30,
+          "max_hp": 30,
+          "armor": 0,
+          "charge": 0,
+          "ultimate_cost": 3,
+          "souls": 0,
+          "ultimate_ready": false
+        },
+        "mana": 3,
+        "max_mana": 3,
+        "hand_count": 5,
+        "deck_count": 11,
+        "discard": [],
+        "statuses": [
+          {
+            "name": "burn",
+            "amount": 3,
+            "turns": 2
+          }
+        ],
+        "mulliganed": true
+      },
+      "log": [
+        {
+          "seq": 1,
+          "action": "mulligan.timeout",
+          "events": [
+            {
+              "kind": "turn_start",
+              "player": "them",
+              "amount": 1
+            },
+            {
+              "kind": "draw",
+              "player": "them"
+            }
+          ]
+        },
+        {
+          "seq": 2,
+          "player": "them",
+          "action": "turn.end",
+          "events": [
+            {
+              "kind": "turn_start",
+              "player": "me",
+              "amount": 2
+            },
+            {
+              "kind": "draw",
+              "player": "me",
+              "card_id": "ace_of_wands",
+              "card_uid": "p1c14"
+            }
+          ]
+        },
+        {
+          "seq": 3,
+          "player": "me",
+          "action": "card.play",
+          "card_uid": "p1c11",
+          "card_id": "five_of_wands",
+          "reversed": true,
+          "target": {
+            "kind": "enemy"
+          },
+          "hidden": true,
+          "events": [
+            {
+              "kind": "status_added",
+              "player": "them",
+              "amount": 3,
+              "status": "burn"
+            }
+          ]
+        }
+      ]
+    },
+    "server_time": 1800000000000,
+    "deadline_at": 1800000030000,
+    "opponent_connected": true
+  }
+}

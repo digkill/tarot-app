@@ -34,6 +34,7 @@ enum DebugLaunch {
         case "history": return .history
         case "decks": return .decks
         case "settings": return .settings
+        case "arcana": return .arcana
         default: return nil
         }
     }
@@ -47,6 +48,15 @@ enum DebugLaunch {
 
     /// `-previewPlans`: open the premium plans.
     static var premium: Bool { arguments.contains("-previewPlans") }
+
+    /// `-arcanaURL http://localhost:8090`: a local Arcana Clash server.
+    static var arcanaURL: String? { value(after: "-arcanaURL") }
+
+    /// `-arcanaToken <jwt>`: sign in to that server with a fixed token.
+    static var arcanaToken: String? { value(after: "-arcanaToken") }
+
+    /// `-arcanaBattle <hero>`: join the queue at launch.
+    static var arcanaBattle: String? { value(after: "-arcanaBattle") }
 
     /// `-previewCatalog`: open the spread catalog.
     static var catalog: Bool { arguments.contains("-previewCatalog") }

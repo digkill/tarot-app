@@ -71,10 +71,15 @@ final class PurchaseStore {
     var userId: String?
 
     @ObservationIgnored private let verifier: any AppleTransactionVerifier
+    @ObservationIgnored private let finishTransaction: @MainActor (Transaction) async -> Void
     @ObservationIgnored private var updatesTask: Task<Void, Never>?
 
-    init(verifier: any AppleTransactionVerifier) {
+    /// `finish` is injectable so tests can observe exactly when a transaction
+    /// is finished; StoreKit's test environment reports that unreliably.
+    init(verifier: any AppleTransactionVerifier,
+         finish: @escaping @MainActor (Transaction) async -> Void = { await $0.finish() }) {
         self.verifier = verifier
+        self.finishTransaction = finish
     }
 
     // MARK: - Products
@@ -189,7 +194,7 @@ final class PurchaseStore {
         do {
             let response = try await verifier.verify(signedTransaction: verification.jwsRepresentation,
                                                      appAccountToken: accountToken)
-            await transaction.finish()
+            await finishTransaction(transaction)
             entitlementsVersion += 1
             return .purchased(response)
         } catch {
@@ -198,7 +203,7 @@ final class PurchaseStore {
                 // Final answer from the server; keeping it unfinished would only
                 // replay the same refusal. It stays in `currentEntitlements`, so
                 // signing in to the right account still restores it.
-                await transaction.finish()
+                await finishTransaction(transaction)
             }
             return .failed(failure)
         }

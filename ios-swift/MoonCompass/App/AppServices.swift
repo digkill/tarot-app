@@ -31,7 +31,7 @@ extension EnvironmentValues {
 /// The main tabs, so any screen can switch tab — e.g. "View all" on the home
 /// screen opens History.
 enum AppTab: Hashable {
-    case home, decks, history, settings
+    case home, arcana, decks, history, settings
 }
 
 private struct SelectTabKey: EnvironmentKey {

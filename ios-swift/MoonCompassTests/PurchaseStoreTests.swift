@@ -98,13 +98,26 @@ final class PurchaseStoreStoreKitTests: XCTestCase {
         session.clearTransactions()
     }
 
+    /// Records which transactions were finished.
+    private final class FinishLog: @unchecked Sendable {
+        private let lock = NSLock()
+        private var ids: [UInt64] = []
+        func add(_ id: UInt64) { lock.withLock { ids.append(id) } }
+        var all: [UInt64] { lock.withLock { ids } }
+    }
+
+    private func makeStore(_ verifier: RecordingVerifier, _ log: FinishLog) -> PurchaseStore {
+        PurchaseStore(verifier: verifier, finish: { transaction in log.add(transaction.id) })
+    }
+
     private func granted() -> AppleVerifyResponse {
         AppleVerifyResponse(ok: true, hasPremium: true, productId: "premium_monthly")
     }
 
     func testPurchaseIsSentToTheServerThenFinished() async throws {
         let verifier = RecordingVerifier(.success(granted()))
-        let store = PurchaseStore(verifier: verifier)
+        let finished = FinishLog()
+        let store = makeStore(verifier, finished)
         store.userId = userId
         await store.loadProducts(ProductIDs.premium)
         XCTAssertEqual(Set(store.products.keys), Set(ProductIDs.premium))
@@ -116,31 +129,29 @@ final class PurchaseStoreStoreKitTests: XCTestCase {
         XCTAssertEqual(verifier.calls.first?.token, UUID(uuidString: userId), "purchase tied to the account")
         XCTAssertEqual(verifier.calls.first?.jws.split(separator: ".").count, 3, "a compact JWS, not decoded JSON")
 
-        var unfinished = 0
-        for await _ in Transaction.unfinished { unfinished += 1 }
-        XCTAssertEqual(unfinished, 0)
+        XCTAssertEqual(finished.all.count, 1, "finished once the server confirmed it")
     }
 
     /// Apple has charged but the server is unreachable: the transaction stays
     /// with StoreKit and the next sync delivers it.
     func testUnconfirmedPurchaseIsKeptAndRetried() async throws {
         let verifier = RecordingVerifier(.failure(APIError(code: "network", message: "offline", status: 0)))
-        let store = PurchaseStore(verifier: verifier)
+        let finished = FinishLog()
+        let store = makeStore(verifier, finished)
         store.userId = userId
         await store.loadProducts(ProductIDs.premium)
 
         let outcome = await store.purchase(ProductIDs.premiumLifetime)
         XCTAssertEqual(outcome, .failed(.verifyLater))
         XCTAssertEqual(store.entitlementsVersion, 0)
+        XCTAssertTrue(finished.all.isEmpty, "not finished while the server has not confirmed it")
 
         verifier.result = .success(granted())
         let synced = await store.syncEntitlements()
         XCTAssertEqual(synced.count, 1, "delivered once, not once per list it appears in")
         XCTAssertEqual(store.entitlementsVersion, 1)
 
-        var unfinished = 0
-        for await _ in Transaction.unfinished { unfinished += 1 }
-        XCTAssertEqual(unfinished, 0)
+        XCTAssertEqual(finished.all.count, 1, "finished once the retry was confirmed")
     }
 
     func testSignedOutSyncDoesNothing() async {
