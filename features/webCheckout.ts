@@ -1,10 +1,14 @@
 import * as WebBrowser from 'expo-web-browser';
 import {createCheckoutRequest, fetchCheckoutRequest, type CheckoutStatus} from './billingApi';
+import type {WebCheckoutProvider} from './premiumSource';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export const startYooKassaCheckout = async (productId: string): Promise<CheckoutStatus | null> => {
-    const session = await createCheckoutRequest(productId);
+export const startWebCheckout = async (
+    productId: string,
+    provider: WebCheckoutProvider,
+): Promise<CheckoutStatus | null> => {
+    const session = await createCheckoutRequest(productId, provider);
     const result = await WebBrowser.openAuthSessionAsync(session.checkoutUrl, 'mediarisetarot://billing/complete');
     if (result.type !== 'success') {
         // Closing the browser ends this attempt; it does not cancel a payment at the provider.

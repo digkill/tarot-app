@@ -51,6 +51,9 @@ export const SettingsScreen = () => {
         if (gate.provider === 'rustore') {
             return gate.local ? t('premium.manageRuStore') : t('premium.managedInRuStoreCta');
         }
+        if (gate.provider === 'cloudpayments') {
+            return gate.local ? t('premium.manageCloudPayments') : t('premium.managedInCloudPaymentsCta');
+        }
         return gate.local ? t('premium.manageYooKassa') : t('premium.managedInYooKassaCta');
     };
 
@@ -79,6 +82,13 @@ export const SettingsScreen = () => {
         }
         if (gate.provider === 'yookassa') {
             Alert.alert(t('premium.managedInYooKassaTitle'), t('premium.managedInYooKassaOther'));
+            return;
+        }
+        if (gate.provider === 'cloudpayments') {
+            Alert.alert(
+                t('premium.managedInCloudPaymentsTitle'),
+                gate.local ? t('premium.managedInCloudPaymentsLocal') : t('premium.managedInCloudPaymentsOther'),
+            );
             return;
         }
         Alert.alert(t('premium.managedBySupportTitle'), t('premium.managedBySupportBody'));

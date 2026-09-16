@@ -17,12 +17,13 @@ import {useAppColors} from '../providers/DeckShopProvider';
 import {hexAlpha} from '../theme/appColors';
 import {isApiError} from '../features/apiClient';
 import {reportPurchaseRequest} from '../features/billingApi';
-import {startYooKassaCheckout} from '../features/yookassaCheckout';
-import {premiumGate, type PremiumGate} from '../features/premiumSource';
+import {startWebCheckout} from '../features/webCheckout';
+import {premiumGate, type PremiumGate, type WebCheckoutProvider} from '../features/premiumSource';
 import {
     describePayError,
     FALLBACK_PREMIUM_PRICES,
     formatRub,
+    formatUsd,
     getPremiumProducts,
     isPaymentsSupported,
     PREMIUM_PRODUCT_IDS,
@@ -32,6 +33,7 @@ import {
     readStorePremiumStatus,
     RuStoreMissingError,
     type PremiumProductId,
+    USD_PREMIUM_PRICES,
 } from '../features/payments';
 import type {Product} from '../libs/RuStoreReactPay';
 
@@ -53,6 +55,7 @@ export const PremiumModal = ({visible, onClose, onActivated}: PremiumModalProps)
     const {user, refreshUser} = useAuth();
     const colors = useAppColors();
     const [processing, setProcessing] = useState(false);
+    const [webProvider, setWebProvider] = useState<WebCheckoutProvider | null>(null);
     const [selected, setSelected] = useState<PremiumProductId>('premium_monthly');
     const [catalog, setCatalog] = useState<Product[]>([]);
     const gate = premiumGate(Boolean(user?.hasPremium || settings.hasPremium), user?.premiumSource);
@@ -68,6 +71,12 @@ export const PremiumModal = ({visible, onClose, onActivated}: PremiumModalProps)
             return {
                 title: t('premium.managedInRuStoreTitle'),
                 body: current.local ? t('premium.managedInRuStoreLocal') : t('premium.managedInRuStoreOther'),
+            };
+        }
+        if (current.provider === 'cloudpayments') {
+            return {
+                title: t('premium.managedInCloudPaymentsTitle'),
+                body: current.local ? t('premium.managedInCloudPaymentsLocal') : t('premium.managedInCloudPaymentsOther'),
             };
         }
         return {
@@ -121,7 +130,7 @@ export const PremiumModal = ({visible, onClose, onActivated}: PremiumModalProps)
         ]);
     };
 
-    const handleSubscribe = async () => {
+    const handleSubscribe = async (provider: WebCheckoutProvider = 'yookassa') => {
         if (processing) {
             return;
         }
@@ -134,8 +143,9 @@ export const PremiumModal = ({visible, onClose, onActivated}: PremiumModalProps)
 
         if (Platform.OS !== 'android') {
             setProcessing(true);
+            setWebProvider(provider);
             try {
-                const status = await startYooKassaCheckout(selected);
+                const status = await startWebCheckout(selected, provider);
                 if (status === null) {
                     return;
                 }
@@ -157,10 +167,11 @@ export const PremiumModal = ({visible, onClose, onActivated}: PremiumModalProps)
                     await activatePremium();
                     return;
                 }
-                console.warn('[payments] yookassa checkout failed', error);
+                console.warn(`[payments] ${provider} checkout failed`, error);
                 Alert.alert(t('premium.purchaseError'));
             } finally {
                 setProcessing(false);
+                setWebProvider(null);
             }
             return;
         }
@@ -392,18 +403,36 @@ export const PremiumModal = ({visible, onClose, onActivated}: PremiumModalProps)
                         <TouchableOpacity
                             style={[styles.subscribeButton, {backgroundColor: colors.accent}]}
                             onPress={() => {
-                                handleSubscribe().catch(() => {});
+                                handleSubscribe('yookassa').catch(() => {});
                             }}
                             disabled={processing}
                         >
-                            {processing ? (
+                            {processing && (Platform.OS === 'android' || webProvider === 'yookassa') ? (
                                 <ActivityIndicator color="#fff" />
                             ) : (
                                 <Text style={styles.subscribeButtonText}>
-                                    {t(Platform.OS === 'android' ? 'premium.subscribe' : 'premium.subscribeYooKassa')}
+                                    {t(Platform.OS === 'android' ? 'premium.subscribe' : 'premium.subscribeRussianCard')}
                                 </Text>
                             )}
                         </TouchableOpacity>
+
+                        {Platform.OS !== 'android' ? (
+                            <TouchableOpacity
+                                style={[styles.foreignCardButton, {borderColor: colors.accent}]}
+                                onPress={() => {
+                                    handleSubscribe('cloudpayments').catch(() => {});
+                                }}
+                                disabled={processing}
+                            >
+                                {processing && webProvider === 'cloudpayments' ? (
+                                    <ActivityIndicator color={colors.accent} />
+                                ) : (
+                                    <Text style={[styles.foreignCardButtonText, {color: colors.accent}]}>
+                                        {t('premium.subscribeForeignCard', {price: formatUsd(USD_PREMIUM_PRICES[selected])})}
+                                    </Text>
+                                )}
+                            </TouchableOpacity>
+                        ) : null}
 
                         <TouchableOpacity
                             style={styles.restoreButton}
@@ -542,6 +571,16 @@ const styles = StyleSheet.create({
     subscribeButtonText: {
         color: '#fff',
         fontSize: 18,
+        fontWeight: '700',
+    },
+    foreignCardButton: {
+        paddingVertical: 16,
+        borderRadius: 20,
+        borderWidth: 1.5,
+        alignItems: 'center',
+    },
+    foreignCardButtonText: {
+        fontSize: 16,
         fontWeight: '700',
     },
     restoreButton: {

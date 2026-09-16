@@ -12,6 +12,15 @@ export const FALLBACK_PREMIUM_PRICES: Record<PremiumProductId, number> = {
     premium_lifetime: 6990,
 };
 
+// Mirrors AmountUSDCents in backend/internal/billing/catalog.go; the server charges its own value.
+export const USD_PREMIUM_PRICES: Record<PremiumProductId, number> = {
+    premium_monthly: 7.99,
+    premium_yearly: 59.99,
+    premium_lifetime: 79.99,
+};
+
+export const formatUsd = (amount: number): string => `$${amount.toFixed(2)}`;
+
 const RUSTORE_SUBSCRIPTIONS_URL = 'rustore://profile/subscriptions';
 
 export class PaymentsUnavailableError extends Error {

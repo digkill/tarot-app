@@ -1,6 +1,8 @@
 import {Platform} from 'react-native';
 
-export type CheckoutProvider = 'rustore' | 'yookassa';
+export type CheckoutProvider = 'rustore' | 'yookassa' | 'cloudpayments';
+// iOS web checkout: YooKassa for Russian cards (RUB), CloudPayments for foreign cards (USD).
+export type WebCheckoutProvider = 'yookassa' | 'cloudpayments';
 export type ManagedProvider = CheckoutProvider | 'support';
 
 export type PremiumGate =
@@ -13,6 +15,8 @@ export const localCheckoutProvider = (): CheckoutProvider =>
     Platform.OS === 'android' ? 'rustore' : 'yookassa';
 
 export const isYooKassaSource = (source?: string | null): boolean => normalize(source) === 'yookassa';
+
+export const isCloudPaymentsSource = (source?: string | null): boolean => normalize(source) === 'cloudpayments';
 
 export const isSupportSource = (source?: string | null): boolean => {
     const value = normalize(source);
@@ -34,6 +38,9 @@ export const premiumGate = (hasPremium: boolean, source?: string | null): Premiu
     }
     if (isYooKassaSource(source)) {
         return {kind: 'managed', provider: 'yookassa', local: local === 'yookassa'};
+    }
+    if (isCloudPaymentsSource(source)) {
+        return {kind: 'managed', provider: 'cloudpayments', local: local !== 'rustore'};
     }
     return {kind: 'managed', provider: 'rustore', local: local === 'rustore'};
 };

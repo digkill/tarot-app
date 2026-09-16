@@ -67,7 +67,6 @@
     "benefits": "Premium unlocks every spread, up to 20 cards of the day, 50 AI interpretations per day, and priority updates.",
     "selectPlan": "Choose a plan",
     "subscribe": "Subscribe",
-    "subscribeYooKassa": "Pay with YooKassa",
     "manage": "Manage subscription",
     "manageRuStore": "Manage in RuStore",
     "manageYooKassa": "YooKassa billing",
@@ -76,7 +75,7 @@
     "managedBySupportCta": "Granted by support",
     "managedInRuStoreTitle": "RuStore subscription",
     "managedInRuStoreLocal": "This account is billed through RuStore. Change or cancel the plan in RuStore subscriptions.",
-    "managedInRuStoreOther": "Premium on this account is billed through RuStore on Android. iOS cannot start a second YooKassa payment while that plan is active.",
+    "managedInRuStoreOther": "Premium on this account is billed through RuStore on Android. iOS cannot start a second payment while that plan is active.",
     "managedInYooKassaTitle": "YooKassa billing",
     "managedInYooKassaLocal": "Premium was paid through the YooKassa web checkout and is tied to this Tarot account. There is no RuStore charge for it.",
     "managedInYooKassaOther": "Premium on this account is billed through YooKassa (iOS web checkout). Android RuStore cannot change or cancel that plan.",
@@ -94,13 +93,14 @@
     "installRuStore": "Install RuStore",
     "disclaimer": "Billed through RuStore. Monthly and yearly plans renew automatically; lifetime is a 99-year subscription. Cancel renewal in RuStore subscription settings. If this account already paid via YooKassa on iOS, manage it there — RuStore will not start a second plan. Sandbox payments show a “Test purchase” badge.",
     "checkoutPending": "Payment is still processing. Open Premium again in a moment.",
-    "disclaimerIos": "On iOS you pay only through our YooKassa web checkout. RuStore is not used here. Premium is tied to your Tarot account, not Apple In-App Purchase. If the account already has a RuStore plan, manage it on Android — a second YooKassa charge is blocked.",
+    "disclaimerIos": "On iOS you pay through web checkout: Russian bank cards via YooKassa (in rubles), international cards via CloudPayments (in US dollars). RuStore is not used here. Premium is tied to your Tarot account, not Apple In-App Purchase. If the account already has a RuStore plan, manage it on Android — a second charge is blocked.",
     "source": {
       "rustore": "Billed via RuStore",
       "yookassa": "Billed via YooKassa (iOS)",
       "admin": "Granted by support",
       "promo": "Promo access",
-      "dev": "Developer unlock"
+      "dev": "Developer unlock",
+      "cloudpayments": "Paid by international card (CloudPayments)"
     },
     "plans": {
       "monthly": {
@@ -126,7 +126,14 @@
       "dailyCards": "Up to 20 cards of the day each day, without watching a video.",
       "unlimitedReadings": "Unlimited access to premium spreads.",
       "prioritySupport": "Priority support for questions and feedback."
-    }
+    },
+    "subscribeRussianCard": "Russian bank card",
+    "subscribeForeignCard": "International card · {{price}}",
+    "manageCloudPayments": "CloudPayments billing",
+    "managedInCloudPaymentsCta": "Paid by international card",
+    "managedInCloudPaymentsTitle": "International card payment",
+    "managedInCloudPaymentsLocal": "Premium was paid by international card through CloudPayments and is tied to this Tarot account. There is no RuStore or YooKassa charge for it.",
+    "managedInCloudPaymentsOther": "Premium on this account was paid by international card through CloudPayments (iOS). Android RuStore cannot change or cancel that plan."
   },
   "spread": {
     "oneCard": {

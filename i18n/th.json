@@ -67,7 +67,6 @@
     "benefits": "พรีเมียมปลดล็อกทุกผัง ไพ่ประจำวันสูงสุด 20 ใบ การตีความ AI 50 ครั้งต่อวัน และอัปเดตสำคัญ",
     "selectPlan": "เลือกแพ็กเกจ",
     "subscribe": "สมัคร",
-    "subscribeYooKassa": "ชำระผ่าน YooKassa",
     "manage": "จัดการการสมัครสมาชิก",
     "manageRuStore": "จัดการใน RuStore",
     "manageYooKassa": "เรียกเก็บผ่าน YooKassa",
@@ -76,7 +75,7 @@
     "managedBySupportCta": "ให้โดยฝ่ายสนับสนุน",
     "managedInRuStoreTitle": "การสมัครสมาชิก RuStore",
     "managedInRuStoreLocal": "บัญชีนี้เรียกเก็บผ่าน RuStore เปลี่ยนหรือยกเลิกแผนได้ในการสมัครสมาชิก RuStore",
-    "managedInRuStoreOther": "พรีเมียมของบัญชีนี้เรียกเก็บผ่าน RuStore บน Android iOS ไม่สามารถเริ่มการชำระ YooKassa ครั้งที่สองได้ขณะแผนยังใช้งาน",
+    "managedInRuStoreOther": "พรีเมียมของบัญชีนี้เรียกเก็บผ่าน RuStore บน Android iOS ไม่สามารถเริ่มการชำระครั้งที่สองได้ขณะแผนยังใช้งาน",
     "managedInYooKassaTitle": "การเรียกเก็บ YooKassa",
     "managedInYooKassaLocal": "พรีเมียมชำระผ่านเว็บเช็คเอาต์ YooKassa และผูกกับบัญชี Tarot ไม่มีการเรียกเก็บใน RuStore",
     "managedInYooKassaOther": "พรีเมียมของบัญชีนี้เรียกเก็บผ่าน YooKassa (iOS) RuStore บน Android เปลี่ยนหรือยกเลิกแผนนี้ไม่ได้",
@@ -94,13 +93,14 @@
     "installRuStore": "ติดตั้ง RuStore",
     "disclaimer": "ชำระผ่าน RuStore รายเดือนและรายปีต่ออายุอัตโนมัติ แบบถาวรคือ 99 ปี ยกเลิกการต่ออายุได้ในการตั้งค่า RuStore หากบัญชีนี้ชำระผ่าน YooKassa บน iOS แล้ว ให้จัดการที่นั่น RuStore จะไม่เปิดแผนที่สอง การทดสอบจะมีป้าย «Тестовая покупка»",
     "checkoutPending": "การชำระเงินยังดำเนินการอยู่ เปิดพรีเมียมอีกครั้งในอีกสักครู่",
-    "disclaimerIos": "บน iOS ชำระเฉพาะผ่านเว็บเช็คเอาต์ YooKassa ของเรา ไม่ใช้ RuStore ที่นี่ พรีเมียมผูกกับบัญชี Tarot ไม่ใช่ Apple IAP หากแผนมีอยู่แล้วใน RuStore ให้จัดการบน Android — การชำระ YooKassa ครั้งที่สองจะถูกบล็อก",
+    "disclaimerIos": "บน iOS ชำระผ่านเว็บเช็คเอาต์: บัตรธนาคารรัสเซียผ่าน YooKassa (เป็นรูเบิล) บัตรต่างประเทศผ่าน CloudPayments (เป็นดอลลาร์สหรัฐ) ไม่ใช้ RuStore ที่นี่ พรีเมียมผูกกับบัญชี Tarot ไม่ใช่ Apple IAP หากแผนมีอยู่แล้วใน RuStore ให้จัดการบน Android — การชำระครั้งที่สองจะถูกบล็อก",
     "source": {
       "rustore": "ชำระผ่าน RuStore",
       "yookassa": "ชำระผ่าน YooKassa (iOS)",
       "admin": "ให้โดยฝ่ายสนับสนุน",
       "promo": "สิทธิ์โปรโมชัน",
-      "dev": "ปลดล็อกสำหรับนักพัฒนา"
+      "dev": "ปลดล็อกสำหรับนักพัฒนา",
+      "cloudpayments": "ชำระด้วยบัตรต่างประเทศ (CloudPayments)"
     },
     "plans": {
       "monthly": {
@@ -126,7 +126,14 @@
       "dailyCards": "ไพ่ประจำวันได้สูงสุด 20 ใบโดยไม่ต้องดูคลิป",
       "unlimitedReadings": "อ่านผังพรีเมียมได้ไม่จำกัด",
       "prioritySupport": "การสนับสนุนแบบลำดับความสำคัญ"
-    }
+    },
+    "subscribeRussianCard": "บัตรธนาคารรัสเซีย",
+    "subscribeForeignCard": "บัตรต่างประเทศ · {{price}}",
+    "manageCloudPayments": "เรียกเก็บผ่าน CloudPayments",
+    "managedInCloudPaymentsCta": "ชำระด้วยบัตรต่างประเทศ",
+    "managedInCloudPaymentsTitle": "การชำระด้วยบัตรต่างประเทศ",
+    "managedInCloudPaymentsLocal": "พรีเมียมชำระด้วยบัตรต่างประเทศผ่าน CloudPayments และผูกกับบัญชี Tarot ไม่มีการเรียกเก็บใน RuStore หรือ YooKassa",
+    "managedInCloudPaymentsOther": "พรีเมียมของบัญชีนี้ชำระด้วยบัตรต่างประเทศผ่าน CloudPayments (iOS) RuStore บน Android เปลี่ยนหรือยกเลิกแผนนี้ไม่ได้"
   },
   "spread": {
     "oneCard": {

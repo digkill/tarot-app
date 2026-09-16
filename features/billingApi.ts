@@ -1,4 +1,5 @@
 import {apiRequest} from './apiClient';
+import type {WebCheckoutProvider} from './premiumSource';
 
 export type ReportPurchaseInput = {
     productId: string;
@@ -26,10 +27,10 @@ export type CheckoutStatus = {
     premiumSource?: string;
 };
 
-export const createCheckoutRequest = (productId: string) =>
+export const createCheckoutRequest = (productId: string, provider: WebCheckoutProvider) =>
     apiRequest<CheckoutSession>('/api/v1/billing/checkout', {
         method: 'POST',
-        body: {productId},
+        body: {productId, provider},
     });
 
 export const fetchCheckoutRequest = (transactionId: string) =>
