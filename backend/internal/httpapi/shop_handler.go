@@ -18,13 +18,16 @@ type shopDeckView struct {
 	PriceKop         int               `json:"priceKop"`
 	OriginalPriceKop *int              `json:"originalPriceKop,omitempty"`
 	ProductID        string            `json:"productId"`
-	IsFree           bool              `json:"isFree"`
-	Owned            bool              `json:"owned"`
-	CardCount        int               `json:"cardCount"`
-	HasBack          bool              `json:"hasBack"`
-	CoverURL         string            `json:"coverUrl"`
-	BackURL          string            `json:"backUrl"`
-	Cards            map[string]string `json:"cards"`
+	// AppleProductID is the StoreKit SKU the iOS client must request. Absent
+	// when the deck is not sold on iOS, and the client must then not offer it.
+	AppleProductID string            `json:"appleProductId,omitempty"`
+	IsFree         bool              `json:"isFree"`
+	Owned          bool              `json:"owned"`
+	CardCount      int               `json:"cardCount"`
+	HasBack        bool              `json:"hasBack"`
+	CoverURL       string            `json:"coverUrl"`
+	BackURL        string            `json:"backUrl"`
+	Cards          map[string]string `json:"cards"`
 }
 
 func (h *Handler) toShopView(d *storage.Deck, owned bool) shopDeckView {
@@ -37,6 +40,7 @@ func (h *Handler) toShopView(d *storage.Deck, owned bool) shopDeckView {
 		PriceKop:         d.PriceKop,
 		OriginalPriceKop: d.OriginalPriceKop,
 		ProductID:        d.ProductID(),
+		AppleProductID:   strOrEmpty(d.AppleProductID),
 		IsFree:           d.IsFree,
 		Owned:            owned || d.IsFree,
 		CardCount:        d.CardCount,
@@ -45,6 +49,15 @@ func (h *Handler) toShopView(d *storage.Deck, owned bool) shopDeckView {
 		BackURL:          back,
 		Cards:            cards,
 	}
+}
+
+// strOrEmpty is the JSON-facing counterpart of derefString, which renders a
+// dash for templates.
+func strOrEmpty(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
 }
 
 func (h *Handler) ownedSet(r *http.Request) map[string]struct{} {

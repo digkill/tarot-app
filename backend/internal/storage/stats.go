@@ -40,8 +40,10 @@ type DashboardStats struct {
 	TxRefunded       int
 	RevenuePaidKop   int64
 	RevenueRefundKop int64
-	SignupsByDay     []DayCount
-	Events30d        []EventCount
+	// Foreign-card (CloudPayments) revenue, kept apart from rubles.
+	RevenuePaidUSDCents int64
+	SignupsByDay        []DayCount
+	Events30d           []EventCount
 }
 
 func (r *StatsRepo) Dashboard(ctx context.Context) (*DashboardStats, error) {
@@ -79,9 +81,10 @@ func (r *StatsRepo) Dashboard(ctx context.Context) (*DashboardStats, error) {
 		SELECT
 			COUNT(*) FILTER (WHERE status = 'paid'),
 			COUNT(*) FILTER (WHERE status = 'refunded'),
-			COALESCE(SUM(amount_kop) FILTER (WHERE status = 'paid'), 0),
-			COALESCE(SUM(amount_kop) FILTER (WHERE status = 'refunded'), 0)
-		FROM transactions`).Scan(&s.TxPaid, &s.TxRefunded, &s.RevenuePaidKop, &s.RevenueRefundKop)
+			COALESCE(SUM(amount_kop) FILTER (WHERE status = 'paid' AND currency = 'RUB'), 0),
+			COALESCE(SUM(amount_kop) FILTER (WHERE status = 'refunded' AND currency = 'RUB'), 0),
+			COALESCE(SUM(amount_kop) FILTER (WHERE status = 'paid' AND currency = 'USD'), 0)
+		FROM transactions`).Scan(&s.TxPaid, &s.TxRefunded, &s.RevenuePaidKop, &s.RevenueRefundKop, &s.RevenuePaidUSDCents)
 	if err != nil {
 		return nil, fmt.Errorf("billing stats: %w", err)
 	}

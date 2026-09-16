@@ -45,7 +45,9 @@
       <option value="admin">admin</option>
       <option value="promo">promo</option>
       <option value="rustore">rustore</option>
-      <option value="yookassa">yookassa / iOS</option>
+      <option value="yookassa">yookassa (web, RUB)</option>
+      <option value="cloudpayments">cloudpayments (web, USD)</option>
+      <option value="apple">apple / iOS IAP</option>
     </select>
   </div>
   <div class="field">
@@ -72,7 +74,7 @@
       <td>{{fmtTime .CreatedAt}}</td>
       <td><a href="/admin/users/{{.UserID}}">{{.UserEmail}}</a></td>
       <td>{{titleOf .ProductID}}</td>
-      <td>{{fmtRubI .AmountKop}}</td>
+      <td>{{fmtMoney .AmountKop .Currency}}</td>
       <td>{{.Provider}}{{if .Sandbox}} · sandbox{{end}}</td>
       <td><a href="/admin/transactions/{{.ID}}"><span class="tag {{.Status}}">{{.Status}}</span></a></td>
     </tr>

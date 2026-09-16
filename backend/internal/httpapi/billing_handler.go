@@ -60,6 +60,21 @@ func (h *Handler) ReportPurchase(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// NormalizeSource cannot produce ProviderApple, so a client cannot claim an
+	// Apple purchase here. Guard the other direction too: this unverified
+	// self-report channel must not overwrite an Apple entitlement. Deck grants
+	// are unaffected and continue below.
+	if isPremium && billing.IsAppleManaged(user.PremiumSource) {
+		slog.Info("ignoring a self-reported premium purchase over apple-managed premium",
+			"user", user.ID, "reported", req.ProductID)
+		writeJSON(w, http.StatusOK, map[string]any{
+			"ok":            true,
+			"hasPremium":    user.HasPremium,
+			"premiumSource": user.PremiumSource,
+		})
+		return
+	}
+
 	source := billing.NormalizeSource(req.Source)
 	provider := billing.ProviderRuStore
 	kind := billing.KindOneTime
@@ -185,6 +200,17 @@ func (h *Handler) SyncSubscriptionStatus(w http.ResponseWriter, r *http.Request)
 		}
 		if !ok {
 			writeError(w, http.StatusUnprocessableEntity, "validation_error", "unknown productId")
+			return
+		}
+		// This is the RuStore self-report channel. Without this guard it could
+		// rewrite an Apple user's premium_source and expiry from an unverified
+		// client claim; the revoke branch below is already protected by
+		// CanRevokeFrom.
+		if billing.IsAppleManaged(user.PremiumSource) {
+			slog.Info("ignoring a rustore subscription sync over apple-managed premium", "user", user.ID)
+			writeJSON(w, http.StatusOK, map[string]any{
+				"ok": true, "hasPremium": user.HasPremium, "premiumSource": user.PremiumSource,
+			})
 			return
 		}
 		if err = h.grantPremium(r, user.ID, product, billing.ProviderRuStore, billing.ParseTime(req.ExpiresAt)); err != nil {

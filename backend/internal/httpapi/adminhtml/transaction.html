@@ -10,7 +10,7 @@
     <div>Тип</div><div>{{.Tx.Kind}}</div>
     <div>Статус</div><div><span class="tag {{.Tx.Status}}">{{.Tx.Status}}</span></div>
     <div>Источник</div><div>{{.Tx.Provider}}{{if .Tx.Sandbox}} · sandbox{{end}}</div>
-    <div>Сумма</div><div>{{fmtRubI .Tx.AmountKop}} {{.Tx.Currency}}</div>
+    <div>Сумма</div><div>{{fmtMoney .Tx.AmountKop .Tx.Currency}}</div>
     <div>Invoice</div><div class="mono">{{deref .Tx.ProviderInvoiceID}}</div>
     <div>Purchase id</div><div class="mono">{{deref .Tx.ProviderPurchaseID}}</div>
     <div>Оплачено</div><div>{{fmtTime .Tx.PaidAt}}</div>
@@ -22,7 +22,17 @@
 </div>
 
 {{if eq .Tx.Status "paid"}}
+{{if eq .Tx.Provider "apple"}}
+<p class="note">Возврат в админке снимает премиум в приложении (если нет других оплаченных транзакций). Деньги возвращает Apple — пользователь делает это через App Store («Сообщить о проблеме»), вернуть их со своей стороны нельзя. Обычно Apple сама присылает уведомление REFUND, и премиум снимается автоматически.</p>
+{{else if eq .Tx.Provider "rustore"}}
 <p class="note">Возврат в админке снимает премиум в приложении (если нет других оплаченных транзакций). Деньги в RuStore нужно вернуть отдельно в консоли разработчика — серверного API возврата у нас нет.</p>
+{{else if eq .Tx.Provider "yookassa"}}
+<p class="note">Возврат в админке снимает премиум в приложении (если нет других оплаченных транзакций). Деньги нужно вернуть отдельно в кабинете ЮKassa.</p>
+{{else if eq .Tx.Provider "cloudpayments"}}
+<p class="note">Возврат в админке снимает премиум в приложении (если нет других оплаченных транзакций). Деньги нужно вернуть отдельно в кабинете CloudPayments.</p>
+{{else}}
+<p class="note">Возврат в админке снимает премиум в приложении (если нет других оплаченных транзакций). Деньги, если они были, возвращаются на стороне платёжного провайдера.</p>
+{{end}}
 <form method="post" action="/admin/transactions/{{.Tx.ID}}/refund" onsubmit="return confirm('Вернуть эту транзакцию и при необходимости снять премиум?');">
   <input type="hidden" name="csrf" value="{{.CSRF}}">
   <div class="field" style="max-width:480px;margin-bottom:12px">

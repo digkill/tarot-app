@@ -31,6 +31,13 @@ func IsYooKassaManaged(source string) bool {
 	return strings.ToLower(strings.TrimSpace(source)) == ProviderYooKassa
 }
 
+// IsAppleManaged reports whether premium came from Apple IAP. Such an
+// entitlement may only be changed by a server-verified Apple transaction or
+// notification, never by a client self-report.
+func IsAppleManaged(source string) bool {
+	return strings.ToLower(strings.TrimSpace(source)) == ProviderApple
+}
+
 func ActivePremiumSource(hasPremium bool, source string) (string, bool) {
 	if !hasPremium {
 		return "", false

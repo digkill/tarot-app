@@ -8,6 +8,7 @@
   <div class="card"><div class="k">Премиум</div><div class="v">{{.Stats.UsersPremium}}</div><div class="s">{{.Stats.UsersAdmin}} админов</div></div>
   <div class="card"><div class="k">Расклады</div><div class="v">{{.Stats.ReadingsTotal}}</div><div class="s">{{.Stats.Readings7d}} за 7 дней · {{.Stats.Readings30d}} за 30</div></div>
   <div class="card"><div class="k">Выручка (оплачено)</div><div class="v">{{fmtRub .Stats.RevenuePaidKop}}</div><div class="s">{{.Stats.TxPaid}} платежей</div></div>
+  <div class="card"><div class="k">Выручка USD (CloudPayments)</div><div class="v">{{fmtMoney .Stats.RevenuePaidUSDCents "USD"}}</div><div class="s">иностранные карты</div></div>
   <div class="card"><div class="k">Возвраты</div><div class="v">{{fmtRub .Stats.RevenueRefundKop}}</div><div class="s">{{.Stats.TxRefunded}} транзакций</div></div>
   <div class="card"><div class="k">Регистрации</div><div class="v">{{.Stats.Signups7d}}</div><div class="s">за 7 дней · {{.Stats.Signups30d}} за 30</div></div>
 </div>
@@ -51,7 +52,7 @@
       <td>{{fmtTime .CreatedAt}}</td>
       <td><a href="/admin/users/{{.UserID}}">{{.UserEmail}}</a></td>
       <td>{{titleOf .ProductID}}</td>
-      <td>{{fmtRubI .AmountKop}}</td>
+      <td>{{fmtMoney .AmountKop .Currency}}</td>
       <td><span class="tag {{.Status}}">{{.Status}}</span></td>
     </tr>
   {{end}}

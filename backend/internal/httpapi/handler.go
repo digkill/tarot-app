@@ -4,8 +4,10 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/digkill/tarot-app/backend/internal/appstore"
 	"github.com/digkill/tarot-app/backend/internal/atrest"
 	"github.com/digkill/tarot-app/backend/internal/auth"
+	"github.com/digkill/tarot-app/backend/internal/cloudpayments"
 	"github.com/digkill/tarot-app/backend/internal/config"
 	"github.com/digkill/tarot-app/backend/internal/llm"
 	"github.com/digkill/tarot-app/backend/internal/mailer"
@@ -34,7 +36,10 @@ type Handler struct {
 	decks         *storage.DeckRepo
 	usage         *storage.UsageRepo
 	checkout      *storage.CheckoutRepo
+	appleSubs     *storage.AppleSubRepo
 	yk            *yookassa.Client
+	cp            *cloudpayments.Client
+	as            *appstore.Client
 	mail          *mailer.Sender
 	box           *atrest.Box
 	llmClient     llm.Interpreter
@@ -56,6 +61,7 @@ func NewHandler(
 	deckRepo *storage.DeckRepo,
 	usageRepo *storage.UsageRepo,
 	checkoutRepo *storage.CheckoutRepo,
+	appleSubs *storage.AppleSubRepo,
 	mail *mailer.Sender,
 	box *atrest.Box,
 	llmClient llm.Interpreter,
@@ -73,7 +79,10 @@ func NewHandler(
 		decks:         deckRepo,
 		usage:         usageRepo,
 		checkout:      checkoutRepo,
+		appleSubs:     appleSubs,
 		yk:            yookassa.New(cfg.YooKassaShopID, cfg.YooKassaSecretKey, cfg.YooKassaVatCode),
+		cp:            cloudpayments.New(cfg.CloudPaymentsPublicID, cfg.CloudPaymentsAPISecret),
+		as:            newAppStoreClient(cfg),
 		mail:          mail,
 		box:           box,
 		llmClient:     llmClient,

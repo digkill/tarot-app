@@ -2,12 +2,14 @@ package httpapi
 
 import (
 	"embed"
+	"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/digkill/tarot-app/backend/internal/appstore"
 	"github.com/digkill/tarot-app/backend/internal/billing"
 )
 
@@ -38,13 +40,16 @@ var adminTmpl = template.Must(template.New("admin").Funcs(template.FuncMap{
 	"fmtDay": func(t time.Time) string {
 		return t.Format("02.01.2006")
 	},
-	"fmtRub":   formatRubKop,
-	"fmtRubI":  func(v int) string { return formatRubKop(int64(v)) },
-	"titleOf":  billing.Title,
-	"deref":    derefString,
-	"derefInt": derefInt,
-	"short":    shortID,
-	"kopRub":   func(k int) int { return k / 100 },
+	"fmtRub":         formatRubKop,
+	"fmtRubI":        func(v int) string { return formatRubKop(int64(v)) },
+	"fmtMoney":       formatMoney,
+	"titleOf":        billing.Title,
+	"deref":          derefString,
+	"derefInt":       derefInt,
+	"appleStatus":    appleStatusLabel,
+	"appleAutoRenew": appleAutoRenewLabel,
+	"short":          shortID,
+	"kopRub":         func(k int) int { return k / 100 },
 }).ParseFS(adminFS, "adminhtml/*.html"))
 
 func derefString(s *string) string {
@@ -52,6 +57,37 @@ func derefString(s *string) string {
 		return "—"
 	}
 	return *s
+}
+
+// appleStatusLabel renders an App Store subscription status for support staff.
+func appleStatusLabel(status *int) string {
+	if status == nil {
+		return "—"
+	}
+	switch *status {
+	case appstore.SubStatusActive:
+		return "активна"
+	case appstore.SubStatusExpired:
+		return "истекла"
+	case appstore.SubStatusBillingRetry:
+		return "проблема с оплатой"
+	case appstore.SubStatusGracePeriod:
+		return "льготный период"
+	case appstore.SubStatusRevoked:
+		return "отозвана"
+	default:
+		return strconv.Itoa(*status)
+	}
+}
+
+func appleAutoRenewLabel(status *int) string {
+	if status == nil {
+		return "—"
+	}
+	if *status == 1 {
+		return "включено"
+	}
+	return "выключено"
 }
 
 func derefInt(v *int) int {
@@ -69,6 +105,37 @@ func shortID(id string) string {
 		return "—"
 	}
 	return id
+}
+
+// formatMoney renders minor units in their own currency. Transactions from
+// CloudPayments are stored in USD cents, so they can't go through fmtRub.
+func formatMoney(minor any, currency string) string {
+	var v int64
+	switch n := minor.(type) {
+	case int:
+		v = int64(n)
+	case int64:
+		v = n
+	}
+	switch strings.ToUpper(strings.TrimSpace(currency)) {
+	case "", "RUB":
+		return formatRubKop(v)
+	case "USD":
+		return "$" + formatDecimalMinor(v)
+	case "EUR":
+		return "€" + formatDecimalMinor(v)
+	default:
+		return formatDecimalMinor(v) + " " + currency
+	}
+}
+
+func formatDecimalMinor(minor int64) string {
+	sign := ""
+	if minor < 0 {
+		sign = "−"
+		minor = -minor
+	}
+	return fmt.Sprintf("%s%d.%02d", sign, minor/100, minor%100)
 }
 
 func formatRubKop(kop int64) string {

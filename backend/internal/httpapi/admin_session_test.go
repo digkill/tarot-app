@@ -31,3 +31,22 @@ func TestFormatRubKop(t *testing.T) {
 		t.Fatalf("0: %q", got)
 	}
 }
+
+func TestFormatMoney(t *testing.T) {
+	for _, tc := range []struct {
+		minor    any
+		currency string
+		want     string
+	}{
+		{59900, "RUB", "599 ₽"},
+		{59900, "", "599 ₽"},
+		{799, "USD", "$7.99"},
+		{int64(5999), "usd", "$59.99"},
+		{7, "USD", "$0.07"},
+		{1250, "EUR", "€12.50"},
+	} {
+		if got := formatMoney(tc.minor, tc.currency); got != tc.want {
+			t.Errorf("formatMoney(%v, %q) = %q, want %q", tc.minor, tc.currency, got, tc.want)
+		}
+	}
+}

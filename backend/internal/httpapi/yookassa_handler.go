@@ -17,17 +17,24 @@ import (
 
 type checkoutRequest struct {
 	ProductID string `json:"productId"`
+	// Provider is "yookassa" (Russian cards, RUB; the default) or
+	// "cloudpayments" (foreign cards, USD).
+	Provider string `json:"provider"`
 }
 
 func (h *Handler) CreateCheckout(w http.ResponseWriter, r *http.Request) {
-	if h.yk == nil || !h.yk.Enabled() {
-		writeError(w, http.StatusServiceUnavailable, "payments_unavailable", "YooKassa is not configured")
-		return
-	}
 	userID := userIDFromCtx(r.Context())
 	var req checkoutRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		writeError(w, http.StatusBadRequest, "bad_request", "invalid request body")
+		return
+	}
+	provider := strings.ToLower(strings.TrimSpace(req.Provider))
+	if provider == "" {
+		provider = billing.ProviderYooKassa
+	}
+	if provider != billing.ProviderYooKassa && provider != billing.ProviderCloudPayments {
+		writeError(w, http.StatusUnprocessableEntity, "validation_error", "unknown provider")
 		return
 	}
 	product, ok := billing.Lookup(req.ProductID)
@@ -43,11 +50,24 @@ func (h *Handler) CreateCheckout(w http.ResponseWriter, r *http.Request) {
 	if source, blocked := billing.ActivePremiumSource(user.HasPremium, user.PremiumSource); blocked {
 		writeJSON(w, http.StatusConflict, map[string]any{
 			"error": map[string]any{
-				"code":           "premium_already_active",
-				"message":        "premium is already active for this account",
+				"code":          "premium_already_active",
+				"message":       "premium is already active for this account",
 				"premiumSource": source,
 			},
 		})
+		return
+	}
+
+	if provider == billing.ProviderCloudPayments {
+		h.startCloudPaymentsCheckout(w, r, user, product)
+		return
+	}
+	h.startYooKassaCheckout(w, r, user, product)
+}
+
+func (h *Handler) startYooKassaCheckout(w http.ResponseWriter, r *http.Request, user *storage.User, product billing.Product) {
+	if h.yk == nil || !h.yk.Enabled() {
+		writeError(w, http.StatusServiceUnavailable, "payments_unavailable", "YooKassa is not configured")
 		return
 	}
 
@@ -115,6 +135,9 @@ func (h *Handler) CreateCheckout(w http.ResponseWriter, r *http.Request) {
 		"confirmationUrl": confirmURL,
 		"returnUrl":       returnURL,
 		"productId":       product.ID,
+		"provider":        billing.ProviderYooKassa,
+		"currency":        billing.CurrencyRUB,
+		"amountMinor":     product.AmountKop,
 	})
 }
 
@@ -139,9 +162,25 @@ func (h *Handler) GetCheckout(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "internal_error", "failed to load user")
 		return
 	}
-	if tx.Status == billing.StatusPending && tx.ProviderInvoiceID != nil && h.yk != nil && h.yk.Enabled() {
-		if pay, gerr := h.yk.GetPayment(*tx.ProviderInvoiceID); gerr == nil {
-			h.applyYooKassaPayment(r, tx, pay)
+	if tx.Status == billing.StatusPending {
+		reconciled := false
+		switch tx.Provider {
+		case billing.ProviderYooKassa:
+			if tx.ProviderInvoiceID != nil && h.yk != nil && h.yk.Enabled() {
+				if pay, gerr := h.yk.GetPayment(*tx.ProviderInvoiceID); gerr == nil {
+					h.applyYooKassaPayment(r, tx, pay)
+					reconciled = true
+				}
+			}
+		case billing.ProviderCloudPayments:
+			h.reconcileCloudPayments(r, tx)
+			reconciled = true
+			// No billing.ProviderApple case on purpose: Apple never produces a
+			// pending transaction and has no checkout session, so there is
+			// nothing to reconcile. Note that a provider left out of this
+			// switch silently never reconciles at all.
+		}
+		if reconciled {
 			if refreshed, rerr := h.txns.GetByID(r.Context(), tx.ID); rerr == nil {
 				tx = refreshed
 			}
@@ -249,7 +288,7 @@ func (h *Handler) applyYooKassaPayment(r *http.Request, tx *storage.Transaction,
 func payGoHTML(url string) string {
 	return `<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Tarot — оплата</title>
 <style>body{font-family:-apple-system,sans-serif;background:#0B1220;color:#f7f4ea;display:flex;min-height:100vh;align-items:center;justify-content:center;margin:0}a{color:#6c5ce7}</style></head>
-<body><p>Переходим к оплате ЮKassa…</p><script>location.replace("` + url + `");</script>
+<body><p>Переходим к оплате… / Redirecting to payment…</p><script>location.replace("` + url + `");</script>
 <noscript><p><a href="` + url + `">Продолжить оплату</a></p></noscript></body></html>`
 }
 

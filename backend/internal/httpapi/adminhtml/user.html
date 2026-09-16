@@ -66,7 +66,9 @@
       <option value="admin">admin</option>
       <option value="promo">promo</option>
       <option value="rustore">rustore</option>
-      <option value="yookassa">yookassa / iOS</option>
+      <option value="yookassa">yookassa (web, RUB)</option>
+      <option value="cloudpayments">cloudpayments (web, USD)</option>
+      <option value="apple">apple / iOS IAP</option>
     </select>
   </div>
   <div class="field">
@@ -89,7 +91,7 @@
     <tr>
       <td>{{fmtTime .CreatedAt}}</td>
       <td>{{titleOf .ProductID}}</td>
-      <td>{{fmtRubI .AmountKop}}</td>
+      <td>{{fmtMoney .AmountKop .Currency}}</td>
       <td><span class="tag {{.Status}}">{{.Status}}</span></td>
       <td><a href="/admin/transactions/{{.ID}}">открыть</a></td>
     </tr>
@@ -97,5 +99,26 @@
   </tbody>
 </table>
 {{else}}<p class="sub">Платежей нет.</p>{{end}}
+
+{{if .AppleSubs}}
+<h2>Подписки Apple</h2>
+<table>
+  <thead><tr><th>Original tx id</th><th>Продукт</th><th>Среда</th><th>Статус</th><th>Автопродление</th><th>Действует до</th><th>Последнее событие</th></tr></thead>
+  <tbody>
+  {{range .AppleSubs}}
+    <tr>
+      <td class="mono">{{.OriginalTransactionID}}</td>
+      <td>{{titleOf .ProductID}}<br><span class="sub mono">{{.AppleProductID}}</span></td>
+      <td>{{.Environment}}</td>
+      <td>{{appleStatus .Status}}</td>
+      <td>{{appleAutoRenew .AutoRenewStatus}}</td>
+      <td>{{fmtTimePtr .ExpiresAt}}</td>
+      <td>{{if .LastNotificationType}}{{.LastNotificationType}}{{else}}—{{end}}<br><span class="sub">{{fmtTime .UpdatedAt}}</span></td>
+    </tr>
+  {{end}}
+  </tbody>
+</table>
+<p class="sub">Статус и срок приходят от Apple. Если подписка активна у Apple, но премиум снят — проверьте, доходят ли уведомления на <span class="mono">/api/v1/billing/apple/notifications</span>.</p>
+{{end}}
 {{template "footer"}}
 {{end}}

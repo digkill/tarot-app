@@ -53,10 +53,15 @@ func (h *Handler) Router() http.Handler {
 			r.Post("/billing/subscription-status", h.SyncSubscriptionStatus)
 			r.Post("/billing/checkout", h.CreateCheckout)
 			r.Get("/billing/checkout/{id}", h.GetCheckout)
+			// Apple IAP: purchase, restore and refresh all go through this one
+			// idempotent route. There is deliberately no self-report channel.
+			r.Post("/billing/apple/verify", h.AppleVerifyPurchase)
 			r.Get("/me/decks", h.MyDecks)
 		})
 
 		r.Post("/billing/yookassa/webhook", h.YooKassaWebhook)
+		r.Post("/billing/cloudpayments/pay", h.CloudPaymentsPay)
+		r.Post("/billing/apple/notifications", h.AppleNotifications)
 
 		r.Group(func(r chi.Router) {
 			r.Use(h.optionalAuth)

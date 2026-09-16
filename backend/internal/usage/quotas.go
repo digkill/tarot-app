@@ -6,8 +6,12 @@ import (
 )
 
 const (
-	FreeDailyCards         = 1
-	PremiumDailyCards      = 20
+	FreeDailyCards    = 3
+	PremiumDailyCards = 20
+	// FreeAdUnlocks stays non-zero for the shipped Android build, whose
+	// "watch to unlock" button would otherwise start failing for live users.
+	// The native iOS client never calls /usage/ad-session at all; drop this to
+	// 0 once the RN client has shipped without that flow.
 	FreeAdUnlocks          = 5
 	FreeInterpretations    = 0
 	PremiumInterpretations = 50

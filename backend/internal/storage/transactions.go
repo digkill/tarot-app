@@ -154,6 +154,22 @@ func (r *TransactionRepo) SetStatus(ctx context.Context, id, status string) erro
 	return nil
 }
 
+// MarkPaidFromPending moves a pending transaction to paid and reports whether
+// this call made the transition, so concurrent webhook and polling
+// reconciliation grant an entitlement exactly once.
+func (r *TransactionRepo) MarkPaidFromPending(ctx context.Context, id, purchaseID string) (bool, error) {
+	tag, err := r.pool.Exec(ctx, `
+		UPDATE transactions
+		SET status = 'paid',
+		    paid_at = NOW(),
+		    provider_purchase_id = COALESCE(NULLIF($2, ''), provider_purchase_id)
+		WHERE id = $1 AND status = 'pending'`, id, purchaseID)
+	if err != nil {
+		return false, fmt.Errorf("mark transaction paid: %w", err)
+	}
+	return tag.RowsAffected() == 1, nil
+}
+
 func (r *TransactionRepo) GetByID(ctx context.Context, id string) (*Transaction, error) {
 	q := `SELECT ` + txSelect + ` FROM transactions t JOIN users u ON u.id = t.user_id WHERE t.id = $1`
 	tx, err := scanTx(r.pool.QueryRow(ctx, q, id))
@@ -199,11 +215,16 @@ func (r *TransactionRepo) List(ctx context.Context, f TxListFilter) ([]Transacti
 		f.Offset = 0
 	}
 
+	// provider_purchase_id is searched too: for Apple it holds the
+	// originalTransactionId, which is the only handle that groups every renewal
+	// of one subscription.
 	const countQ = `
 		SELECT COUNT(*)
 		FROM transactions t
 		JOIN users u ON u.id = t.user_id
-		WHERE ($1 = '' OR u.email ILIKE '%' || $1 || '%' OR COALESCE(t.provider_invoice_id,'') ILIKE '%' || $1 || '%')
+		WHERE ($1 = '' OR u.email ILIKE '%' || $1 || '%'
+		        OR COALESCE(t.provider_invoice_id,'') ILIKE '%' || $1 || '%'
+		        OR COALESCE(t.provider_purchase_id,'') ILIKE '%' || $1 || '%')
 		  AND ($2 = '' OR t.status = $2)
 		  AND ($3 = '' OR t.user_id::text = $3)`
 	var total int
@@ -214,7 +235,9 @@ func (r *TransactionRepo) List(ctx context.Context, f TxListFilter) ([]Transacti
 	q := `SELECT ` + txSelect + `
 		FROM transactions t
 		JOIN users u ON u.id = t.user_id
-		WHERE ($1 = '' OR u.email ILIKE '%' || $1 || '%' OR COALESCE(t.provider_invoice_id,'') ILIKE '%' || $1 || '%')
+		WHERE ($1 = '' OR u.email ILIKE '%' || $1 || '%'
+		        OR COALESCE(t.provider_invoice_id,'') ILIKE '%' || $1 || '%'
+		        OR COALESCE(t.provider_purchase_id,'') ILIKE '%' || $1 || '%')
 		  AND ($2 = '' OR t.status = $2)
 		  AND ($3 = '' OR t.user_id::text = $3)
 		ORDER BY t.created_at DESC

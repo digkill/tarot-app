@@ -30,6 +30,10 @@
       <input name="rustore_product_id" value="{{if .Deck}}{{deref .Deck.RustoreProductID}}{{end}}" placeholder="deck_japanese">
     </div>
     <div class="field">
+      <label>Apple product id (IAP, non-consumable) — пусто = не продаётся на iOS</label>
+      <input name="apple_product_id" value="{{if .Deck}}{{deref .Deck.AppleProductID}}{{end}}" placeholder="org.mediarise.tarot.deck.japanese">
+    </div>
+    <div class="field">
       <label>Порядок</label>
       <input name="sort_order" value="{{if .Deck}}{{.Deck.SortOrder}}{{else}}0{{end}}">
     </div>

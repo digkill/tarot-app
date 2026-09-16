@@ -5,7 +5,7 @@
 <p><a class="btn" href="/admin/decks/new">Новая колода</a></p>
 {{if .Decks}}
 <table>
-  <thead><tr><th>Slug</th><th>Название</th><th>Цена</th><th>SKU</th><th>Карт</th><th>Статус</th></tr></thead>
+  <thead><tr><th>Slug</th><th>Название</th><th>Цена</th><th>SKU RuStore</th><th>SKU Apple</th><th>Карт</th><th>Статус</th></tr></thead>
   <tbody>
   {{range .Decks}}
     <tr>
@@ -13,6 +13,7 @@
       <td>{{index .TitleI18n "ru"}} {{index .TitleI18n "en"}}</td>
       <td>{{if .IsFree}}бесплатно{{else}}{{fmtRubI .PriceKop}}{{end}}</td>
       <td class="mono">{{deref .RustoreProductID}}</td>
+      <td class="mono">{{deref .AppleProductID}}</td>
       <td>{{.CardCount}}</td>
       <td>{{if .IsPublished}}<span class="tag paid">в магазине</span>{{else}}черновик{{end}}</td>
     </tr>

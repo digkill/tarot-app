@@ -138,9 +138,12 @@ func deckParamsFromForm(r *http.Request, slug string) storage.UpsertDeckParams {
 		PriceKop:         parsePriceKop(r),
 		OriginalPriceKop: parseOriginalPriceKop(r),
 		RustoreProductID: product,
-		IsFree:           r.FormValue("is_free") == "1",
-		IsPublished:      r.FormValue("is_published") == "1",
-		SortOrder:        atoiDefault(r.FormValue("sort_order"), 0),
+		// No slug-derived default: an Apple SKU has to exist in App Store
+		// Connect, so guessing one would only produce purchases we can't map.
+		AppleProductID: storage.NullIfBlank(r.FormValue("apple_product_id")),
+		IsFree:         r.FormValue("is_free") == "1",
+		IsPublished:    r.FormValue("is_published") == "1",
+		SortOrder:      atoiDefault(r.FormValue("sort_order"), 0),
 	}
 }
 

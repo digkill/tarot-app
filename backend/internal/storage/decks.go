@@ -26,6 +26,7 @@ type Deck struct {
 	OriginalPriceKop *int
 	Currency         string
 	RustoreProductID *string
+	AppleProductID   *string
 	IsFree           bool
 	IsPublished      bool
 	SortOrder        int
@@ -52,7 +53,7 @@ func NewDeckRepo(pool *pgxpool.Pool) *DeckRepo {
 
 const deckSelect = `
 	id, slug, title_i18n, description_i18n, theme, price_kop, original_price_kop, currency,
-	rustore_product_id, is_free, is_published, sort_order, card_count, has_back,
+	rustore_product_id, apple_product_id, is_free, is_published, sort_order, card_count, has_back,
 	created_at, updated_at`
 
 func scanDeck(row rowScanner) (*Deck, error) {
@@ -60,7 +61,7 @@ func scanDeck(row rowScanner) (*Deck, error) {
 	var titleRaw, descRaw, themeRaw []byte
 	err := row.Scan(
 		&d.ID, &d.Slug, &titleRaw, &descRaw, &themeRaw, &d.PriceKop, &d.OriginalPriceKop, &d.Currency,
-		&d.RustoreProductID, &d.IsFree, &d.IsPublished, &d.SortOrder, &d.CardCount, &d.HasBack,
+		&d.RustoreProductID, &d.AppleProductID, &d.IsFree, &d.IsPublished, &d.SortOrder, &d.CardCount, &d.HasBack,
 		&d.CreatedAt, &d.UpdatedAt,
 	)
 	if err != nil {
@@ -86,6 +87,7 @@ type UpsertDeckParams struct {
 	PriceKop         int
 	OriginalPriceKop *int
 	RustoreProductID *string
+	AppleProductID   *string
 	IsFree           bool
 	IsPublished      bool
 	SortOrder        int
@@ -97,12 +99,12 @@ func (r *DeckRepo) Create(ctx context.Context, p UpsertDeckParams) (*Deck, error
 	const q = `
 		INSERT INTO decks (
 			slug, title_i18n, description_i18n, theme, price_kop, original_price_kop, rustore_product_id,
-			is_free, is_published, sort_order
-		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+			apple_product_id, is_free, is_published, sort_order
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
 		RETURNING ` + deckSelect
 	d, err := scanDeck(r.pool.QueryRow(ctx, q,
 		p.Slug, title, desc, p.Theme.JSON(), p.PriceKop, p.OriginalPriceKop, p.RustoreProductID,
-		p.IsFree, p.IsPublished, p.SortOrder,
+		p.AppleProductID, p.IsFree, p.IsPublished, p.SortOrder,
 	))
 	if err != nil {
 		if isUniqueViolation(err) {
@@ -124,15 +126,16 @@ func (r *DeckRepo) Update(ctx context.Context, id string, p UpsertDeckParams) (*
 			price_kop = $5,
 			original_price_kop = $6,
 			rustore_product_id = $7,
-			is_free = $8,
-			is_published = $9,
-			sort_order = $10,
+			apple_product_id = $8,
+			is_free = $9,
+			is_published = $10,
+			sort_order = $11,
 			updated_at = NOW()
 		WHERE id = $1
 		RETURNING ` + deckSelect
 	d, err := scanDeck(r.pool.QueryRow(ctx, q,
 		id, title, desc, p.Theme.JSON(), p.PriceKop, p.OriginalPriceKop, p.RustoreProductID,
-		p.IsFree, p.IsPublished, p.SortOrder,
+		p.AppleProductID, p.IsFree, p.IsPublished, p.SortOrder,
 	))
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -196,6 +199,25 @@ func (r *DeckRepo) GetByProductID(ctx context.Context, productID string) (*Deck,
 			return nil, ErrNotFound
 		}
 		return nil, fmt.Errorf("get deck by product: %w", err)
+	}
+	return d, nil
+}
+
+// GetByAppleProductID resolves an App Store Connect SKU to a deck. Unlike
+// GetByProductID there is no slug-derived fallback: an Apple SKU only exists if
+// an admin entered it, so a miss must not silently match some other deck.
+func (r *DeckRepo) GetByAppleProductID(ctx context.Context, sku string) (*Deck, error) {
+	sku = strings.TrimSpace(sku)
+	if sku == "" {
+		return nil, ErrNotFound
+	}
+	const q = `SELECT ` + deckSelect + ` FROM decks WHERE apple_product_id = $1`
+	d, err := scanDeck(r.pool.QueryRow(ctx, q, sku))
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, ErrNotFound
+		}
+		return nil, fmt.Errorf("get deck by apple product: %w", err)
 	}
 	return d, nil
 }

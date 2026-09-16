@@ -171,15 +171,22 @@ func (h *Handler) AdminUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	shopDecks, _ := h.decks.ListAll(r.Context())
+	// Apple-side state answers the most common support question: "why did my
+	// premium disappear".
+	appleSubs, err := h.appleSubs.ListByUser(r.Context(), user.ID)
+	if err != nil {
+		slog.Error("load apple subscriptions for admin", "error", err, "user", user.ID)
+	}
 	base := h.adminBase(r, user.Email, "users")
 	h.renderAdmin(w, "user", http.StatusOK, struct {
 		adminBase
-		User     *storage.User
-		Readings int
-		Tx       []storage.Transaction
-		Products []billing.Product
-		Decks    []storage.Deck
-	}{base, user, readings, tx, billing.Products, shopDecks})
+		User      *storage.User
+		Readings  int
+		Tx        []storage.Transaction
+		Products  []billing.Product
+		Decks     []storage.Deck
+		AppleSubs []storage.AppleSubscription
+	}{base, user, readings, tx, billing.Products, shopDecks, appleSubs})
 }
 
 func (h *Handler) AdminSetPremium(w http.ResponseWriter, r *http.Request) {
