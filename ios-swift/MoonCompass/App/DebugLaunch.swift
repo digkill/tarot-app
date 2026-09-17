@@ -58,6 +58,9 @@ enum DebugLaunch {
     /// `-arcanaBattle <hero>`: join the queue at launch.
     static var arcanaBattle: String? { value(after: "-arcanaBattle") }
 
+    /// `-previewDeck <slug>`: select that deck as if it were owned.
+    static var deck: String? { value(after: "-previewDeck") }
+
     /// `-previewCatalog`: open the spread catalog.
     static var catalog: Bool { arguments.contains("-previewCatalog") }
 }

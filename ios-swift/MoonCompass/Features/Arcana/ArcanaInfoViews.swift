@@ -52,7 +52,7 @@ struct ArcanaHeroesView: View {
             VStack(spacing: 16) {
                 ForEach(arcana.catalog?.heroes ?? []) { hero in
                     HStack(alignment: .top, spacing: 14) {
-                        CardImage(file: settings.catalog.card(id: hero.cardId)?.imageFile ?? CardArt.backFile, width: 90)
+                        ArcanaCardArt(cardId: hero.cardId, width: 90)
                             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                         VStack(alignment: .leading, spacing: 8) {
                             Text(settings.catalog.card(id: hero.cardId)?.name ?? hero.id)

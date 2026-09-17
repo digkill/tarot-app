@@ -120,7 +120,7 @@ struct ArcanaBattlefieldView: View {
 
     private func heroPortrait(_ id: String, width: CGFloat) -> some View {
         let cardId = id == "strength" ? "the_strength" : id
-        return CardImage(file: settings.catalog.card(id: cardId)?.imageFile ?? CardArt.backFile, width: width)
+        return ArcanaCardArt(cardId: cardId, width: width)
             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
 
@@ -452,7 +452,7 @@ struct ArcanaCardSheet: View {
         let def = arcana.catalog?.card(card.cardId)
         ScrollView {
             VStack(spacing: 14) {
-                CardImage(source: .bundled(tarot?.imageFile ?? CardArt.backFile), width: 180, contentMode: .fit)
+                ArcanaCardArt(cardId: card.cardId, width: 180, contentMode: .fit)
                     .rotationEffect(card.isReversed ? .degrees(180) : .zero)
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 Text(tarot?.name ?? "")

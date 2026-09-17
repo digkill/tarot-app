@@ -17,11 +17,11 @@ struct ArcanaConfig: Sendable, Equatable {
 
     static func current(api: APIConfig) -> ArcanaConfig {
         #if DEBUG
-        if let override = DebugLaunch.arcanaURL.flatMap(URL.init(string:)) {
-            return ArcanaConfig(baseURL: override, debugToken: DebugLaunch.arcanaToken)
-        }
-        #endif
+        let base = DebugLaunch.arcanaURL.flatMap(URL.init(string:)) ?? api.baseURL
+        return ArcanaConfig(baseURL: base, debugToken: DebugLaunch.arcanaToken)
+        #else
         return ArcanaConfig(baseURL: api.baseURL)
+        #endif
     }
 }
 

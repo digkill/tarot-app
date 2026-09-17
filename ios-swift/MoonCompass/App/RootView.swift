@@ -25,6 +25,14 @@ struct RootView: View {
         .preferredColorScheme(.dark)
         .environment(\.locale, Locale(identifier: settings.settings.language.rawValue))
         .task {
+            #if DEBUG
+            if let slug = DebugLaunch.deck {
+                settings.update { $0.selectedDeckId = slug; $0.ownedDeckIds = [slug] }
+            }
+            if DebugLaunch.previewUser != nil {
+                settings.update { $0.acceptedDisclaimer = true }
+            }
+            #endif
             await session.start()
         }
         .task(id: session.user?.id) {

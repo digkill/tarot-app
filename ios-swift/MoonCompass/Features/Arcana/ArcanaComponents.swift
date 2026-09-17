@@ -107,7 +107,7 @@ struct ArcanaCardTile: View {
         let tarot = card.cardId.flatMap { settings.catalog.card(id: $0) }
         VStack(spacing: 4) {
             ZStack(alignment: .topLeading) {
-                CardImage(file: tarot?.imageFile ?? CardArt.backFile, width: width)
+                ArcanaCardArt(cardId: card.cardId, width: width)
                     .rotationEffect(card.isReversed ? .degrees(180) : .zero)
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                 Text("\(card.cost)")
@@ -138,5 +138,29 @@ struct ArcanaCardTile: View {
             .stroke(selected ? colors.gold : (card.isPlayable ? colors.accent : .clear), lineWidth: selected ? 3 : 2))
         .opacity(dimmed ? 0.5 : 1)
         .accessibilityElement(children: .combine)
+    }
+}
+
+/// Card art for the game, drawn from the deck the player has selected — the
+/// same art they see in readings, so a bought deck is theirs in battle too.
+/// Falls back per card to the classic art when the deck lacks a picture.
+struct ArcanaCardArt: View {
+    @Environment(SettingsStore.self) private var settings
+    @Environment(DeckStore.self) private var decks
+
+    /// A tarot card id (`the_tower`); nil or unknown shows the card back.
+    let cardId: String?
+    let width: CGFloat
+    var contentMode: ContentMode = .fill
+
+    var body: some View {
+        let slug = decks.activeDeck(selectedSlug: settings.settings.selectedDeckId,
+                                    locallyOwned: settings.settings.ownedDeckIds).slug
+        let source: CardArtSource = if let card = cardId.flatMap({ settings.catalog.card(id: $0) }) {
+            decks.faceSource(for: card, deckSlug: slug)
+        } else {
+            decks.backSource(deckSlug: slug)
+        }
+        CardImage(source: source, width: width, contentMode: contentMode)
     }
 }

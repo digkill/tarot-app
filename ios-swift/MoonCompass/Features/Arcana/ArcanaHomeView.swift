@@ -99,9 +99,9 @@ struct ArcanaHomeView: View {
                 .foregroundStyle(colors.gold)
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
-                    heroChip(id: nil, title: l.t("arcana.randomHero"), file: CardArt.backFile, hp: nil)
+                    heroChip(id: nil, title: l.t("arcana.randomHero"), cardId: nil, hp: nil)
                     ForEach(arcana.catalog?.heroes ?? []) { hero in
-                        heroChip(id: hero.id, title: heroName(hero), file: settings.catalog.card(id: hero.cardId)?.imageFile ?? CardArt.backFile, hp: hero.hp)
+                        heroChip(id: hero.id, title: heroName(hero), cardId: hero.cardId, hp: hero.hp)
                     }
                 }
                 .padding(.vertical, 4)
@@ -110,13 +110,13 @@ struct ArcanaHomeView: View {
         }
     }
 
-    private func heroChip(id: String?, title: String, file: String, hp: Int?) -> some View {
+    private func heroChip(id: String?, title: String, cardId: String?, hp: Int?) -> some View {
         let selected = arcana.hero == id
         return Button {
             arcana.hero = id
         } label: {
             VStack(spacing: 6) {
-                CardImage(file: file, width: 84)
+                ArcanaCardArt(cardId: cardId, width: 84)
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                 Text(title)
                     .font(.caption.weight(.semibold))
