@@ -59,6 +59,17 @@ func (p *Postgres) SaveMatch(ctx context.Context, m MatchRecord) error {
 	if err != nil {
 		return err
 	}
+	// A player without an account row (a test bot) is stored as NULL, the
+	// same as a deleted account, so the other player's history still saves.
+	known, err := p.existingUsers(ctx, m.Player1ID, m.Player2ID)
+	if err != nil {
+		return err
+	}
+	for _, id := range []*string{&m.Player1ID, &m.Player2ID, &m.WinnerID} {
+		if !known[*id] {
+			*id = ""
+		}
+	}
 	_, err = p.pool.Exec(ctx, `
 		INSERT INTO arcana_matches (id, player1_id, player2_id, player1_hero, player2_hero, winner_id,
 			result_reason, seed, rules_version, protocol_version, turns, started_at, finished_at,
@@ -120,4 +131,21 @@ func (p *Postgres) GetMatch(ctx context.Context, id string) (MatchRecord, error)
 	}
 	err = json.Unmarshal(replay, &m.Replay)
 	return m, err
+}
+
+func (p *Postgres) existingUsers(ctx context.Context, ids ...string) (map[string]bool, error) {
+	rows, err := p.pool.Query(ctx, `SELECT id::text FROM users WHERE id::text = ANY($1)`, ids)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	known := map[string]bool{}
+	for rows.Next() {
+		var id string
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		known[id] = true
+	}
+	return known, rows.Err()
 }
