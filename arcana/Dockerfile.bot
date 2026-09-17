@@ -1,0 +1,13 @@
+# A bot opponent that queues on the production server forever, so a single
+# tester always finds a match. Configured through ARCANA_URL and
+# ARCANA_BOT_SECRET (the server's JWT_SECRET).
+FROM golang:1.25-bookworm AS build
+WORKDIR /src
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o /out/arcbot ./cmd/bot
+
+FROM gcr.io/distroless/static-debian12:nonroot
+COPY --from=build /out/arcbot /arcbot
+ENTRYPOINT ["/arcbot"]

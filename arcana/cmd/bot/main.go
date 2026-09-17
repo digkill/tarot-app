@@ -3,14 +3,18 @@
 //
 //	go run ./cmd/bot -url ws://localhost:8090/api/v1/arcana/ws -secret "$JWT_SECRET"
 //
-// With -secret the bot signs its own token for a fixed test user id; the
-// user must exist when the server stores matches in Postgres.
+// With -secret the bot signs its own token for a fixed test user id. The id
+// need not exist in the users table: the server stores such a player as NULL.
+//
+// Flags fall back to ARCANA_URL, ARCANA_TOKEN, ARCANA_BOT_SECRET,
+// ARCANA_BOT_USER and ARCANA_BOT_HERO, for running as a container.
 package main
 
 import (
 	"context"
 	"flag"
 	"log"
+	"os"
 	"os/signal"
 	"syscall"
 	"time"
@@ -21,31 +25,36 @@ import (
 )
 
 func main() {
-	url := flag.String("url", "ws://localhost:8090/api/v1/arcana/ws", "server WebSocket URL")
-	token := flag.String("token", "", "access token")
-	secret := flag.String("secret", "", "JWT secret to sign a token with instead")
-	user := flag.String("user", "00000000-0000-4000-8000-00000000b0b0", "user id for -secret")
-	hero := flag.String("hero", "", "hero id (random when empty)")
+	url := flag.String("url", env("ARCANA_URL", "ws://localhost:8090/api/v1/arcana/ws"), "server WebSocket URL")
+	token := flag.String("token", os.Getenv("ARCANA_TOKEN"), "access token")
+	secret := flag.String("secret", os.Getenv("ARCANA_BOT_SECRET"), "JWT secret to sign a token with instead")
+	user := flag.String("user", env("ARCANA_BOT_USER", "00000000-0000-4000-8000-00000000b0b0"), "user id for -secret")
+	hero := flag.String("hero", os.Getenv("ARCANA_BOT_HERO"), "hero id (random when empty)")
 	loop := flag.Bool("loop", true, "queue again after each match")
 	flag.Parse()
 
-	if *token == "" && *secret != "" {
+	if *token == "" && *secret == "" {
+		log.Fatal("-token or -secret is required")
+	}
+	// A fresh short-lived token per match, so a long-running bot never
+	// shows up with an expired one.
+	currentToken := func() string {
+		if *secret == "" {
+			return *token
+		}
 		signed, err := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
-			Subject: *user, ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
+			Subject: *user, ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
 		}).SignedString([]byte(*secret))
 		if err != nil {
 			log.Fatal(err)
 		}
-		*token = signed
-	}
-	if *token == "" {
-		log.Fatal("-token or -secret is required")
+		return signed
 	}
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 	for {
-		b := &bot.Bot{URL: *url, Token: *token, Hero: *hero, Log: log.Printf}
+		b := &bot.Bot{URL: *url, Token: currentToken(), Hero: *hero, Log: log.Printf}
 		log.Print("waiting for an opponent")
 		res, err := b.Play(ctx)
 		if err != nil {
@@ -62,4 +71,11 @@ func main() {
 			return
 		}
 	}
+}
+
+func env(name, def string) string {
+	if v := os.Getenv(name); v != "" {
+		return v
+	}
+	return def
 }
