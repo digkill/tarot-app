@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 
@@ -350,7 +351,7 @@ func (s *Server) joinQueue(sess *session, msg protocol.ClientMessage) {
 		sess.error("invalid_hero", "unknown hero", msg.Ref)
 		return
 	}
-	ticket := matchmaking.Ticket{UserID: sess.userID, Hero: hero, JoinedAt: time.Now()}
+	ticket := matchmaking.Ticket{UserID: sess.userID, Hero: hero, Deck: s.artDeck(sess, msg.Deck), JoinedAt: time.Now()}
 	opponent, paired := s.queue.Join(ticket)
 	if !paired {
 		sess.Send(protocol.ServerMessage{Type: protocol.QueueWaiting, Payload: map[string]string{"hero": hero}})
@@ -358,6 +359,25 @@ func (s *Server) joinQueue(sess *session, msg protocol.ClientMessage) {
 	}
 	s.startMatch(opponent, ticket)
 }
+
+// artDeck is the deck the player may be seen with. Anything not owned —
+// or not checkable — falls back to the classic deck rather than failing
+// the queue: the deck is cosmetic.
+func (s *Server) artDeck(sess *session, slug string) string {
+	slug = strings.TrimSpace(slug)
+	if slug == "" || slug == classicDeck {
+		return ""
+	}
+	ctx, cancel := context.WithTimeout(sess.ctx, 5*time.Second)
+	defer cancel()
+	owned, err := s.store.OwnsDeck(ctx, sess.userID, slug)
+	if err != nil || !owned {
+		return ""
+	}
+	return slug
+}
+
+const classicDeck = "rws"
 
 func (s *Server) startMatch(a, b matchmaking.Ticket) {
 	var outs [2]match.Outbox
@@ -380,6 +400,7 @@ func (s *Server) startMatch(a, b matchmaking.Ticket) {
 		}
 		return
 	}
+	m.Decks = [2]string{a.Deck, b.Deck}
 	s.matches.Add(m)
 	for _, sess := range sessions {
 		if sess != nil {
@@ -397,6 +418,7 @@ func (s *Server) finished(r match.Result) {
 	record := storage.MatchRecord{
 		ID: r.ID, Player1ID: r.Players[0].ID, Player2ID: r.Players[1].ID,
 		Player1Hero: r.Players[0].Hero, Player2Hero: r.Players[1].Hero, WinnerID: r.WinnerID,
+		Player1Deck: r.Decks[0], Player2Deck: r.Decks[1],
 		Reason: r.Reason, Seed: r.Seed, RulesVersion: r.Rules.Version, ProtocolVersion: protocol.Version,
 		Turns: r.Turns, StartedAt: r.StartedAt, FinishedAt: r.FinishedAt, Replay: r.Log,
 	}

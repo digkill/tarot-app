@@ -102,12 +102,13 @@ struct ArcanaCardTile: View {
     var width: CGFloat = 96
     var selected = false
     var dimmed = false
+    var deckSlug: String?
 
     var body: some View {
         let tarot = card.cardId.flatMap { settings.catalog.card(id: $0) }
         VStack(spacing: 4) {
             ZStack(alignment: .topLeading) {
-                ArcanaCardArt(cardId: card.cardId, width: width)
+                ArcanaCardArt(cardId: card.cardId, width: width, deckSlug: deckSlug)
                     .rotationEffect(card.isReversed ? .degrees(180) : .zero)
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                 Text("\(card.cost)")
@@ -152,10 +153,12 @@ struct ArcanaCardArt: View {
     let cardId: String?
     let width: CGFloat
     var contentMode: ContentMode = .fill
+    /// Another player's deck; nil draws with the player's own selected deck.
+    var deckSlug: String?
 
     var body: some View {
-        let slug = decks.activeDeck(selectedSlug: settings.settings.selectedDeckId,
-                                    locallyOwned: settings.settings.ownedDeckIds).slug
+        let slug = deckSlug ?? decks.activeDeck(selectedSlug: settings.settings.selectedDeckId,
+                                                locallyOwned: settings.settings.ownedDeckIds).slug
         let source: CardArtSource = if let card = cardId.flatMap({ settings.catalog.card(id: $0) }) {
             decks.faceSource(for: card, deckSlug: slug)
         } else {

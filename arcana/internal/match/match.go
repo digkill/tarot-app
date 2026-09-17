@@ -46,6 +46,7 @@ type Result struct {
 	Seed       uint64
 	Rules      game.Rules
 	Players    [2]game.PlayerSetup
+	Decks      [2]string
 	WinnerID   string
 	Reason     game.Reason
 	StartedAt  time.Time
@@ -57,6 +58,8 @@ type Result struct {
 type Match struct {
 	ID      string
 	Players [2]game.PlayerSetup
+	// Art decks, per seat. Cosmetic: the engine never sees them.
+	Decks [2]string
 
 	cmds chan func()
 	done chan struct{}
@@ -116,8 +119,8 @@ func (m *Match) Run() {
 				continue
 			}
 			out.Send(protocol.ServerMessage{Type: protocol.MatchStarted, MatchID: m.ID, Payload: protocol.StartedPayload{
-				You:      protocol.PlayerInfo{ID: m.Players[i].ID, Hero: m.Players[i].Hero},
-				Opponent: protocol.PlayerInfo{ID: m.Players[1-i].ID, Hero: m.Players[1-i].Hero},
+				You:      protocol.PlayerInfo{ID: m.Players[i].ID, Hero: m.Players[i].Hero, Deck: m.Decks[i]},
+				Opponent: protocol.PlayerInfo{ID: m.Players[1-i].ID, Hero: m.Players[1-i].Hero, Deck: m.Decks[1-i]},
 			}})
 		}
 		m.afterChange()
@@ -354,7 +357,7 @@ func (m *Match) finish() {
 	}
 	if m.onFinish != nil {
 		m.onFinish(Result{
-			ID: m.ID, Seed: m.g.Seed, Rules: m.g.Rules, Players: m.Players,
+			ID: m.ID, Seed: m.g.Seed, Rules: m.g.Rules, Players: m.Players, Decks: m.Decks,
 			WinnerID: m.g.WinnerID(), Reason: m.g.Reason, StartedAt: m.startedAt, FinishedAt: now,
 			Turns: m.g.Turn, Log: m.g.Log(),
 		})
@@ -366,6 +369,7 @@ func (m *Match) sendState(i int) {
 	m.sendTo(i, protocol.MatchState, protocol.StatePayload{
 		State: m.g.ViewFor(m.Players[i].ID), ServerTime: now.UnixMilli(),
 		DeadlineAt: m.deadline.UnixMilli(), OpponentConnected: m.outs[1-i] != nil,
+		YourDeck: m.Decks[i], OpponentDeck: m.Decks[1-i],
 	})
 }
 

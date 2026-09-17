@@ -13,6 +13,7 @@ import (
 type Ticket struct {
 	UserID   string
 	Hero     string
+	Deck     string
 	JoinedAt time.Time
 }
 

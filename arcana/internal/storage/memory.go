@@ -40,6 +40,9 @@ func (s *Memory) ListMatches(_ context.Context, userID string, limit int) ([]Mat
 	return out, nil
 }
 
+// OwnsDeck accepts everything: there is no shop without a database.
+func (s *Memory) OwnsDeck(context.Context, string, string) (bool, error) { return true, nil }
+
 func (s *Memory) GetMatch(_ context.Context, id string) (MatchRecord, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()

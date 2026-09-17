@@ -216,7 +216,9 @@
       "connection_failed": "Can't reach the game server.",
       "already_mulliganed": "You already replaced cards.",
       "generic": "That action wasn't accepted."
-    }
+    },
+    "opponentDeck": "Opponent’s deck: {{deck}}",
+    "viewDeck": "View this deck in the shop"
   },
   "nav": {
     "arcana": "Arcana"

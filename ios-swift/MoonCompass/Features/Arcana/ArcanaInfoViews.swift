@@ -90,6 +90,7 @@ struct ArcanaHeroesView: View {
 struct ArcanaHistoryView: View {
     @Environment(SettingsStore.self) private var settings
     @Environment(ArcanaStore.self) private var arcana
+    @Environment(DeckStore.self) private var decks
     @Environment(\.appColors) private var colors
 
     @State private var matches: [ArcanaMatchSummary]?
@@ -147,6 +148,11 @@ struct ArcanaHistoryView: View {
             }
             Text("\(heroName(m.hero)) — \(heroName(m.opponentHero))")
                 .foregroundStyle(colors.text)
+            if let slug = m.opponentDeck, let deck = decks.deck(slug: slug), !deck.isBundled {
+                Text(l.t("arcana.opponentDeck", ["deck": deck.title(in: settings.settings.language, localizer: l)]))
+                    .font(.caption)
+                    .foregroundStyle(colors.accent)
+            }
             Text([l.t("arcana.reason.\(m.reason)"), l.t("arcana.turns", ["count": m.turns]),
                   l.t("arcana.minutes", ["count": max(1, Int((Double(m.durationMs) / 60000).rounded()))])]
                 .joined(separator: " · "))

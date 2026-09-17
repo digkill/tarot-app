@@ -143,6 +143,8 @@ struct ArcanaErrorPayload: Decodable, Sendable, Equatable {
 struct ArcanaPlayerInfo: Decodable, Sendable, Equatable {
     var id: String
     var hero: String
+    /// The shop deck whose art this player is seen with; nil is the classic.
+    var deck: String?
 }
 
 struct ArcanaStartedPayload: Decodable, Sendable, Equatable {
@@ -155,6 +157,8 @@ struct ArcanaStatePayload: Decodable, Sendable {
     var serverTime: Int64
     var deadlineAt: Int64
     var opponentConnected: Bool
+    var yourDeck: String?
+    var opponentDeck: String?
 }
 
 struct ArcanaEmotePayload: Decodable, Sendable, Equatable {
@@ -224,6 +228,7 @@ struct ArcanaClientMessage: Encodable, Sendable, Equatable {
     var token: String?
     var matchId: String?
     var hero: String?
+    var deck: String?
     var cardUid: String?
     var cardUids: [String]?
     var target: ArcanaTarget?
@@ -321,6 +326,8 @@ struct ArcanaMatchSummary: Codable, Sendable, Hashable, Identifiable {
     var opponentId: String?
     var hero: String
     var opponentHero: String
+    var deck: String?
+    var opponentDeck: String?
     var result: String
     var reason: String
     var turns: Int

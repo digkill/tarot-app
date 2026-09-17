@@ -4,8 +4,14 @@ import SwiftUI
 struct ArcanaHomeView: View {
     @Environment(SettingsStore.self) private var settings
     @Environment(ArcanaStore.self) private var arcana
+    @Environment(DeckStore.self) private var decks
     @Environment(\.appColors) private var colors
     @Environment(\.scenePhase) private var scenePhase
+
+    private var activeDeckSlug: String {
+        decks.activeDeck(selectedSlug: settings.settings.selectedDeckId,
+                         locallyOwned: settings.settings.ownedDeckIds).slug
+    }
 
     var body: some View {
         let l = settings.localizer
@@ -19,6 +25,7 @@ struct ArcanaHomeView: View {
                     }
                     heroPicker(l)
                     PrimaryButton(title: l.t("arcana.battle"), isEnabled: arcana.catalog != nil) {
+                        arcana.deck = activeDeckSlug
                         arcana.battle()
                     }
                     if arcana.catalogFailed, arcana.catalog == nil {
@@ -61,6 +68,7 @@ struct ArcanaHomeView: View {
             if let hero = DebugLaunch.arcanaBattle {
                 await arcana.loadCatalog()
                 arcana.hero = hero == "random" ? nil : hero
+                arcana.deck = activeDeckSlug
                 arcana.battle()
             }
         }

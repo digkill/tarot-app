@@ -58,6 +58,7 @@ struct ArcanaMatchView: View {
 struct ArcanaBattlefieldView: View {
     @Environment(SettingsStore.self) private var settings
     @Environment(ArcanaStore.self) private var arcana
+    @Environment(DeckStore.self) private var decks
     @Environment(\.appColors) private var colors
 
     @State private var detail: ArcanaCardView?
@@ -85,7 +86,9 @@ struct ArcanaBattlefieldView: View {
             .padding(.top, 6)
             .overlay { overlays(v, l) }
             .sheet(item: $detail) { card in
-                ArcanaCardSheet(card: card, canAct: v.isMyTurn) { target in
+                let inHand = v.you.hand.contains { $0.uid == card.uid }
+                ArcanaCardSheet(card: card, canAct: v.isMyTurn && inHand,
+                                deckSlug: inHand || card.uid.hasPrefix(myUIDPrefix(v)) ? nil : (arcana.opponentDeck ?? DeckOption.classicSlug)) { target in
                     arcana.play(card.uid, target: target)
                 }
                 .presentationDetents([.large])
@@ -118,16 +121,16 @@ struct ArcanaBattlefieldView: View {
         return settings.catalog.card(id: cardId)?.name ?? id
     }
 
-    private func heroPortrait(_ id: String, width: CGFloat) -> some View {
+    private func heroPortrait(_ id: String, width: CGFloat, deckSlug: String? = nil) -> some View {
         let cardId = id == "strength" ? "the_strength" : id
-        return ArcanaCardArt(cardId: cardId, width: width)
+        return ArcanaCardArt(cardId: cardId, width: width, deckSlug: deckSlug)
             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
 
     private func opponentPanel(_ v: ArcanaGameView, _ l: Localizer) -> some View {
         let o = v.opponent
         return HStack(alignment: .top, spacing: 10) {
-            heroPortrait(o.hero.id, width: 52)
+            heroPortrait(o.hero.id, width: 52, deckSlug: arcana.opponentDeck ?? DeckOption.classicSlug)
                 .overlay(alignment: .bottomTrailing) {
                     if !arcana.opponentConnected {
                         Image(systemName: "wifi.slash")
@@ -149,6 +152,12 @@ struct ArcanaBattlefieldView: View {
                 .foregroundStyle(colors.text)
                 ArcanaHealthBar(hero: o.hero)
                 statuses(o.statuses)
+                if let name = opponentDeckName {
+                    Label(name, systemImage: "rectangle.stack.fill")
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(colors.muted)
+                        .lineLimit(1)
+                }
             }
         }
         .padding(10)
@@ -183,6 +192,8 @@ struct ArcanaBattlefieldView: View {
                     }
                 }
             }
+            HStack(alignment: .top, spacing: 10) {
+                lastPlayedColumn(v)
             VStack(alignment: .leading, spacing: 4) {
                 ForEach(v.log.suffix(4).reversed()) { entry in
                     if let line = ArcanaText.logLine(entry, me: v.you.id, cardName: cardName, l) {
@@ -201,14 +212,61 @@ struct ArcanaBattlefieldView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            }
             .padding(10)
             .background(colors.bg.opacity(0.55), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
         }
         .frame(maxHeight: .infinity)
     }
 
+    /// The opponent's last card above, ours below — each in its own deck's art.
+    @ViewBuilder
+    private func lastPlayedColumn(_ v: ArcanaGameView) -> some View {
+        let theirs = lastPlayed(v, mine: false)
+        let mine = lastPlayed(v, mine: true)
+        if theirs != nil || mine != nil {
+            VStack(spacing: 6) {
+                if let theirs {
+                    ArcanaCardArt(cardId: theirs.cardId, width: 44, deckSlug: arcana.opponentDeck ?? DeckOption.classicSlug)
+                        .rotationEffect(theirs.isReversed ? .degrees(180) : .zero)
+                        .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
+                        .onTapGesture { detail = theirs }
+                }
+                if let mine {
+                    ArcanaCardArt(cardId: mine.cardId, width: 44)
+                        .rotationEffect(mine.isReversed ? .degrees(180) : .zero)
+                        .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
+                        .onTapGesture { detail = mine }
+                }
+            }
+        }
+    }
+
     private func cardName(_ id: String) -> String {
         settings.catalog.card(id: id)?.name ?? id
+    }
+
+    /// The opponent's deck, when it is not the classic one.
+    private var opponentDeckName: String? {
+        guard let slug = arcana.opponentDeck, let deck = decks.deck(slug: slug), !deck.isBundled else { return nil }
+        return l10n.t("arcana.opponentDeck", ["deck": deck.title(in: settings.settings.language, localizer: l10n)])
+    }
+
+    private var l10n: Localizer { settings.localizer }
+
+    /// Card uids are `p1c…`/`p2c…` by seat; ours start with our seat's prefix.
+    private func myUIDPrefix(_ v: ArcanaGameView) -> String {
+        v.you.hand.first?.uid.prefix(2).description ?? v.you.discard.first?.uid.prefix(2).description ?? "p0"
+    }
+
+    /// The last card each side played, as they see it: the opponent's in
+    /// their deck's art.
+    private func lastPlayed(_ v: ArcanaGameView, mine: Bool) -> ArcanaCardView? {
+        for entry in v.log.reversed() where entry.action == "card.play" && (entry.player == v.you.id) == mine {
+            guard let id = entry.cardId else { return nil }
+            return ArcanaCardView(uid: entry.cardUid ?? id, cardId: id, reversed: entry.reversed, cost: 0, baseCost: 0)
+        }
+        return nil
     }
 
     /// "−5 ❤︎" style totals of what an action did to each side.
@@ -444,6 +502,7 @@ struct ArcanaCardSheet: View {
 
     let card: ArcanaCardView
     let canAct: Bool
+    var deckSlug: String?
     let play: (ArcanaTarget?) -> Void
 
     var body: some View {
@@ -452,13 +511,14 @@ struct ArcanaCardSheet: View {
         let def = arcana.catalog?.card(card.cardId)
         ScrollView {
             VStack(spacing: 14) {
-                ArcanaCardArt(cardId: card.cardId, width: 180, contentMode: .fit)
+                ArcanaCardArt(cardId: card.cardId, width: 180, contentMode: .fit, deckSlug: deckSlug)
                     .rotationEffect(card.isReversed ? .degrees(180) : .zero)
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 Text(tarot?.name ?? "")
                     .font(.title2.weight(.bold))
                     .foregroundStyle(colors.gold)
-                Text(l.t("arcana.cost", ["cost": card.cost]) + " · " + l.t(card.isReversed ? "arcana.reversed" : "arcana.upright"))
+                Text((card.baseCost > 0 || canAct ? l.t("arcana.cost", ["cost": card.cost]) + " · " : "")
+                     + l.t(card.isReversed ? "arcana.reversed" : "arcana.upright"))
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(colors.text)
                 if let def {
@@ -472,7 +532,7 @@ struct ArcanaCardSheet: View {
                     play(target)
                     dismiss()
                 }
-                if !(card.isPlayable && canAct) {
+                if canAct, !card.isPlayable {
                     Text(l.t("arcana.notPlayable"))
                         .font(.subheadline)
                         .foregroundStyle(colors.muted)
@@ -612,9 +672,18 @@ struct ArcanaTargetButtons: View {
 struct ArcanaResultView: View {
     @Environment(SettingsStore.self) private var settings
     @Environment(ArcanaStore.self) private var arcana
+    @Environment(DeckStore.self) private var decks
+    @Environment(DeepLinks.self) private var deepLinks
+    @Environment(\.selectTab) private var selectTab
     @Environment(\.appColors) private var colors
 
     let result: ArcanaFinishedPayload
+
+    /// The opponent's deck when it is one we could sell.
+    private var opponentDeck: DeckOption? {
+        guard let slug = arcana.opponentDeck, let deck = decks.deck(slug: slug), !deck.isBundled else { return nil }
+        return deck
+    }
 
     var body: some View {
         let l = settings.localizer
@@ -629,6 +698,31 @@ struct ArcanaResultView: View {
             Text(l.t("arcana.reason.\(result.reason)"))
                 .foregroundStyle(colors.text)
                 .multilineTextAlignment(.center)
+            if let deck = opponentDeck {
+                Button {
+                    arcana.closeResult()
+                    deepLinks.deckSlug = deck.slug
+                    selectTab(.decks)
+                } label: {
+                    HStack(spacing: 12) {
+                        CardImage(source: decks.coverSource(deck), width: 44)
+                            .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(l.t("arcana.opponentDeck", ["deck": deck.title(in: settings.settings.language, localizer: l)]))
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(colors.text)
+                            Text(l.t("arcana.viewDeck"))
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(colors.accent)
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.right").foregroundStyle(colors.muted)
+                    }
+                    .padding(12)
+                    .background(colors.panel, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                }
+                .buttonStyle(.plain)
+            }
             PrimaryButton(title: l.t("arcana.playAgain")) { arcana.battle() }
             LinkButton(title: l.t("arcana.close")) { arcana.closeResult() }
         }

@@ -71,6 +71,8 @@ type matchSummary struct {
 	OpponentID   string      `json:"opponent_id,omitempty"`
 	Hero         string      `json:"hero"`
 	OpponentHero string      `json:"opponent_hero"`
+	Deck         string      `json:"deck,omitempty"`
+	OpponentDeck string      `json:"opponent_deck,omitempty"`
 	Result       string      `json:"result"` // win, loss, none
 	Reason       game.Reason `json:"reason"`
 	Turns        int         `json:"turns"`
@@ -85,9 +87,11 @@ func summarize(m storage.MatchRecord, userID string) matchSummary {
 		ID: m.ID, Reason: m.Reason, Turns: m.Turns, StartedAt: m.StartedAt, FinishedAt: m.FinishedAt,
 		DurationMS: m.Duration().Milliseconds(), RatingDelta: m.RatingDelta, Result: "none",
 		Hero: m.Player1Hero, OpponentHero: m.Player2Hero, OpponentID: m.Player2ID,
+		Deck: m.Player1Deck, OpponentDeck: m.Player2Deck,
 	}
 	if m.Player2ID == userID {
 		s.Hero, s.OpponentHero, s.OpponentID = m.Player2Hero, m.Player1Hero, m.Player1ID
+		s.Deck, s.OpponentDeck = m.Player2Deck, m.Player1Deck
 	}
 	switch m.WinnerID {
 	case "":

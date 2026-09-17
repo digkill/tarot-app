@@ -18,6 +18,8 @@ type MatchRecord struct {
 	Player2ID       string
 	Player1Hero     string
 	Player2Hero     string
+	Player1Deck     string
+	Player2Deck     string
 	WinnerID        string
 	Reason          game.Reason
 	Seed            uint64
@@ -37,4 +39,7 @@ type Store interface {
 	// ListMatches is a player's finished matches, newest first, without replays.
 	ListMatches(ctx context.Context, userID string, limit int) ([]MatchRecord, error)
 	GetMatch(ctx context.Context, id string) (MatchRecord, error)
+	// OwnsDeck reports whether the user may play with a shop deck's art: the
+	// deck is free or bought. Unknown slugs are not owned.
+	OwnsDeck(ctx context.Context, userID, slug string) (bool, error)
 }

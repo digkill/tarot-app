@@ -44,12 +44,14 @@ const (
 
 // ClientMessage is any client frame; each type reads its own fields.
 type ClientMessage struct {
-	Type     string       `json:"type"`
-	Ref      string       `json:"ref,omitempty"` // echoed in an error reply
-	Protocol int          `json:"protocol,omitempty"`
-	Token    string       `json:"token,omitempty"`
-	MatchID  string       `json:"match_id,omitempty"`
-	Hero     string       `json:"hero,omitempty"`
+	Type     string `json:"type"`
+	Ref      string `json:"ref,omitempty"` // echoed in an error reply
+	Protocol int    `json:"protocol,omitempty"`
+	Token    string `json:"token,omitempty"`
+	MatchID  string `json:"match_id,omitempty"`
+	Hero     string `json:"hero,omitempty"`
+	// The art deck the player wants to be seen with (a shop deck slug).
+	Deck     string       `json:"deck,omitempty"`
 	CardUID  string       `json:"card_uid,omitempty"`
 	CardUIDs []string     `json:"card_uids,omitempty"`
 	Target   *game.Target `json:"target,omitempty"`
@@ -81,6 +83,9 @@ type ErrorPayload struct {
 type PlayerInfo struct {
 	ID   string `json:"id"`
 	Hero string `json:"hero"`
+	// The player's art deck, so the opponent's cards are drawn as they see
+	// them — and so a nice deck sells itself. Empty means the classic deck.
+	Deck string `json:"deck,omitempty"`
 }
 
 type StartedPayload struct {
@@ -93,6 +98,8 @@ type StatePayload struct {
 	ServerTime        int64     `json:"server_time"` // unix ms
 	DeadlineAt        int64     `json:"deadline_at"` // unix ms: end of the turn or mulligan
 	OpponentConnected bool      `json:"opponent_connected"`
+	YourDeck          string    `json:"your_deck,omitempty"`
+	OpponentDeck      string    `json:"opponent_deck,omitempty"`
 }
 
 type DisconnectedPayload struct {

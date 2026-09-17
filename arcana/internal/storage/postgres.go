@@ -73,25 +73,26 @@ func (p *Postgres) SaveMatch(ctx context.Context, m MatchRecord) error {
 	_, err = p.pool.Exec(ctx, `
 		INSERT INTO arcana_matches (id, player1_id, player2_id, player1_hero, player2_hero, winner_id,
 			result_reason, seed, rules_version, protocol_version, turns, started_at, finished_at,
-			duration_ms, rating_delta, replay)
-		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
+			duration_ms, rating_delta, replay, player1_deck, player2_deck)
+		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)
 		ON CONFLICT (id) DO NOTHING`,
 		m.ID, nullable(m.Player1ID), nullable(m.Player2ID), m.Player1Hero, m.Player2Hero, nullable(m.WinnerID),
 		string(m.Reason), int64(m.Seed), m.RulesVersion, m.ProtocolVersion, m.Turns, m.StartedAt, m.FinishedAt,
-		m.Duration().Milliseconds(), m.RatingDelta, replay)
+		m.Duration().Milliseconds(), m.RatingDelta, replay, m.Player1Deck, m.Player2Deck)
 	return err
 }
 
 const matchColumns = `id, COALESCE(player1_id::text,''), COALESCE(player2_id::text,''), player1_hero, player2_hero,
 	COALESCE(winner_id::text,''), result_reason, seed, rules_version, protocol_version, turns,
-	started_at, finished_at, rating_delta`
+	started_at, finished_at, rating_delta, player1_deck, player2_deck`
 
 func scanMatch(row pgx.Row, replay *[]byte) (MatchRecord, error) {
 	var m MatchRecord
 	var reason string
 	var seed int64
 	dest := []any{&m.ID, &m.Player1ID, &m.Player2ID, &m.Player1Hero, &m.Player2Hero, &m.WinnerID, &reason,
-		&seed, &m.RulesVersion, &m.ProtocolVersion, &m.Turns, &m.StartedAt, &m.FinishedAt, &m.RatingDelta}
+		&seed, &m.RulesVersion, &m.ProtocolVersion, &m.Turns, &m.StartedAt, &m.FinishedAt, &m.RatingDelta,
+		&m.Player1Deck, &m.Player2Deck}
 	if replay != nil {
 		dest = append(dest, replay)
 	}
@@ -148,4 +149,15 @@ func (p *Postgres) existingUsers(ctx context.Context, ids ...string) (map[string
 		known[id] = true
 	}
 	return known, rows.Err()
+}
+
+func (p *Postgres) OwnsDeck(ctx context.Context, userID, slug string) (bool, error) {
+	var owned bool
+	err := p.pool.QueryRow(ctx, `
+		SELECT EXISTS (
+			SELECT 1 FROM decks d
+			WHERE d.slug = $2 AND d.is_published
+			  AND (d.is_free OR EXISTS (SELECT 1 FROM user_decks ud WHERE ud.deck_id = d.id AND ud.user_id::text = $1))
+		)`, userID, slug).Scan(&owned)
+	return owned, err
 }

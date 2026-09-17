@@ -44,6 +44,10 @@ final class ArcanaStore {
     var hero: String? {
         didSet { defaults.set(hero, forKey: Self.heroKey) }
     }
+    /// The deck the player is seen with; set by the lobby from the selected deck.
+    var deck: String?
+    /// The opponent's deck slug, to draw their cards as they see them.
+    private(set) var opponentDeck: String?
 
     @ObservationIgnored private let api: ArcanaAPI
     @ObservationIgnored private let urlSession: URLSession
@@ -122,7 +126,7 @@ final class ArcanaStore {
         stage = .searching
         wantsQueue = true
         if connection == .online {
-            send(.init(type: "queue.join", hero: hero))
+            send(.init(type: "queue.join", hero: hero, deck: deck))
         } else if connection == .offline {
             connect()
         }
@@ -159,6 +163,7 @@ final class ArcanaStore {
         started = nil
         matchId = nil
         finished = nil
+        opponentDeck = nil
         if !keepConnected { disconnect() }
     }
 
@@ -307,7 +312,7 @@ final class ArcanaStore {
                 stage = .lobby
                 view = nil
             } else if wantsQueue, stage == .searching {
-                send(.init(type: "queue.join", hero: hero))
+                send(.init(type: "queue.join", hero: hero, deck: deck))
             }
         case .queueWaiting:
             stage = .searching
@@ -317,6 +322,7 @@ final class ArcanaStore {
             wantsQueue = false
             matchId = id
             started = payload
+            opponentDeck = payload.opponent.deck
             resumableMatch = nil
             view = nil
             finished = nil
@@ -330,6 +336,7 @@ final class ArcanaStore {
             let offset = Double(payload.serverTime) / 1000 - Date().timeIntervalSince1970
             deadline = Date(timeIntervalSince1970: Double(payload.deadlineAt) / 1000 - offset)
             opponentConnected = payload.opponentConnected
+            opponentDeck = payload.opponentDeck
             resumableMatch = nil
             if stage != .finished { stage = .match }
         case let .finished(id, payload):
