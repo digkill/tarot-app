@@ -30,6 +30,7 @@ func main() {
 	secret := flag.String("secret", os.Getenv("ARCANA_BOT_SECRET"), "JWT secret to sign a token with instead")
 	user := flag.String("user", env("ARCANA_BOT_USER", "00000000-0000-4000-8000-00000000b0b0"), "user id for -secret")
 	hero := flag.String("hero", os.Getenv("ARCANA_BOT_HERO"), "hero id (random when empty)")
+	deck := flag.String("deck", os.Getenv("ARCANA_BOT_DECK"), "art deck slug (classic when empty)")
 	loop := flag.Bool("loop", true, "queue again after each match")
 	flag.Parse()
 
@@ -54,7 +55,7 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 	for {
-		b := &bot.Bot{URL: *url, Token: currentToken(), Hero: *hero, Log: log.Printf}
+		b := &bot.Bot{URL: *url, Token: currentToken(), Hero: *hero, Deck: *deck, Log: log.Printf}
 		log.Print("waiting for an opponent")
 		res, err := b.Play(ctx)
 		if err != nil {

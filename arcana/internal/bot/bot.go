@@ -38,6 +38,8 @@ type Bot struct {
 	URL   string
 	Token string
 	Hero  string
+	// The art deck to be seen with, as a shop deck slug.
+	Deck string
 	// DropAfterSeq, when set, closes the connection once the match reaches
 	// that sequence number and reconnects with match.resume — to exercise
 	// reconnection.
@@ -97,7 +99,7 @@ func (b *Bot) session(ctx context.Context, join bool) (Result, bool, error) {
 			_ = json.Unmarshal(f.Payload, &h)
 			switch {
 			case join:
-				err = send(protocol.ClientMessage{Type: protocol.QueueJoin, Hero: b.Hero})
+				err = send(protocol.ClientMessage{Type: protocol.QueueJoin, Hero: b.Hero, Deck: b.Deck})
 			case h.ActiveMatch != "":
 				err = send(protocol.ClientMessage{Type: protocol.MatchResume, MatchID: h.ActiveMatch})
 			default:
@@ -105,7 +107,10 @@ func (b *Bot) session(ctx context.Context, join bool) (Result, bool, error) {
 			}
 		case protocol.MatchStarted:
 			b.matchID = f.MatchID
-			b.logf("match %s started", f.MatchID)
+			var started protocol.StartedPayload
+			_ = json.Unmarshal(f.Payload, &started)
+			b.logf("match %s started: you %s/%q vs %s/%q", f.MatchID,
+				started.You.Hero, started.You.Deck, started.Opponent.Hero, started.Opponent.Deck)
 		case protocol.MatchState:
 			var st protocol.StatePayload
 			if err := json.Unmarshal(f.Payload, &st); err != nil {
