@@ -22,8 +22,17 @@ export type HomeStackParamList = {
     SpreadCatalog: undefined;
 };
 
+export type ArcanaStackParamList = {
+    ArcanaHome: undefined;
+    ArcanaBattle: undefined;
+    ArcanaRules: undefined;
+    ArcanaHeroes: undefined;
+    ArcanaMatchHistory: undefined;
+};
+
 export type AppTabsParamList = {
     Explore: undefined;
+    Arcana: undefined;
     Decks: {slug?: string} | undefined;
     History: undefined;
     Settings: undefined;

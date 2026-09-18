@@ -13,6 +13,7 @@ import {SettingsProvider, useSettings} from './providers/SettingsProvider';
 import {HistoryProvider} from './providers/HistoryProvider';
 import {AuthProvider, useAuth} from './providers/AuthProvider';
 import {DeckShopProvider, useAppColors} from './providers/DeckShopProvider';
+import {ArcanaProvider} from './providers/ArcanaProvider';
 import type {AppColors} from './theme/appColors';
 import {DisclaimerScreen} from './screens/DisclaimerScreen';
 import {AuthScreen} from './screens/AuthScreen';
@@ -20,6 +21,13 @@ import {VerifyEmailScreen} from './screens/VerifyEmailScreen';
 import {ForgotPasswordScreen} from './screens/ForgotPasswordScreen';
 import {LegalDocumentScreen} from './screens/LegalDocumentScreen';
 import {HomeScreen} from './screens/HomeScreen';
+import {ArcanaHomeScreen} from './screens/ArcanaHomeScreen';
+import {ArcanaBattleScreen} from './screens/ArcanaBattleScreen';
+import {
+    ArcanaHeroesScreen,
+    ArcanaMatchHistoryScreen,
+    ArcanaRulesScreen,
+} from './screens/ArcanaInfoScreens';
 import {SpreadCatalogScreen} from './screens/SpreadCatalogScreen';
 import {DeckGalleryScreen} from './screens/DeckGalleryScreen';
 import {HistoryListScreen} from './screens/HistoryListScreen';
@@ -31,7 +39,7 @@ import {AppBackground} from './components/AppBackground';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {I18n} from './i18n';
 import {VideoSplash} from './components/VideoSplash';
-import {AppTabsParamList, HomeStackParamList, RootStackParamList} from './navigation/types';
+import {AppTabsParamList, ArcanaStackParamList, HomeStackParamList, RootStackParamList} from './navigation/types';
 import * as WebBrowser from 'expo-web-browser';
 
 WebBrowser.maybeCompleteAuthSession();
@@ -39,6 +47,7 @@ WebBrowser.maybeCompleteAuthSession();
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 const HomeStack = createNativeStackNavigator<HomeStackParamList>();
 const Tab = createBottomTabNavigator<AppTabsParamList>();
+const ArcanaStack = createNativeStackNavigator<ArcanaStackParamList>();
 
 // Deep links, e.g. mediarisetarot://deck/japanese opens the Decks tab
 // scrolled to that deck's promo card. Only resolves once the user has
@@ -93,8 +102,33 @@ const HomeStackNavigator = () => {
     );
 };
 
+// Arcana Clash: the lobby and its reference screens, with the battlefield
+// pushed on top (it hides the tab bar, like Reading does).
+const ArcanaStackNavigator = () => {
+    const {t} = useTranslation();
+    const colors = useAppColors();
+    return (
+        <ArcanaStack.Navigator screenOptions={stackHeader(colors)}>
+            <ArcanaStack.Screen name="ArcanaHome" component={ArcanaHomeScreen} options={{headerShown: false}} />
+            <ArcanaStack.Screen
+                name="ArcanaBattle"
+                component={ArcanaBattleScreen}
+                options={{headerShown: false, gestureEnabled: false}}
+            />
+            <ArcanaStack.Screen name="ArcanaRules" component={ArcanaRulesScreen} options={{title: t('arcana.rules')}} />
+            <ArcanaStack.Screen name="ArcanaHeroes" component={ArcanaHeroesScreen} options={{title: t('arcana.heroes')}} />
+            <ArcanaStack.Screen
+                name="ArcanaMatchHistory"
+                component={ArcanaMatchHistoryScreen}
+                options={{title: t('arcana.history')}}
+            />
+        </ArcanaStack.Navigator>
+    );
+};
+
 const TAB_ICONS: Record<keyof AppTabsParamList, keyof typeof Ionicons.glyphMap> = {
     Explore: 'home-outline',
+    Arcana: 'flash-outline',
     Decks: 'albums-outline',
     History: 'time-outline',
     Settings: 'settings-outline',
@@ -121,6 +155,7 @@ const MainTabs = () => {
                 component={HomeStackNavigator}
                 options={{title: t('nav.home')}}
             />
+            <Tab.Screen name="Arcana" component={ArcanaStackNavigator} options={{title: t('nav.arcana')}} />
             <Tab.Screen name="Decks" component={DeckGalleryScreen} options={{title: t('nav.decks')}} />
             <Tab.Screen name="History" component={HistoryListScreen} options={{title: t('nav.history')}} />
             <Tab.Screen name="Settings" component={SettingsScreen} options={{title: t('nav.settings')}} />
@@ -235,7 +270,9 @@ export default function App() {
                 <AuthProvider>
                     <DeckShopProvider>
                         <HistoryProvider>
-                            {videoDone ? <AppNavigation /> : null}
+                            <ArcanaProvider>
+                                {videoDone ? <AppNavigation /> : null}
+                            </ArcanaProvider>
                         </HistoryProvider>
                     </DeckShopProvider>
                 </AuthProvider>

@@ -163,3 +163,16 @@ export const apiRequest = async <T>(path: string, options: RequestOptions = {}):
 };
 
 export const isApiError = (error: unknown): error is ApiError => error instanceof ApiError;
+
+/**
+ * The access token for connections that authenticate once instead of per
+ * request, such as the Arcana Clash WebSocket. `force` rotates first, for a
+ * reconnect after the server rejected the token.
+ */
+export const socketAccessToken = async (force = false): Promise<string | null> => {
+    if (force) {
+        const rotated = await rotateTokens();
+        return rotated ? tokenBridge?.getAccessToken() ?? null : null;
+    }
+    return tokenBridge?.getAccessToken() ?? null;
+};
