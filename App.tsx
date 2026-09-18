@@ -110,11 +110,6 @@ const ArcanaStackNavigator = () => {
     return (
         <ArcanaStack.Navigator screenOptions={stackHeader(colors)}>
             <ArcanaStack.Screen name="ArcanaHome" component={ArcanaHomeScreen} options={{headerShown: false}} />
-            <ArcanaStack.Screen
-                name="ArcanaBattle"
-                component={ArcanaBattleScreen}
-                options={{headerShown: false, gestureEnabled: false}}
-            />
             <ArcanaStack.Screen name="ArcanaRules" component={ArcanaRulesScreen} options={{title: t('arcana.rules')}} />
             <ArcanaStack.Screen name="ArcanaHeroes" component={ArcanaHeroesScreen} options={{title: t('arcana.heroes')}} />
             <ArcanaStack.Screen
@@ -238,6 +233,11 @@ const AppNavigation = () => {
                 ) : (
                     <>
                         <RootStack.Screen name="Main" component={MainTabs} />
+                        <RootStack.Screen
+                            name="ArcanaBattle"
+                            component={ArcanaBattleScreen}
+                            options={{gestureEnabled: false}}
+                        />
                         <RootStack.Screen
                             name="Reading"
                             component={ReadingScreen}

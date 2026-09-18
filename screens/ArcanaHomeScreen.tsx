@@ -18,15 +18,18 @@ import {useSettings} from '../providers/SettingsProvider';
 import {hexAlpha} from '../theme/appColors';
 import {heroCardId} from '../features/arcanaApi';
 import {arcanaCardImageFile, arcanaCardNames} from '../features/arcanaText';
-import type {ArcanaStackParamList} from '../navigation/types';
+import type {ArcanaStackParamList, RootStackParamList} from '../navigation/types';
 
 type Navigation = NativeStackNavigationProp<ArcanaStackParamList, 'ArcanaHome'>;
+type RootNavigation = NativeStackNavigationProp<RootStackParamList>;
 
 /** The Arcana Clash lobby: hero choice, Battle, and the reference screens. */
 export const ArcanaHomeScreen = () => {
     const {t} = useTranslation();
     const colors = useAppColors();
     const navigation = useNavigation<Navigation>();
+    // The battlefield lives on the root stack, so it covers the tab bar.
+    const rootNavigation = useNavigation<RootNavigation>();
     const {settings} = useSettings();
     const {selectedSlug, faceSource, backSource} = useDeckShop();
     const {
@@ -59,9 +62,9 @@ export const ArcanaHomeScreen = () => {
     // The match screen owns the match; the lobby only starts it.
     useEffect(() => {
         if (stage === 'searching' || stage === 'match' || stage === 'finished') {
-            navigation.navigate('ArcanaBattle');
+            rootNavigation.navigate('ArcanaBattle');
         }
-    }, [navigation, stage]);
+    }, [rootNavigation, stage]);
 
     const names = arcanaCardNames(settings.language);
     const heroName = (id: string) => names[heroCardId(id)] ?? id;

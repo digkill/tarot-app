@@ -85,7 +85,7 @@ type matchSummary struct {
 func summarize(m storage.MatchRecord, userID string) matchSummary {
 	s := matchSummary{
 		ID: m.ID, Reason: m.Reason, Turns: m.Turns, StartedAt: m.StartedAt, FinishedAt: m.FinishedAt,
-		DurationMS: m.Duration().Milliseconds(), RatingDelta: m.RatingDelta, Result: "none",
+		DurationMS: m.Duration().Milliseconds(), RatingDelta: m.RatingDelta,
 		Hero: m.Player1Hero, OpponentHero: m.Player2Hero, OpponentID: m.Player2ID,
 		Deck: m.Player1Deck, OpponentDeck: m.Player2Deck,
 	}
@@ -93,13 +93,7 @@ func summarize(m storage.MatchRecord, userID string) matchSummary {
 		s.Hero, s.OpponentHero, s.OpponentID = m.Player2Hero, m.Player1Hero, m.Player1ID
 		s.Deck, s.OpponentDeck = m.Player2Deck, m.Player1Deck
 	}
-	switch m.WinnerID {
-	case "":
-	case userID:
-		s.Result = "win"
-	default:
-		s.Result = "loss"
-	}
+	s.Result = m.Result(userID)
 	return s
 }
 

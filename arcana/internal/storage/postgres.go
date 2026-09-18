@@ -61,6 +61,16 @@ func (p *Postgres) SaveMatch(ctx context.Context, m MatchRecord) error {
 	}
 	// A player without an account row (a test bot) is stored as NULL, the
 	// same as a deleted account, so the other player's history still saves.
+	// The winner is also kept as a seat number, which no missing row can
+	// erase.
+	seat := any(nil)
+	switch m.WinnerID {
+	case "":
+	case m.Player1ID:
+		seat = 1
+	case m.Player2ID:
+		seat = 2
+	}
 	known, err := p.existingUsers(ctx, m.Player1ID, m.Player2ID)
 	if err != nil {
 		return err
@@ -73,18 +83,18 @@ func (p *Postgres) SaveMatch(ctx context.Context, m MatchRecord) error {
 	_, err = p.pool.Exec(ctx, `
 		INSERT INTO arcana_matches (id, player1_id, player2_id, player1_hero, player2_hero, winner_id,
 			result_reason, seed, rules_version, protocol_version, turns, started_at, finished_at,
-			duration_ms, rating_delta, replay, player1_deck, player2_deck)
-		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)
+			duration_ms, rating_delta, replay, player1_deck, player2_deck, winner_seat)
+		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19)
 		ON CONFLICT (id) DO NOTHING`,
 		m.ID, nullable(m.Player1ID), nullable(m.Player2ID), m.Player1Hero, m.Player2Hero, nullable(m.WinnerID),
 		string(m.Reason), int64(m.Seed), m.RulesVersion, m.ProtocolVersion, m.Turns, m.StartedAt, m.FinishedAt,
-		m.Duration().Milliseconds(), m.RatingDelta, replay, m.Player1Deck, m.Player2Deck)
+		m.Duration().Milliseconds(), m.RatingDelta, replay, m.Player1Deck, m.Player2Deck, seat)
 	return err
 }
 
 const matchColumns = `id, COALESCE(player1_id::text,''), COALESCE(player2_id::text,''), player1_hero, player2_hero,
 	COALESCE(winner_id::text,''), result_reason, seed, rules_version, protocol_version, turns,
-	started_at, finished_at, rating_delta, player1_deck, player2_deck`
+	started_at, finished_at, rating_delta, player1_deck, player2_deck, COALESCE(winner_seat, 0)`
 
 func scanMatch(row pgx.Row, replay *[]byte) (MatchRecord, error) {
 	var m MatchRecord
@@ -92,7 +102,7 @@ func scanMatch(row pgx.Row, replay *[]byte) (MatchRecord, error) {
 	var seed int64
 	dest := []any{&m.ID, &m.Player1ID, &m.Player2ID, &m.Player1Hero, &m.Player2Hero, &m.WinnerID, &reason,
 		&seed, &m.RulesVersion, &m.ProtocolVersion, &m.Turns, &m.StartedAt, &m.FinishedAt, &m.RatingDelta,
-		&m.Player1Deck, &m.Player2Deck}
+		&m.Player1Deck, &m.Player2Deck, &m.WinnerSeat}
 	if replay != nil {
 		dest = append(dest, replay)
 	}

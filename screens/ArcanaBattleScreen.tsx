@@ -36,9 +36,9 @@ import {
     describeArcanaSide,
     isNegativeArcanaStatus,
 } from '../features/arcanaText';
-import type {ArcanaStackParamList, AppTabsParamList} from '../navigation/types';
+import type {RootStackParamList} from '../navigation/types';
 
-type Navigation = NativeStackNavigationProp<ArcanaStackParamList, 'ArcanaBattle'>;
+type Navigation = NativeStackNavigationProp<RootStackParamList, 'ArcanaBattle'>;
 
 const CLASSIC_DECK = 'rws';
 
@@ -202,7 +202,14 @@ export const ArcanaBattleScreen = () => {
 
     const cardTile = (
         card: ArcanaCardView,
-        options: {width: number; deck?: string; selected?: boolean; dimmed?: boolean; onPress?: () => void},
+        options: {
+            width: number;
+            deck?: string;
+            selected?: boolean;
+            dimmed?: boolean;
+            hideName?: boolean;
+            onPress?: () => void;
+        },
     ) => {
         const source = art(card.card_id, options.deck);
         const costColor =
@@ -243,9 +250,11 @@ export const ArcanaBattleScreen = () => {
                         </View>
                     ) : null}
                 </View>
-                <Text numberOfLines={2} style={[styles.tileName, {color: colors.text, width: options.width}]}>
-                    {card.card_id ? cardName(card.card_id) : t('arcana.hiddenCard')}
-                </Text>
+                {options.hideName ? null : (
+                    <Text numberOfLines={2} style={[styles.tileName, {color: colors.text, width: options.width}]}>
+                        {card.card_id ? cardName(card.card_id) : t('arcana.hiddenCard')}
+                    </Text>
+                )}
             </TouchableOpacity>
         );
     };
@@ -493,9 +502,10 @@ export const ArcanaBattleScreen = () => {
                         style={[styles.deckPromo, {backgroundColor: colors.panel}]}
                         onPress={() => {
                             arcana.closeResult();
-                            navigation.getParent<NativeStackNavigationProp<AppTabsParamList>>()?.navigate('Decks', {
-                                slug: deck.slug,
-                            });
+                            navigation.navigate('Main', {
+                                screen: 'Decks',
+                                params: {slug: deck.slug},
+                            } as never);
                         }}
                     >
                         <Image
@@ -582,6 +592,7 @@ export const ArcanaBattleScreen = () => {
                         {theirLast
                             ? cardTile(theirLast, {
                                   width: 44,
+                                  hideName: true,
                                   deck: opponentDeckSlug,
                                   onPress: () => setDetail({card: theirLast, deck: opponentDeckSlug, fromHand: false}),
                               })
@@ -589,6 +600,7 @@ export const ArcanaBattleScreen = () => {
                         {myLast
                             ? cardTile(myLast, {
                                   width: 44,
+                                  hideName: true,
                                   onPress: () => setDetail({card: myLast, fromHand: false}),
                               })
                             : null}
@@ -691,7 +703,12 @@ export const ArcanaBattleScreen = () => {
                 </View>
             </View>
 
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.handRow}>
+            <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={styles.hand}
+                contentContainerStyle={styles.handRow}
+            >
                 {view.you.hand.map((card) =>
                     cardTile(card, {
                         width: 88,
@@ -799,7 +816,8 @@ const styles = StyleSheet.create({
     powers: {flexDirection: 'row', gap: 8},
     powerBtn: {flex: 1, flexDirection: 'row', gap: 5, alignItems: 'center', justifyContent: 'center', borderRadius: 10, paddingVertical: 8},
     powerBtnText: {color: '#fff', fontSize: 12, fontWeight: '700'},
-    handRow: {gap: 8, paddingVertical: 6},
+    hand: {flexGrow: 0, height: 178},
+    handRow: {gap: 8, paddingVertical: 6, alignItems: 'flex-start'},
     tile: {alignItems: 'center', gap: 4, borderRadius: 12, borderWidth: 2, padding: 4},
     reversed: {transform: [{rotate: '180deg'}]},
     costBadge: {position: 'absolute', top: -6, left: -6, width: 26, height: 26, borderRadius: 13, alignItems: 'center', justifyContent: 'center'},

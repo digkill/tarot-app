@@ -17,6 +17,15 @@ func NewMemory() *Memory { return &Memory{matches: map[string]MatchRecord{}} }
 func (s *Memory) SaveMatch(_ context.Context, m MatchRecord) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	if m.WinnerSeat == 0 {
+		switch m.WinnerID {
+		case "":
+		case m.Player1ID:
+			m.WinnerSeat = 1
+		case m.Player2ID:
+			m.WinnerSeat = 2
+		}
+	}
 	if _, ok := s.matches[m.ID]; !ok {
 		s.matches[m.ID] = m
 	}

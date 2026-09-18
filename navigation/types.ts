@@ -15,6 +15,7 @@ export type RootStackParamList = {
         readingKind?: 'daily' | 'bonus';
     };
     Interpretation: {readingId: string};
+    ArcanaBattle: undefined;
 };
 
 export type HomeStackParamList = {
@@ -24,7 +25,6 @@ export type HomeStackParamList = {
 
 export type ArcanaStackParamList = {
     ArcanaHome: undefined;
-    ArcanaBattle: undefined;
     ArcanaRules: undefined;
     ArcanaHeroes: undefined;
     ArcanaMatchHistory: undefined;

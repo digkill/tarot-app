@@ -96,3 +96,39 @@ func TestRoutesWorkWithOrWithoutThePrefix(t *testing.T) {
 		}
 	}
 }
+
+// A player without an account row (a test bot, or a deleted account) is
+// stored as NULL, which must not turn the other player's loss into "no
+// result".
+func TestResultSurvivesAPlayerWithoutAnAccount(t *testing.T) {
+	mux, store := setup(t)
+	now := time.Now()
+	if err := store.SaveMatch(context.Background(), storage.MatchRecord{
+		ID: "m2", Player1ID: "", Player2ID: "b", Player1Hero: "death", Player2Hero: "strength",
+		WinnerID: "", WinnerSeat: 1, Reason: game.ReasonSurrender,
+		StartedAt: now.Add(-time.Minute), FinishedAt: now,
+	}); err != nil {
+		t.Fatal(err)
+	}
+	_, body := get(t, mux, "/api/v1/arcana/matches", "b")
+	m := body["matches"].([]any)[0].(map[string]any)
+	if m["result"] != "loss" {
+		t.Fatalf("result = %v, want loss", m["result"])
+	}
+}
+
+func TestResultFromTheRecord(t *testing.T) {
+	record := storage.MatchRecord{Player1ID: "a", Player2ID: "b"}
+	if got := record.Result("a"); got != "none" {
+		t.Fatalf("no winner: %s", got)
+	}
+	record.WinnerSeat = 2
+	if record.Result("a") != "loss" || record.Result("b") != "win" || record.Result("c") != "none" {
+		t.Fatal("by seat")
+	}
+	// Older rows have only the id.
+	old := storage.MatchRecord{Player1ID: "a", Player2ID: "b", WinnerID: "a"}
+	if old.Result("a") != "win" || old.Result("b") != "loss" {
+		t.Fatal("by id")
+	}
+}
