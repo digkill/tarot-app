@@ -98,16 +98,19 @@ final class PurchaseStoreStoreKitTests: XCTestCase {
         session.clearTransactions()
     }
 
-    /// Records which transactions were finished.
+    /// Records which products were finished. Assertions name the product
+    /// rather than count everything: the simulator's StoreKit session can
+    /// still hold a purchase from another test in this run.
     private final class FinishLog: @unchecked Sendable {
         private let lock = NSLock()
-        private var ids: [UInt64] = []
-        func add(_ id: UInt64) { lock.withLock { ids.append(id) } }
-        var all: [UInt64] { lock.withLock { ids } }
+        private var products: [String] = []
+        func add(_ productId: String) { lock.withLock { products.append(productId) } }
+        func count(of productId: String) -> Int { lock.withLock { products.filter { $0 == productId }.count } }
+        var isEmpty: Bool { lock.withLock { products.isEmpty } }
     }
 
     private func makeStore(_ verifier: RecordingVerifier, _ log: FinishLog) -> PurchaseStore {
-        PurchaseStore(verifier: verifier, finish: { transaction in log.add(transaction.id) })
+        PurchaseStore(verifier: verifier, finish: { transaction in log.add(transaction.productID) })
     }
 
     private func granted() -> AppleVerifyResponse {
@@ -129,7 +132,7 @@ final class PurchaseStoreStoreKitTests: XCTestCase {
         XCTAssertEqual(verifier.calls.first?.token, UUID(uuidString: userId), "purchase tied to the account")
         XCTAssertEqual(verifier.calls.first?.jws.split(separator: ".").count, 3, "a compact JWS, not decoded JSON")
 
-        XCTAssertEqual(finished.all.count, 1, "finished once the server confirmed it")
+        XCTAssertEqual(finished.count(of: ProductIDs.premiumMonthly), 1, "finished once the server confirmed it")
     }
 
     /// Apple has charged but the server is unreachable: the transaction stays
@@ -144,14 +147,15 @@ final class PurchaseStoreStoreKitTests: XCTestCase {
         let outcome = await store.purchase(ProductIDs.premiumLifetime)
         XCTAssertEqual(outcome, .failed(.verifyLater))
         XCTAssertEqual(store.entitlementsVersion, 0)
-        XCTAssertTrue(finished.all.isEmpty, "not finished while the server has not confirmed it")
+        XCTAssertTrue(finished.isEmpty, "not finished while the server has not confirmed it")
 
         verifier.result = .success(granted())
         let synced = await store.syncEntitlements()
-        XCTAssertEqual(synced.count, 1, "delivered once, not once per list it appears in")
-        XCTAssertEqual(store.entitlementsVersion, 1)
+        XCTAssertFalse(synced.isEmpty, "the kept transaction is delivered on the next sync")
+        XCTAssertEqual(store.entitlementsVersion, synced.count, "one bump per grant")
 
-        XCTAssertEqual(finished.all.count, 1, "finished once the retry was confirmed")
+        XCTAssertEqual(finished.count(of: ProductIDs.premiumLifetime), 1,
+                       "finished exactly once, not once per list it appears in")
     }
 
     func testSignedOutSyncDoesNothing() async {

@@ -12,4 +12,5 @@
 Не использовать как актуальное: `PREMIUM_FEATURE.md` (демо/клиентский OpenAI).  
 `CLAUDE.md` и `AGENTS.md` — короткие указатели сюда.
 
-**Сейчас:** клиент `1.1.9`, `versionCode`/`buildNumber` `12`, пакет `org.mediarise.tarot`, API `https://tarot.sorapure.fun`.
+**Сейчас:** оба клиента `1.3.0`, `versionCode`/`buildNumber`/`CURRENT_PROJECT_VERSION` `14`, пакет `org.mediarise.tarot`, API `https://tarot.sorapure.fun`.
+Версии Android (`app.config.js`) и нативного iOS (`ios-swift/project.yml`) держим одинаковыми.
