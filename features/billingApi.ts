@@ -1,3 +1,4 @@
+import type {AuthUser} from '../entities';
 import {apiRequest} from './apiClient';
 import type {WebCheckoutProvider} from './premiumSource';
 
@@ -69,4 +70,10 @@ export const reportSubscriptionStatus = (input: {
             productId: input.productId ?? '',
             expiresAt: input.expiresAt ?? '',
         },
+    });
+
+export const redeemPremiumCode = (code: string) =>
+    apiRequest<{user: AuthUser}>('/api/v1/billing/premium-code', {
+        method: 'POST',
+        body: {code: code.trim().toUpperCase()},
     });

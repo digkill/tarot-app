@@ -207,9 +207,12 @@ func (r *UserRepo) GrantPremium(ctx context.Context, id string, g PremiumGrant) 
 	tag, err := r.pool.Exec(ctx, `
 		UPDATE users
 		SET has_premium = TRUE,
-		    premium_product_id = NULLIF($2, ''),
-		    premium_source = NULLIF($3, ''),
-		    premium_expires_at = $4
+		    premium_product_id = CASE WHEN has_premium AND premium_source='promo' AND premium_expires_at IS NULL
+                THEN premium_product_id ELSE NULLIF($2, '') END,
+            premium_source = CASE WHEN has_premium AND premium_source='promo' AND premium_expires_at IS NULL
+                THEN premium_source ELSE NULLIF($3, '') END,
+            premium_expires_at = CASE WHEN has_premium AND premium_source='promo' AND premium_expires_at IS NULL
+                THEN NULL ELSE $4::timestamptz END
 		WHERE id = $1`, id, g.ProductID, g.Source, g.ExpiresAt)
 	if err != nil {
 		return fmt.Errorf("grant premium: %w", err)
@@ -257,8 +260,16 @@ func (r *UserRepo) applyExpiry(ctx context.Context, u *User) (*User, error) {
 	if u == nil || !u.HasPremium || u.PremiumExpiresAt == nil || !time.Now().After(*u.PremiumExpiresAt) {
 		return u, nil
 	}
-	if err := r.RevokePremium(ctx, u.ID); err != nil {
+	// Re-check expiry while holding the database row lock: a code redemption
+	// may have replaced the expiring plan since this user was read.
+	tag, err := r.pool.Exec(ctx, `UPDATE users SET has_premium=FALSE,
+		premium_product_id=NULL, premium_source=NULL, premium_expires_at=NULL
+		WHERE id=$1 AND premium_expires_at IS NOT NULL AND premium_expires_at < NOW()`, u.ID)
+	if err != nil {
 		return u, err
+	}
+	if tag.RowsAffected() == 0 {
+		return r.GetByID(ctx, u.ID)
 	}
 	u.HasPremium = false
 	u.PremiumExpiresAt = nil

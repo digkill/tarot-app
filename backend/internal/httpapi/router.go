@@ -49,6 +49,7 @@ func (h *Handler) Router() http.Handler {
 			r.Get("/usage", h.GetUsage)
 			r.Post("/usage/daily-card", h.ConsumeDailyCard)
 			r.Post("/usage/ad-session", h.StartAdSession)
+			r.Post("/billing/premium-code", h.RedeemPremiumCode)
 			r.Post("/billing/purchases", h.ReportPurchase)
 			r.Post("/billing/subscription-status", h.SyncSubscriptionStatus)
 			r.Post("/billing/checkout", h.CreateCheckout)
